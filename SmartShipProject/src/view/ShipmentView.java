@@ -34,8 +34,8 @@ public class ShipmentView extends JFrame
 	private Button btnSubmit,btnClear,btnZone;
 	
 	private JPanel cardPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4;
-	private JCheckBox checkBoxSE1,checkBoxSE2,checkBoxSE3,checkBoxSE4,checkBoxSE5,
-	checkBoxF1,checkBoxF2,checkBoxF3,checkBoxF4,checkBoxF5;
+	private JCheckBox checkBoxSE1,checkBoxSE2,checkBoxSE3,checkBoxSE4,checkBoxSE5,checkBoxSE6,checkBoxSE7,
+	checkBoxF1,checkBoxF2,checkBoxF3,checkBoxF4,checkBoxF5,checkBoxF6,checkBoxF7;
 	
 	private ArrayList<Package> defPackages;
 	
@@ -81,11 +81,21 @@ public class ShipmentView extends JFrame
 		
 		lblPackageName = new JLabel("Package Name: ");
 		
-		checkBoxSE1 = new JCheckBox("Stanley Cup");
+		checkBoxSE1 = new JCheckBox("Naruto Manga");
 		checkBoxSE2 = new JCheckBox("Sherlock Holmes Book");
 		checkBoxSE3 = new JCheckBox("Laptop Backpack");
 		checkBoxSE4 = new JCheckBox("Uno Card Game");
-		checkBoxSE5 = new JCheckBox("");
+		checkBoxSE5 = new JCheckBox("Calculator");
+		checkBoxSE6 = new JCheckBox("Brazilian Hair");
+		checkBoxSE7 = new JCheckBox("Pillow");
+		
+		checkBoxF1 = new JCheckBox("Mona Lisa Poster");
+		checkBoxF2 = new JCheckBox("iPhone 17");
+		checkBoxF3 = new JCheckBox("Guitar");
+		checkBoxF4 = new JCheckBox("Roku Smart TV");
+		checkBoxF5 = new JCheckBox("ASUS Laptop");
+		checkBoxF6 = new JCheckBox("PlayStation 5");
+		checkBoxF7 = new JCheckBox("Stanley Cup");
 
 		defPackages = new ArrayList<Package>();
 		//defPackages.add(new Package("Mona Lisa Poster","Fragile",));
@@ -93,9 +103,10 @@ public class ShipmentView extends JFrame
 		defPackages.add(new Package("ASUS Laptop","Fragile",3.64,12.34,0.57,8.58));
 		
 		
-		
-
-		
+	}
+	
+	private void addPanelsToCardPanel()
+	{
 		
 	}
 	
