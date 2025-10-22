@@ -128,7 +128,7 @@ public class ShipmentView extends JFrame
 		shipmentForm3 = new JPanel(new GridBagLayout());
 		shipmentForm4 = new JPanel(new GridBagLayout());
 		
-		//gridBagLayout = new GridBagLayout();
+		gridBagLayout = new GridBagLayout();
 		buttonPanel = new JPanel();
 		gc = new GridBagConstraints();	
 		cl = new CardLayout();
@@ -144,45 +144,30 @@ public class ShipmentView extends JFrame
 		gc.anchor = GridBagConstraints.CENTER;
 		
 		
-		gc.gridwidth = 5;
-		gc.gridx = 0;
-		gc.gridy = 0;
+		//Add lblSenderSection: column 0 of row 0 with colspan of 5
+		
+		addObjects(shipmentForm1,lblSenderSection,gc,0,0,5);
 		
 		
-		shipmentForm1.add(lblSenderSection,gc);
-		
-		gc.anchor = GridBagConstraints.WEST;
+		//Add lblSenderName: column 0 of row 1 with colspan of 1
 
-		gc.gridwidth = 1;
-		gc.weightx = 1;
-		gc.gridx = 0;
-		gc.gridy = 1;
+		addObjects(shipmentForm1,lblSenderName,gc,0,1,1);
 		
+		//Add rdbAmazon: column 1 of row 1 with colspan of 1
+
+		addObjects(shipmentForm1,rdbAmazon,gc,1,1,1);
 		
-		shipmentForm1.add(lblSenderName,gc);
-		
-		
-		gc.gridx = 1;
-		gc.gridy = 1;
-		
-		shipmentForm1.add(rdbAmazon,gc);
-		
-		gc.gridx = 2;
-		gc.gridy = 1;
-		
-		shipmentForm1.add(rdbEbay,gc);
-		
-		gc.gridx = 3;
-		gc.gridy = 1;
-		
-		shipmentForm1.add(rdbTemu,gc);
-		
-		gc.gridx = 4;
-		gc.gridy = 1;
-		
-		shipmentForm1.add(rdbSheen,gc);
-		
-		//gc.gridx = 
+		//Add rdbEbay: column 2 of row 1 with colspan of 1
+
+		addObjects(shipmentForm1,rdbEbay,gc,2,1,1);
+
+		//Add rdbTemu: column 3 of row 1 with colspan of 1
+
+		addObjects(shipmentForm1,rdbTemu,gc,3,1,1);
+
+		//Add rdbSheen: column 3 of row 1 with colspan of 1
+
+		addObjects(shipmentForm1,rdbSheen,gc,4,1,1);
 		
 		
 	}
@@ -261,16 +246,16 @@ public class ShipmentView extends JFrame
 	}
 	
 	
-	public void addObjects(GridBagLayout layout, Container panel, Component component, GridBagConstraints gbc, int column, int row,  int colspan)
+	public void addObjects(Container panel, Component component, GridBagConstraints gbc, int column, int row,  int colspan)
 	{
 
         gbc.gridx = column;
         gbc.gridy = row;
 
-        gbc.weightx = colspan;
+        gbc.gridwidth = colspan;
         
-        layout.setConstraints(component, gbc);
-        panel.add(component);
+        
+        panel.add(component,gbc);
     }
 	
 	public static void main(String[] args)
