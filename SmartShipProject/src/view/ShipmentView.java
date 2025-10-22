@@ -48,7 +48,6 @@ public class ShipmentView extends JFrame
 	
 	
 	private ArrayList<Package> defPackages;
-	private GridBagLayout gridBagLayout;
 	private GridBagConstraints gc;
     private int currentCard = 1;
     private CardLayout cl;
@@ -74,14 +73,14 @@ public class ShipmentView extends JFrame
 		lblReceiverTRN = new JLabel("Tax Registration Number: ");
 		receiverTRNTxt = new JTextField(9);
 		lblReceiverName = new JLabel("Receiver Name: ");
-		receiverFNameTxt = new JTextField(30);
-		receiverLNameTxt = new JTextField(30);
+		receiverFNameTxt = new JTextField(20);
+		receiverLNameTxt = new JTextField(20);
 		lblReceiverAddr = new JLabel("Receiver Address: ");
-		receiverAddrTxt = new JTextField(50);
+		receiverAddrTxt = new JTextField(20);
 		
 		lblZone = new JLabel("Zone: ");
 		btnZone = new Button("Generate Zone");
-		zoneTxt = new JTextField(2);
+		zoneTxt = new JTextField(5);
 		
 		
 		
@@ -128,7 +127,6 @@ public class ShipmentView extends JFrame
 		shipmentForm3 = new JPanel(new GridBagLayout());
 		shipmentForm4 = new JPanel(new GridBagLayout());
 		
-		gridBagLayout = new GridBagLayout();
 		buttonPanel = new JPanel();
 		gc = new GridBagConstraints();	
 		cl = new CardLayout();
@@ -139,21 +137,28 @@ public class ShipmentView extends JFrame
 	
 	private void addComponentsToPanel()
 	{
-		
+		//Padding of 10 all around
 		gc.insets = new Insets(10,10,10,10);
 		gc.anchor = GridBagConstraints.CENTER;
-		
+		gc.ipady = 10;
+	
 		
 		//Add lblSenderSection: column 0 of row 0 with colspan of 5
 		
 		addObjects(shipmentForm1,lblSenderSection,gc,0,0,5);
 		
+
 		
 		//Add lblSenderName: column 0 of row 1 with colspan of 1
+		gc.anchor = GridBagConstraints.EAST;
+
 
 		addObjects(shipmentForm1,lblSenderName,gc,0,1,1);
 		
+		
 		//Add rdbAmazon: column 1 of row 1 with colspan of 1
+		
+
 
 		addObjects(shipmentForm1,rdbAmazon,gc,1,1,1);
 		
@@ -168,6 +173,70 @@ public class ShipmentView extends JFrame
 		//Add rdbSheen: column 3 of row 1 with colspan of 1
 
 		addObjects(shipmentForm1,rdbSheen,gc,4,1,1);
+		
+		//Add lblReceiverSection: column 0 of row 2 with colspan of 5
+		
+		gc.anchor = GridBagConstraints.CENTER;
+
+		addObjects(shipmentForm1,lblReceiverSection,gc,0,2,5);
+
+		//Add lblReceiverTRN: column 0 of row 3 with colspan of 1
+		gc.anchor = GridBagConstraints.EAST;
+
+
+		addObjects(shipmentForm1,lblReceiverTRN,gc,0,3,1);
+		
+		//Add receiverTRNTxt: column 1 of row 3 with colspan of 2
+		
+		gc.anchor = GridBagConstraints.WEST;
+
+		addObjects(shipmentForm1,receiverTRNTxt,gc,1,3,2);
+
+
+		//Add lblReceiverName: column 0 of row 4 with colspan of 1
+		
+		gc.anchor = GridBagConstraints.EAST;
+
+		addObjects(shipmentForm1,lblReceiverName,gc,0,4,1);
+		
+		addObjects(shipmentForm1,receiverFNameTxt,gc,1,4,2);
+		
+		addObjects(shipmentForm1,receiverLNameTxt,gc,2,4,2);
+		
+		//Add lblReceiverAddr: column 0 of row 5 with colspan of 1
+		
+		addObjects(shipmentForm1,lblReceiverAddr,gc,0,5,1);
+		
+		//Add receiverAddrTxt: column 1 of row 5 with colspan of 2
+
+		addObjects(shipmentForm1,receiverAddrTxt,gc,1,5,2);
+		
+		//Add lblZone: column 0 of row 6 with colspan of 1
+
+		
+		addObjects(shipmentForm1,lblZone,gc,0,6,1);
+		
+		//Add btnZone: column 1 of row 6 with colspan of 1
+
+		addObjects(shipmentForm1,btnZone,gc,1,6,1);
+		
+		//Add zoneTxt: column 2 of row 6 with colspan of 1
+		
+		addObjects(shipmentForm1,zoneTxt,gc,2,6,1);
+		
+		/*END OF SHIPMENT FORM PAGE 1
+		 * 
+		 * 
+		 * START OF SHIPMENT FORM PAGE 2*/
+		
+		gc.insets = new Insets(10,10,10,10);
+		gc.anchor = GridBagConstraints.CENTER;
+		gc.ipady = 0;
+
+		addObjects(shipmentForm2,lblPackageSection,gc,0,0,5);
+		
+		
+
 		
 		
 	}
