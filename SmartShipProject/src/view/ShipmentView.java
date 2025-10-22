@@ -32,15 +32,18 @@ public class ShipmentView extends JFrame
 	private JLabel lblSenderSection, lblSenderName, lblSenderAddr, 
 	lblReceiverSection, lblReceiverTRN, lblReceiverName,lblReceiverAddr,
 	lblZone,
-	lblPackageSection, lblPackageName,lblPackgeType,
-	lblPkgeWeight, lblPkgeWidth, lblPkgeLength, lblPackageType, lblDestination;
+	lblPackageSection, lblPackageName,lblPackageType,
+	lblCartSection, lblCart, lblPaymentMethod, lblItem, lblPrice,
+	lblQty, lblWeight,lblTotalWeight,lblSubTotal,lblSurcharge,lblDiscount,lblGrandTotal;
 	private JTextField senderAddrTxt, 
-	receiverTRNTxt,receiverFNameTxt,receiverLNameTxt, receiverAddrTxt,zoneTxt;
+	receiverTRNTxt,receiverFNameTxt,receiverLNameTxt, receiverAddrTxt,zoneTxt
+	;
 	
 	private JRadioButton rdbAmazon, rdbEbay,rdbTemu,rdbSheen,
-	rdbStandard, rdbExpress,rdbFragile;
+	rdbStandard, rdbExpress,rdbFragile,
+	rdbCash,rdbCard;
 	private ButtonGroup btnGrpStores,btnGrpPackages;
-	private Button btnSubmit,btnClear,btnZone, nextBtn,prevBtn;
+	private Button clearBtn,btnZone, nextBtn,prevBtn;
 	
 	private JPanel cardPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel;
 	private JCheckBox checkBoxSE1,checkBoxSE2,checkBoxSE3,checkBoxSE4,checkBoxSE5,checkBoxSE6,checkBoxSE7,
@@ -66,7 +69,7 @@ public class ShipmentView extends JFrame
 		btnGrpStores.add(rdbTemu);
 		btnGrpStores.add(rdbSheen);
 		lblSenderAddr = new JLabel("Sender Address: ");
-		senderAddrTxt = new JTextField();
+		senderAddrTxt = new JTextField(20);
 		
 		//This section should be auto filled based on User Information
 		lblReceiverSection = new JLabel("Receiver Information Section");
@@ -85,7 +88,11 @@ public class ShipmentView extends JFrame
 		
 		
 		lblPackageSection = new JLabel("Package Information Section");
-		lblPackgeType = new JLabel("Package Type: ");
+		
+		
+		lblPackageType = new JLabel("Package Type: ");
+		
+		
 		rdbStandard = new JRadioButton("Standard");
 		rdbExpress = new JRadioButton("Express");
 		rdbFragile = new JRadioButton("Fragile");
@@ -117,10 +124,14 @@ public class ShipmentView extends JFrame
 		defPackages = new ArrayList<Package>();
 		//defPackages.add(new Package("Mona Lisa Poster","Fragile",));
 		
-		//defPackages.add(new Package("ASUS Laptop","Fragile",3.64,12.34,0.57,8.58));
+		
+		
+		defPackages.add(new Package("ASUS Laptop","Fragile",3.64,12.34,0.57,8.58));
+		
 		
 		nextBtn = new Button("Next");
 		prevBtn = new Button("Previous");
+		clearBtn = new Button("Clear Form");
 		
 		shipmentForm1 = new JPanel(new GridBagLayout());
 		shipmentForm2 = new JPanel(new GridBagLayout());
@@ -174,66 +185,129 @@ public class ShipmentView extends JFrame
 
 		addObjects(shipmentForm1,rdbSheen,gc,4,1,1);
 		
+		addObjects(shipmentForm1,lblSenderAddr,gc,0,2,1);
+
+		addObjects(shipmentForm1,senderAddrTxt,gc,1,2,2);
+
+		
 		//Add lblReceiverSection: column 0 of row 2 with colspan of 5
 		
 		gc.anchor = GridBagConstraints.CENTER;
 
-		addObjects(shipmentForm1,lblReceiverSection,gc,0,2,5);
+		addObjects(shipmentForm1,lblReceiverSection,gc,0,3,5);
 
 		//Add lblReceiverTRN: column 0 of row 3 with colspan of 1
 		gc.anchor = GridBagConstraints.EAST;
 
 
-		addObjects(shipmentForm1,lblReceiverTRN,gc,0,3,1);
+		addObjects(shipmentForm1,lblReceiverTRN,gc,0,4,1);
 		
 		//Add receiverTRNTxt: column 1 of row 3 with colspan of 2
 		
 		gc.anchor = GridBagConstraints.WEST;
 
-		addObjects(shipmentForm1,receiverTRNTxt,gc,1,3,2);
+		addObjects(shipmentForm1,receiverTRNTxt,gc,1,4,2);
 
 
 		//Add lblReceiverName: column 0 of row 4 with colspan of 1
 		
 		gc.anchor = GridBagConstraints.EAST;
 
-		addObjects(shipmentForm1,lblReceiverName,gc,0,4,1);
+		addObjects(shipmentForm1,lblReceiverName,gc,0,5,1);
 		
-		addObjects(shipmentForm1,receiverFNameTxt,gc,1,4,2);
+		addObjects(shipmentForm1,receiverFNameTxt,gc,1,5,2);
 		
-		addObjects(shipmentForm1,receiverLNameTxt,gc,2,4,2);
+		addObjects(shipmentForm1,receiverLNameTxt,gc,2,5,2);
 		
 		//Add lblReceiverAddr: column 0 of row 5 with colspan of 1
 		
-		addObjects(shipmentForm1,lblReceiverAddr,gc,0,5,1);
+		addObjects(shipmentForm1,lblReceiverAddr,gc,0,6,1);
 		
 		//Add receiverAddrTxt: column 1 of row 5 with colspan of 2
 
-		addObjects(shipmentForm1,receiverAddrTxt,gc,1,5,2);
+		addObjects(shipmentForm1,receiverAddrTxt,gc,1,6,2);
 		
 		//Add lblZone: column 0 of row 6 with colspan of 1
 
 		
-		addObjects(shipmentForm1,lblZone,gc,0,6,1);
+		addObjects(shipmentForm1,lblZone,gc,0,7,1);
 		
 		//Add btnZone: column 1 of row 6 with colspan of 1
 
-		addObjects(shipmentForm1,btnZone,gc,1,6,1);
+		addObjects(shipmentForm1,btnZone,gc,1,7,1);
 		
 		//Add zoneTxt: column 2 of row 6 with colspan of 1
 		
-		addObjects(shipmentForm1,zoneTxt,gc,2,6,1);
+		addObjects(shipmentForm1,zoneTxt,gc,2,7,1);
 		
 		/*END OF SHIPMENT FORM PAGE 1
 		 * 
 		 * 
 		 * START OF SHIPMENT FORM PAGE 2*/
+
+		gc = new GridBagConstraints();
 		
 		gc.insets = new Insets(10,10,10,10);
 		gc.anchor = GridBagConstraints.CENTER;
-		gc.ipady = 0;
+		
 
-		addObjects(shipmentForm2,lblPackageSection,gc,0,0,5);
+		//Add lblPackageSection: column 0 of row 0 with colspan of 4
+
+		addObjects(shipmentForm2,lblPackageSection,gc,0,0,4);
+		
+		
+		gc.anchor = GridBagConstraints.EAST;
+
+		addObjects(shipmentForm2,lblPackageType,gc,0,1,1);
+		gc.anchor = GridBagConstraints.WEST;
+
+		addObjects(shipmentForm2,rdbStandard,gc,1,1,1);
+		addObjects(shipmentForm2,rdbExpress,gc,2,1,1);
+		addObjects(shipmentForm2,rdbFragile,gc,3,1,1);
+		addObjects(shipmentForm2,rdbFragile,gc,3,1,1);
+		
+		gc.anchor = GridBagConstraints.EAST;
+
+		addObjects(shipmentForm2,lblPackageName,gc,0,2,1);
+		gc.anchor = GridBagConstraints.WEST;
+
+		addObjects(shipmentForm2,checkBoxSE1,gc,1,2,1);
+		addObjects(shipmentForm2,checkBoxSE2,gc,1,3,1);
+		addObjects(shipmentForm2,checkBoxSE3,gc,1,4,1);
+		addObjects(shipmentForm2,checkBoxSE4,gc,1,5,1);
+		addObjects(shipmentForm2,checkBoxSE5,gc,1,6,1);
+		addObjects(shipmentForm2,checkBoxSE6,gc,1,7,1);
+		addObjects(shipmentForm2,checkBoxSE7,gc,1,8,1);
+
+		addObjects(shipmentForm2,checkBoxF1,gc,2,2,1);
+		addObjects(shipmentForm2,checkBoxF2,gc,2,3,1);
+		addObjects(shipmentForm2,checkBoxF3,gc,2,4,1);
+		addObjects(shipmentForm2,checkBoxF4,gc,2,5,1);
+		addObjects(shipmentForm2,checkBoxF5,gc,2,6,1);
+		addObjects(shipmentForm2,checkBoxF6,gc,2,7,1);
+		addObjects(shipmentForm2,checkBoxF7,gc,2,8,1);
+
+
+
+		/*END OF SHIPMENT FORM PAGE 2
+		 * 
+		 * 
+		 * START OF SHIPMENT FORM PAGE 3*/
+
+		gc = new GridBagConstraints();
+		
+		gc.insets = new Insets(10,10,10,10);
+		gc.anchor = GridBagConstraints.CENTER;
+		
+		addObjects(shipmentForm3,lblCartSection,gc,0,0,1);
+
+
+		
+
+
+		
+		
+
 		
 		
 
@@ -251,6 +325,7 @@ public class ShipmentView extends JFrame
 		
 		buttonPanel.add(nextBtn);
 		buttonPanel.add(prevBtn);
+		buttonPanel.add(clearBtn);
 		
 		 nextBtn.addActionListener(new ActionListener() 
 	     {
@@ -315,8 +390,21 @@ public class ShipmentView extends JFrame
 	}
 	
 	
-	public void addObjects(Container panel, Component component, GridBagConstraints gbc, int column, int row,  int colspan)
+	public void addObjects(JPanel panel, Component component, GridBagConstraints gbc, int column, int row,  int colspan)
 	{
+
+	if (panel == null ) {
+	        System.err.println("Panel or Component is null!");
+	        return;
+	    }
+	
+	if(component == null)
+	{
+		System.err.println("Component is null!");
+        return;
+	}
+		
+
 
         gbc.gridx = column;
         gbc.gridy = row;
