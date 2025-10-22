@@ -2,7 +2,16 @@ package view;
 
 import model.Package;
 
+import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -31,13 +40,18 @@ public class ShipmentView extends JFrame
 	private JRadioButton rdbAmazon, rdbEbay,rdbTemu,rdbSheen,
 	rdbStandard, rdbExpress,rdbFragile;
 	private ButtonGroup btnGrpStores,btnGrpPackages;
-	private Button btnSubmit,btnClear,btnZone;
+	private Button btnSubmit,btnClear,btnZone, nextBtn,prevBtn;
 	
-	private JPanel cardPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4;
+	private JPanel cardPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel;
 	private JCheckBox checkBoxSE1,checkBoxSE2,checkBoxSE3,checkBoxSE4,checkBoxSE5,checkBoxSE6,checkBoxSE7,
 	checkBoxF1,checkBoxF2,checkBoxF3,checkBoxF4,checkBoxF5,checkBoxF6,checkBoxF7;
 	
+	
 	private ArrayList<Package> defPackages;
+	private GridBagLayout gridBagLayout;
+	private GridBagConstraints gc;
+    private int currentCard = 1;
+    private CardLayout cl;
 	
 	private void initializeShipmentComponents()
 	{
@@ -47,6 +61,7 @@ public class ShipmentView extends JFrame
 		rdbEbay = new JRadioButton("Ebay");
 		rdbTemu = new JRadioButton("Temu");
 		rdbSheen = new JRadioButton("Sheen");
+		btnGrpStores = new ButtonGroup();
 		btnGrpStores.add(rdbAmazon);
 		btnGrpStores.add(rdbEbay);
 		btnGrpStores.add(rdbTemu);
@@ -75,6 +90,7 @@ public class ShipmentView extends JFrame
 		rdbStandard = new JRadioButton("Standard");
 		rdbExpress = new JRadioButton("Express");
 		rdbFragile = new JRadioButton("Fragile");
+		btnGrpPackages = new ButtonGroup();
 		btnGrpPackages.add(rdbStandard);
 		btnGrpPackages.add(rdbExpress);
 		btnGrpPackages.add(rdbFragile);
@@ -96,11 +112,55 @@ public class ShipmentView extends JFrame
 		checkBoxF5 = new JCheckBox("ASUS Laptop");
 		checkBoxF6 = new JCheckBox("PlayStation 5");
 		checkBoxF7 = new JCheckBox("Stanley Cup");
+		
+		
 
 		defPackages = new ArrayList<Package>();
 		//defPackages.add(new Package("Mona Lisa Poster","Fragile",));
 		
-		defPackages.add(new Package("ASUS Laptop","Fragile",3.64,12.34,0.57,8.58));
+		//defPackages.add(new Package("ASUS Laptop","Fragile",3.64,12.34,0.57,8.58));
+		
+		nextBtn = new Button("Next");
+		prevBtn = new Button("Previous");
+		
+		shipmentForm1 = new JPanel(new GridBagLayout());
+		shipmentForm2 = new JPanel(new GridBagLayout());
+		shipmentForm3 = new JPanel(new GridBagLayout());
+		shipmentForm4 = new JPanel(new GridBagLayout());
+		
+		gridBagLayout = new GridBagLayout();
+		buttonPanel = new JPanel();
+		gc = new GridBagConstraints();	
+		cl = new CardLayout();
+		cardPanel = new JPanel(cl);
+		
+	}
+	
+	
+	private void addComponentsToPanel()
+	{
+		gc.insets = new Insets(20,20,20,20);
+		gc.anchor = GridBagConstraints.CENTER;
+		//addObjects(GridBagLayout layout, Component component, Container panel, GridBagConstraints gbc, int row, int column, int colspan)
+		
+		gc.weightx = 1;
+		gc.gridx = 0;
+		gc.gridy = 0;
+		
+		
+		shipmentForm1.add(lblSenderSection,gc);
+
+		gc.anchor = GridBagConstraints.WEST;
+
+		gc.weightx = 1;
+		gc.gridx = 0;
+		gc.gridy = 1;
+		
+		
+		
+		
+		shipmentForm1.add(lblSenderName,gc);
+		
 		
 		
 	}
@@ -108,6 +168,91 @@ public class ShipmentView extends JFrame
 	private void addPanelsToCardPanel()
 	{
 		
+		cardPanel.add(shipmentForm1, "1");
+		cardPanel.add(shipmentForm2,"2");
+		cardPanel.add(shipmentForm3,"3");
+		cardPanel.add(shipmentForm4,"4");
+		
+		buttonPanel.add(nextBtn);
+		buttonPanel.add(prevBtn);
+		
+		 nextBtn.addActionListener(new ActionListener() 
+	     {
+	         public void actionPerformed(ActionEvent arg0)
+	         {
+
+	             // if condition apply
+	             if (currentCard < 4) 
+	             {
+	                 
+	                 // increment the value of currentcard by 1
+	                 currentCard += 1;
+
+	                 // show the value of currentcard
+	                 cl.show(cardPanel, "" + (currentCard));
+	             }
+	         }
+	     });
+
+	     // add previousbtn in ActionListener
+	     prevBtn.addActionListener(new ActionListener() 
+	     {
+	         public void actionPerformed(ActionEvent arg0)
+	         {
+	             // if condition apply
+	             if (currentCard > 1) {
+
+	                 // decrement the value 
+	                 // of currentcard by 1
+	                 currentCard -= 1;
+
+	                 // show the value of currentcard
+	                 cl.show(cardPanel, "" + (currentCard));
+	             }
+	         }
+	     });
+		 // used to get content pane
+        getContentPane().add(cardPanel, BorderLayout.NORTH);
+
+        // used to get content pane
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		
+	}
+	
+	private void setWindowsProperties()
+	{
+		setTitle("Smart Ship Project");
+		setSize(700,400);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
+		setResizable(true);
+	
+	}
+	
+	public ShipmentView()
+	{
+		initializeShipmentComponents();
+		addComponentsToPanel();
+		addPanelsToCardPanel();
+		setWindowsProperties();
+	}
+	
+	
+	public void addObjects(GridBagLayout layout, Container panel, Component component, GridBagConstraints gbc, int column, int row,  int colspan)
+	{
+
+        gbc.gridx = column;
+        gbc.gridy = row;
+
+        gbc.weightx = colspan;
+        
+        layout.setConstraints(component, gbc);
+        panel.add(component);
+    }
+	
+	public static void main(String[] args)
+	{
+		new ShipmentView();
 	}
 	
 
