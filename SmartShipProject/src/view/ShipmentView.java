@@ -128,7 +128,7 @@ public class ShipmentView extends JFrame
 		shipmentForm3 = new JPanel(new GridBagLayout());
 		shipmentForm4 = new JPanel(new GridBagLayout());
 		
-		gridBagLayout = new GridBagLayout();
+		//gridBagLayout = new GridBagLayout();
 		buttonPanel = new JPanel();
 		gc = new GridBagConstraints();	
 		cl = new CardLayout();
@@ -139,28 +139,50 @@ public class ShipmentView extends JFrame
 	
 	private void addComponentsToPanel()
 	{
-		gc.insets = new Insets(20,20,20,20);
-		gc.anchor = GridBagConstraints.CENTER;
-		//addObjects(GridBagLayout layout, Component component, Container panel, GridBagConstraints gbc, int row, int column, int colspan)
 		
-		gc.weightx = 1;
+		gc.insets = new Insets(10,10,10,10);
+		gc.anchor = GridBagConstraints.CENTER;
+		
+		
+		gc.gridwidth = 5;
 		gc.gridx = 0;
 		gc.gridy = 0;
 		
 		
 		shipmentForm1.add(lblSenderSection,gc);
-
+		
 		gc.anchor = GridBagConstraints.WEST;
 
+		gc.gridwidth = 1;
 		gc.weightx = 1;
 		gc.gridx = 0;
 		gc.gridy = 1;
 		
 		
-		
-		
 		shipmentForm1.add(lblSenderName,gc);
 		
+		
+		gc.gridx = 1;
+		gc.gridy = 1;
+		
+		shipmentForm1.add(rdbAmazon,gc);
+		
+		gc.gridx = 2;
+		gc.gridy = 1;
+		
+		shipmentForm1.add(rdbEbay,gc);
+		
+		gc.gridx = 3;
+		gc.gridy = 1;
+		
+		shipmentForm1.add(rdbTemu,gc);
+		
+		gc.gridx = 4;
+		gc.gridy = 1;
+		
+		shipmentForm1.add(rdbSheen,gc);
+		
+		//gc.gridx = 
 		
 		
 	}
@@ -222,10 +244,11 @@ public class ShipmentView extends JFrame
 	private void setWindowsProperties()
 	{
 		setTitle("Smart Ship Project");
-		setSize(700,400);
+		setSize(700,500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setVisible(true);
-		setResizable(true);
+		setResizable(false);
 	
 	}
 	
