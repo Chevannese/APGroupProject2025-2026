@@ -48,7 +48,8 @@ public class ShipmentView extends JFrame
 	rdbLocal,rdbInternational,
 	rdbCash,rdbCard;
 	private ButtonGroup btnGrpPackages,btnGrpLocation, btnGrpPayment;
-	private JButton clearShipBtn1,zoneBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
+	private JButton clearShipBtn1,zoneBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, 
+	nextShipBtn1,nextShipBtn2,prevShipBtn2;
 	
 	private JPanel mainPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel,shipmentPanel;
 	private JScrollPane scrollCartTable;
@@ -153,7 +154,8 @@ public class ShipmentView extends JFrame
 		//prevBtn = new JButton("Previous");
 		clearShipBtn1 = new JButton("Clear Form");
 		nextShipBtn1 = new JButton("Next");
-		
+		nextShipBtn2 = new JButton("Next");
+		prevShipBtn2 = new JButton("Previous");
 		shipmentForm1 = new JPanel(new GridBagLayout());
 		shipmentForm2 = new JPanel(new GridBagLayout());
 		shipmentForm3 = new JPanel(new GridBagLayout());
@@ -253,6 +255,7 @@ public class ShipmentView extends JFrame
 		gc.anchor = GridBagConstraints.EAST;
 
 		addObjects(shipmentForm1,zoneTxt,gc,1,9,1,1);
+		
 		addObjects(shipmentForm1,nextShipBtn1, gc,0,10,1,1);
 		addObjects(shipmentForm1,clearShipBtn1,gc,1,10,1,1);
 		
@@ -315,9 +318,10 @@ public class ShipmentView extends JFrame
 		addObjects(shipmentForm2,clearCartBtn,gc,2,8,1,1);
 
 		addObjects(shipmentForm2,clearCartBtn,gc,2,8,1,1);
-		gc.anchor = GridBagConstraints.CENTER;
 		
-	
+		addObjects(shipmentForm2,nextShipBtn2,gc,0,9,1,1);
+		addObjects(shipmentForm2,prevShipBtn2,gc,1,9,1,1);
+
 
 
 
@@ -339,7 +343,7 @@ public class ShipmentView extends JFrame
 		
 	}
 	
-	private void addPanelsTomainPanel()
+	private void addPanelsToMainPanel()
 	{
 		
 		shipmentPanel.add(shipmentForm1, "1");
@@ -353,25 +357,7 @@ public class ShipmentView extends JFrame
 		
 		
 		
-		/*
-
-	     // add previousbtn in ActionListener
-	     prevBtn.addActionListener(new ActionListener() 
-	     {
-	         public void actionPerformed(ActionEvent arg0)
-	         {
-	             // if condition apply
-	             if (currentCard > 1) {
-
-	                 // decrement the value 
-	                 // of currentcard by 1
-	                 currentCard -= 1;
-
-	                 // show the value of currentcard
-	                 cardLayout.show(mainPanel, "" + (currentCard));
-	             }
-	         }
-	     });*/
+		
 
 		
 		
@@ -409,8 +395,10 @@ public class ShipmentView extends JFrame
 				boolean flag2 = rdbInternational.isSelected();
 				
 				if(senderNameTxt.getText().compareTo("") == 0 || senderAddrTxt.getText().compareTo("") == 0
+						|| receiverTRNTxt.getText().compareTo("") == 0
 						|| receiverFNameTxt.getText().compareTo("") == 0 || receiverLNameTxt.getText().compareTo("") == 0 ||
-						zoneTxt.getText().compareTo("") == 0 || receiverTRNTxt.getText().compareTo("") == 0
+						receiverAddrTxt.getText().compareTo("") == 0 ||
+						zoneTxt.getText().compareTo("") == 0 
 					|| flag1 == false && flag2 == false)
 				{
 						JOptionPane.showMessageDialog( 
@@ -429,6 +417,7 @@ public class ShipmentView extends JFrame
 						JOptionPane.showMessageDialog( 
 				        		SwingUtilities.getWindowAncestor(mainPanel),
 				        		 "TRN must be exactly 9 digits in the format: 123456789");
+						return;
 					}
 					else
 					
@@ -447,12 +436,10 @@ public class ShipmentView extends JFrame
 
 					if(exception == false)
 					{
-						// increment the value of currentcard by 1
-		                 currentCard += 1;
 
 
 		                 // show the value of currentcard
-		                 cardLayout.show(shipmentPanel, "" + (currentCard));
+		                 cardLayout.show(shipmentPanel, "2");
 					}
 					
 				}
@@ -471,13 +458,44 @@ public class ShipmentView extends JFrame
 						senderAddrTxt.setText(null);
 						receiverFNameTxt.setText(null);
 						receiverLNameTxt.setText(null);
+						receiverAddrTxt.setText(null);
 						zoneTxt.setText(null);
 						receiverTRNTxt.setText(null);
 						btnGrpLocation.clearSelection();
+						zoneChance = true;
 
 					}
 			
 				});
+		
+		nextShipBtn2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				if(exception == false)
+				{
+
+
+	                 // show the value of currentcard
+	                 cardLayout.show(shipmentPanel, "3");
+				}
+			}
+			
+		});
+		
+		
+
+	     // add previousbtn in ActionListener
+	     prevShipBtn2.addActionListener(new ActionListener() 
+	     {
+	         public void actionPerformed(ActionEvent arg0)
+	         {	            
+
+	                 cardLayout.show(shipmentPanel, "1");
+	             
+	         }
+	     });
 	}
 	
 	private void setWindowsProperties()
@@ -495,9 +513,11 @@ public class ShipmentView extends JFrame
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
+		
 		initializeShipmentComponents();
 		addShipmentComponentsToPanel();
-		addPanelsTomainPanel();
+		addPanelsToMainPanel();
+		writeTestData();
 		setWindowsProperties();
 		registerListeners();
 	}
@@ -539,6 +559,18 @@ public class ShipmentView extends JFrame
 	public static void main(String[] args)
 	{
 		new ShipmentView();
+	}
+	
+	private void writeTestData()
+	{
+		senderNameTxt.setText("Amazon");
+		senderAddrTxt.setText("1 Cherry Lane");
+		receiverFNameTxt.setText("Chevannese");
+		receiverLNameTxt.setText("Ellis");
+		receiverAddrTxt.setText("7 Constant Spring Road");
+		zoneTxt.setText("1");
+		receiverTRNTxt.setText("123456789");
+		rdbLocal.doClick();
 	}
 	
 	
