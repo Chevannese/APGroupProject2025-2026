@@ -429,7 +429,7 @@ public class ShipmentView extends JFrame
 
 					}catch(NumberFormatException nf)
 					{
-						JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(mainPanel),"Invalid Input Type for TRN field\n"
+						JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(mainPanel),"Invalid Format for TRN field\n"
 								+ "Must be in format: 123456789");
 						exception = true;
 					}
