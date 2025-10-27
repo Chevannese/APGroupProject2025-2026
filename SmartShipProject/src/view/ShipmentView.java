@@ -48,7 +48,7 @@ public class ShipmentView extends JFrame
 	rdbLocal,rdbInternational,
 	rdbCash,rdbCard;
 	private ButtonGroup btnGrpPackages,btnGrpLocation, btnGrpPayment;
-	private JButton clearBtn,zoneBtn, nextBtn,prevBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
+	private JButton clearShipBtn1,zoneBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
 	
 	private JPanel mainPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel,shipmentPanel;
 	private JScrollPane scrollCartTable;
@@ -149,9 +149,9 @@ public class ShipmentView extends JFrame
 		
 		cartTable =  new JTable();
 		
-		nextBtn = new JButton("Next");
-		prevBtn = new JButton("Previous");
-		clearBtn = new JButton("Clear Form");
+		//nextBtn = new JButton("Next");
+		//prevBtn = new JButton("Previous");
+		clearShipBtn1 = new JButton("Clear Form");
 		nextShipBtn1 = new JButton("Next");
 		
 		shipmentForm1 = new JPanel(new GridBagLayout());
@@ -254,6 +254,7 @@ public class ShipmentView extends JFrame
 
 		addObjects(shipmentForm1,zoneTxt,gc,1,9,1,1);
 		addObjects(shipmentForm1,nextShipBtn1, gc,0,10,1,1);
+		addObjects(shipmentForm1,clearShipBtn1,gc,1,10,1,1);
 		
 		
 		/*END OF SHIPMENT FORM PAGE 1
@@ -433,7 +434,7 @@ public class ShipmentView extends JFrame
 					
 					try
 					{
-						//Temporary assigns temp to the converted number from TextField receiverTRNTxt
+						//Temporary assigns temp to the converted number of TextField from receiverTRNTxt
 						//to check that all values are number
 						temp = Integer.parseInt(receiverTRNTxt.getText());
 
@@ -460,6 +461,23 @@ public class ShipmentView extends JFrame
 			}
 	
 		});
+		
+		clearShipBtn1.addActionListener(new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e) 
+					{
+						senderNameTxt.setText(null);
+						senderAddrTxt.setText(null);
+						receiverFNameTxt.setText(null);
+						receiverLNameTxt.setText(null);
+						zoneTxt.setText(null);
+						receiverTRNTxt.setText(null);
+						btnGrpLocation.clearSelection();
+
+					}
+			
+				});
 	}
 	
 	private void setWindowsProperties()
