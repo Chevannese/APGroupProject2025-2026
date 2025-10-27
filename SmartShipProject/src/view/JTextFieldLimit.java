@@ -1,4 +1,4 @@
-package smartshipurl;
+package view;
 
 import javax.swing.JTextField;
 import javax.swing.text.*;
