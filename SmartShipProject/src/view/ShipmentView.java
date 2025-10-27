@@ -1,12 +1,11 @@
 package view;
 
-import model.Package;
+import model.Shipment;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,16 +13,20 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class ShipmentView extends JFrame
 {
@@ -45,20 +48,23 @@ public class ShipmentView extends JFrame
 	private JRadioButton rdbStandard, rdbExpress,rdbFragile,
 	rdbLocal,rdbInternational,
 	rdbCash,rdbCard;
-	private ButtonGroup btnGrpPackages,btnGrpLocation;
-	private JButton clearBtn,btnZone, nextBtn,prevBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn;
+	private ButtonGroup btnGrpPackages,btnGrpLocation, btnGrpPayment;
+	private JButton clearBtn,btnZone, nextBtn,prevBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
 	
-	private JPanel cardPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel;
-	private JCheckBox checkBoxSE1,checkBoxSE2,checkBoxSE3,checkBoxSE4,checkBoxSE5,checkBoxSE6,checkBoxSE7,
-	checkBoxF1,checkBoxF2,checkBoxF3,checkBoxF4,checkBoxF5,checkBoxF6,checkBoxF7;
-	
+	private JPanel mainPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel,shipmentPanel;
+	private JProgressBar progress;
+	private JScrollPane scrollCartTable;
+	private JTable cartTable;
+
 	private String[] illegalItems = {"gun","knife","drug","money"};
+	private String[] packageCols = {"PackageID","PackageName", "Cost", "Weight", "Qty", "Remove"};
 	private int illegalItemsLength = illegalItems.length;
 	
-	private ArrayList<Package> defPackages;
+	
+	private ArrayList<Shipment> shipments;
 	private GridBagConstraints gc;
     private int currentCard = 1;
-    private CardLayout cl;
+    private CardLayout cardLayout;
 	
 	private void initializeShipmentComponents()
 	{
@@ -127,11 +133,22 @@ public class ShipmentView extends JFrame
 		checkCartBtn = new JButton("Check Cart");
 		clearCartBtn = new JButton("Clear Cart");
 		delPackageBtn = new JButton("Delete Package");
-				
+		
+		lblCartSection = new JLabel("Cart Detail Section");
+		lblCartSection.setFont(new Font("Verdana", Font.BOLD,20));
+		lblPaymentMethod = new JLabel("Payment Method:");
+		rdbCash = new JRadioButton("Cash");
+		rdbCard = new JRadioButton("Card");
+		btnGrpPayment = new ButtonGroup();
+		btnGrpPayment.add(rdbCash);
+		btnGrpPayment.add(rdbCard);
+		
+		cartTable =  new JTable();
 		
 		nextBtn = new JButton("Next");
 		prevBtn = new JButton("Previous");
 		clearBtn = new JButton("Clear Form");
+		nextShipBtn1 = new JButton("Next");
 		
 		shipmentForm1 = new JPanel(new GridBagLayout());
 		shipmentForm2 = new JPanel(new GridBagLayout());
@@ -140,8 +157,18 @@ public class ShipmentView extends JFrame
 		
 		buttonPanel = new JPanel();
 		gc = new GridBagConstraints();	
-		cl = new CardLayout();
-		cardPanel = new JPanel(cl);
+		cardLayout = new CardLayout();
+		mainPanel = new JPanel(cardLayout);
+		shipmentPanel = new JPanel(cardLayout);
+		progress = new JProgressBar();
+		progress.setValue(0);
+		progress.setStringPainted(true);
+		progress.setMaximum(100);
+		progress.setForeground(Color.BLUE);
+		
+		//Color progressDefault;
+		//progress.setSize(10,20);
+	
 		
 	}
 	
@@ -152,23 +179,13 @@ public class ShipmentView extends JFrame
 		gc.insets = new Insets(10,10,10,10);
 		gc.anchor = GridBagConstraints.CENTER;
 		gc.ipady = 5;
-	
-		
-		//Add lblSenderSection: column 0 of row 0 with colspan of 5
-		
+			
 		addObjects(shipmentForm1,lblSenderSection,gc,0,0,5,1);
-		
-
-		
-		//Add lblSenderName: column 0 of row 1 with colspan of 1
+				
 		gc.anchor = GridBagConstraints.EAST;
 
 
 		addObjects(shipmentForm1,lblSenderName,gc,0,1,1,1);
-		
-		
-		
-
 
 		addObjects(shipmentForm1,senderNameTxt,gc,1,1,1,1);
 
@@ -183,15 +200,11 @@ public class ShipmentView extends JFrame
 		gc.anchor = GridBagConstraints.CENTER;
 
 		addObjects(shipmentForm1,lblReceiverSection,gc,0,3,5,1);
-
-		//Add lblReceiverTRN: column 0 of row 3 with colspan of 1
 		gc.anchor = GridBagConstraints.EAST;
 
 
 		addObjects(shipmentForm1,lblReceiverTRN,gc,0,4,1,1);
-		
-		//Add receiverTRNTxt: column 1 of row 3 with colspan of 2
-		
+				
 		gc.anchor = GridBagConstraints.WEST;
 
 		addObjects(shipmentForm1,receiverTRNTxt,gc,1,4,2,1);
@@ -240,6 +253,8 @@ public class ShipmentView extends JFrame
 		gc.anchor = GridBagConstraints.EAST;
 
 		addObjects(shipmentForm1,zoneTxt,gc,1,9,1,1);
+		addObjects(shipmentForm1,nextShipBtn1, gc,0,10,1,1);
+		
 		
 		/*END OF SHIPMENT FORM PAGE 1
 		 * 
@@ -298,63 +313,46 @@ public class ShipmentView extends JFrame
 		addObjects(shipmentForm2,delPackageBtn,gc,1,8,1,1);
 		addObjects(shipmentForm2,clearCartBtn,gc,2,8,1,1);
 
+		addObjects(shipmentForm2,clearCartBtn,gc,2,8,1,1);
+		gc.anchor = GridBagConstraints.CENTER;
+		
+	
+
 
 
 		/*END OF SHIPMENT FORM PAGE 2
 		 * 
 		 * 
 		 * START OF SHIPMENT FORM PAGE 3*/
-
 		gc = new GridBagConstraints();
 		
 		gc.insets = new Insets(10,10,10,10);
 		gc.anchor = GridBagConstraints.CENTER;
 		
-		//addObjects(shipmentForm3,lblCartSection,gc,0,0,1);
+		addObjects(shipmentForm3,lblCartSection,gc,0,0,3,1);
+		addObjects(shipmentForm3,lblPaymentMethod,gc,0,1,1,1);
+		addObjects(shipmentForm3,rdbCash,gc,1,1,1,1);
+		addObjects(shipmentForm3,rdbCard,gc,2,1,1,1);
 
 
-		
-
-
-		
-		
-
-		
-		
-
-		
 		
 	}
 	
-	private void addShipmentPanelsToCardPanel()
+	private void addPanelsTomainPanel()
 	{
 		
-		cardPanel.add(shipmentForm1, "1");
-		cardPanel.add(shipmentForm2,"2");
-		cardPanel.add(shipmentForm3,"3");
-		cardPanel.add(shipmentForm4,"4");
+		shipmentPanel.add(shipmentForm1, "1");
+		shipmentPanel.add(shipmentForm2,"2");
+		shipmentPanel.add(shipmentForm3,"3");
+		shipmentPanel.add(shipmentForm4,"4");
+		mainPanel.add(shipmentPanel, "ShipmentForm");
 		
-		buttonPanel.add(nextBtn);
-		buttonPanel.add(prevBtn);
-		buttonPanel.add(clearBtn);
+		add(mainPanel);
+		cardLayout.show(mainPanel, "ShipmentForm");
 		
-		 nextBtn.addActionListener(new ActionListener() 
-	     {
-	         public void actionPerformed(ActionEvent arg0)
-	         {
-
-	             // if condition apply
-	             if (currentCard < 4) 
-	             {
-	                 
-	                 // increment the value of currentcard by 1
-	                 currentCard += 1;
-
-	                 // show the value of currentcard
-	                 cl.show(cardPanel, "" + (currentCard));
-	             }
-	         }
-	     });
+		
+		
+		/*
 
 	     // add previousbtn in ActionListener
 	     prevBtn.addActionListener(new ActionListener() 
@@ -369,35 +367,72 @@ public class ShipmentView extends JFrame
 	                 currentCard -= 1;
 
 	                 // show the value of currentcard
-	                 cl.show(cardPanel, "" + (currentCard));
+	                 cardLayout.show(mainPanel, "" + (currentCard));
 	             }
 	         }
-	     });
-		 // used to get content pane
-        getContentPane().add(cardPanel, BorderLayout.NORTH);
+	     });*/
 
-        // used to get content pane
-        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		
+		
+	}
+	
+	private void registerListeners()
+	{
+		nextShipBtn1.addActionListener(new ActionListener()
+		{
+
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				//validation checks
+				//mainPanel.show(shipmentForm1,"1");
+				
+				if(senderNameTxt.getText().compareTo("") == 0)
+				{	
+				        JOptionPane.showMessageDialog( 
+				        		SwingUtilities.getWindowAncestor(mainPanel),
+				        		 "One or two fields were not filled");
+				   
+				}
+				 
+				
+				
+				 // if condition apply
+				else if (currentCard < 4) 
+	             {
+	                 
+	                 // increment the value of currentcard by 1
+	                 currentCard += 1;
+
+
+	                 // show the value of currentcard
+	                 cardLayout.show(shipmentPanel, "" + (currentCard));
+	             }
+			}
+	
+		});
 	}
 	
 	private void setWindowsProperties()
 	{
-		setTitle("Smart Ship Project");
-		setSize(1000,600);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setVisible(true);
+		
 		//setResizable(false);
 	
 	}
 	
 	public ShipmentView()
 	{
+		setTitle("Smart Ship Project");
+		setSize(1000,600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setVisible(true);
+		
 		initializeShipmentComponents();
 		addShipmentComponentsToPanel();
-		addShipmentPanelsToCardPanel();
+		addPanelsTomainPanel();
 		setWindowsProperties();
+		registerListeners();
 	}
 	
 	
@@ -426,6 +461,13 @@ public class ShipmentView extends JFrame
         
         panel.add(component,gbc);
     }
+	
+	private int setZone()
+	{
+		Random zone = new Random();
+		 
+		return (zone.nextInt(4 - 1 + 1) + 1);
+	}
 	
 	public static void main(String[] args)
 	{
