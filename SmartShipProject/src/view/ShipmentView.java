@@ -48,7 +48,7 @@ public class ShipmentView extends JFrame
 	rdbLocal,rdbInternational,
 	rdbCash,rdbCard;
 	private ButtonGroup btnGrpPackages,btnGrpLocation, btnGrpPayment;
-	private JButton clearBtn,btnZone, nextBtn,prevBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
+	private JButton clearBtn,zoneBtn, nextBtn,prevBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
 	
 	private JPanel mainPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel,shipmentPanel;
 	private JScrollPane scrollCartTable;
@@ -64,7 +64,7 @@ public class ShipmentView extends JFrame
 	private GridBagConstraints gc;
     private int currentCard = 1, temp;
     private CardLayout cardLayout;
-    private boolean exception = false;
+    private boolean exception = false, zoneChance = true;
 	
 	private void initializeShipmentComponents()
 	{
@@ -80,6 +80,9 @@ public class ShipmentView extends JFrame
 		lblReceiverSection.setFont(new Font("Verdana", Font.BOLD,20));
 		lblReceiverTRN = new JLabel("Tax Registration Number: ");
 		receiverTRNTxt = new JTextField(9);
+		//JTextFieldLimit limits;
+		//	limits.setLimit(9);
+	//	receiverTRNTxt.setLimit(9);
 		lblReceiverFName = new JLabel("Receiver First Name:");
 		lblReceiverLName = new JLabel("Receiver Last Name:");
 		receiverFNameTxt = new JTextField(30);
@@ -96,8 +99,9 @@ public class ShipmentView extends JFrame
 		
 		
 		lblZone = new JLabel("Zone: ");
-		btnZone = new JButton("Generate Zone");
+		zoneBtn = new JButton("Generate Zone");
 		zoneTxt = new JTextField(5);
+		zoneTxt.setEnabled(false);
 		
 		
 		
@@ -244,7 +248,7 @@ public class ShipmentView extends JFrame
 		gc.anchor = GridBagConstraints.WEST;
 
 
-		addObjects(shipmentForm1,btnZone,gc,1,9,1,1);
+		addObjects(shipmentForm1,zoneBtn,gc,1,9,1,1);
 		
 		gc.anchor = GridBagConstraints.EAST;
 
@@ -374,6 +378,24 @@ public class ShipmentView extends JFrame
 	
 	private void registerListeners()
 	{
+		
+		zoneBtn.addActionListener(new ActionListener()
+				{
+
+					@Override
+					public void actionPerformed(ActionEvent e) 
+					{
+						if(zoneChance == true)
+						{
+							String x = String.valueOf(setZone());
+							zoneTxt.setText(x);	
+							zoneChance = false;
+						}
+					}
+				}
+				);
+		
+		
 		nextShipBtn1.addActionListener(new ActionListener()
 		{
 
@@ -401,6 +423,14 @@ public class ShipmentView extends JFrame
 					receiverFName = receiverFNameTxt.getText();
 					receiverLName = receiverLNameTxt.getText();
 					trn = receiverTRNTxt.getText();
+					if(trn.length() != receiverTRNTxt.getColumns())
+					{
+						JOptionPane.showMessageDialog( 
+				        		SwingUtilities.getWindowAncestor(mainPanel),
+				        		 "TRN must be exactly 9 digits in the format: 123456789");
+					}
+					else
+					
 					try
 					{
 						//Temporary assigns temp to the converted number from TextField receiverTRNTxt
@@ -492,6 +522,8 @@ public class ShipmentView extends JFrame
 	{
 		new ShipmentView();
 	}
+	
+	
 	
 
 }
