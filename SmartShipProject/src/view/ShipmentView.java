@@ -21,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -52,10 +51,10 @@ public class ShipmentView extends JFrame
 	private JButton clearBtn,btnZone, nextBtn,prevBtn,addToCartBtn, checkCartBtn, clearCartBtn, delPackageBtn, nextShipBtn1;
 	
 	private JPanel mainPanel, shipmentForm1,shipmentForm2,shipmentForm3,shipmentForm4, buttonPanel,shipmentPanel;
-	private JProgressBar progress;
 	private JScrollPane scrollCartTable;
 	private JTable cartTable;
 
+	private String trn, senderName, senderAddr, receiverFName, receiverLName, zone, shippingLocation;
 	private String[] illegalItems = {"gun","knife","drug","money"};
 	private String[] packageCols = {"PackageID","PackageName", "Cost", "Weight", "Qty", "Remove"};
 	private int illegalItemsLength = illegalItems.length;
@@ -63,8 +62,9 @@ public class ShipmentView extends JFrame
 	
 	private ArrayList<Shipment> shipments;
 	private GridBagConstraints gc;
-    private int currentCard = 1;
+    private int currentCard = 1, temp;
     private CardLayout cardLayout;
+    private boolean exception = false;
 	
 	private void initializeShipmentComponents()
 	{
@@ -160,14 +160,10 @@ public class ShipmentView extends JFrame
 		cardLayout = new CardLayout();
 		mainPanel = new JPanel(cardLayout);
 		shipmentPanel = new JPanel(cardLayout);
-		progress = new JProgressBar();
-		progress.setValue(0);
-		progress.setStringPainted(true);
-		progress.setMaximum(100);
-		progress.setForeground(Color.BLUE);
+
 		
-		//Color progressDefault;
-		//progress.setSize(10,20);
+	
+		
 	
 		
 	}
@@ -384,30 +380,53 @@ public class ShipmentView extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
+				exception = false;
 				//validation checks
-				//mainPanel.show(shipmentForm1,"1");
+				boolean flag1 = rdbLocal.isSelected();
+				boolean flag2 = rdbInternational.isSelected();
 				
-				if(senderNameTxt.getText().compareTo("") == 0)
-				{	
-				        JOptionPane.showMessageDialog( 
+				if(senderNameTxt.getText().compareTo("") == 0 || senderAddrTxt.getText().compareTo("") == 0
+						|| receiverFNameTxt.getText().compareTo("") == 0 || receiverLNameTxt.getText().compareTo("") == 0 ||
+						zoneTxt.getText().compareTo("") == 0 || receiverTRNTxt.getText().compareTo("") == 0
+					|| flag1 == false && flag2 == false)
+				{
+						JOptionPane.showMessageDialog( 
 				        		SwingUtilities.getWindowAncestor(mainPanel),
 				        		 "One or two fields were not filled");
-				   
 				}
-				 
-				
-				
-				 // if condition apply
-				else if (currentCard < 4) 
-	             {
-	                 
-	                 // increment the value of currentcard by 1
-	                 currentCard += 1;
+				else
+				{
+					senderName = senderNameTxt.getText();
+					senderAddr = senderAddrTxt.getText();
+					receiverFName = receiverFNameTxt.getText();
+					receiverLName = receiverLNameTxt.getText();
+					trn = receiverTRNTxt.getText();
+					try
+					{
+						//Temporary assigns temp to the converted number from TextField receiverTRNTxt
+						//to check that all values are number
+						temp = Integer.parseInt(receiverTRNTxt.getText());
+
+					}catch(NumberFormatException nf)
+					{
+						JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(mainPanel),"Invalid Input Type for TRN field\n"
+								+ "Must be in format: 123456789");
+						exception = true;
+					}
+
+					if(exception == false)
+					{
+						// increment the value of currentcard by 1
+		                 currentCard += 1;
 
 
-	                 // show the value of currentcard
-	                 cardLayout.show(shipmentPanel, "" + (currentCard));
-	             }
+		                 // show the value of currentcard
+		                 cardLayout.show(shipmentPanel, "" + (currentCard));
+					}
+					
+				}
+				
+				
 			}
 	
 		});
