@@ -1,26 +1,21 @@
-package smartship.model;
+package model;
 
-import java.util.List;
-
-public class Driver {
-    private String name;
-    private String licenseNumber;
-    private int driverId;
-
-    public Driver(String name, String licenseNumber, int driverId) {
-        this.name = name;
-        this.licenseNumber = licenseNumber;
-        this.driverId = driverId;
-    }
-
-    public Driver(Driver d) {
-        this(d.name, d.licenseNumber, d.driverId);
-    }
-
-
-    public boolean login(String username, String password) {
-       
-    }
+public class Driver extends User 
+{
+	public Driver()
+	{
+		super();
+	}
+	
+	public Driver(String trn, String firstName, String lastName, String password, String contactNum, String email)
+	{
+		super(trn, firstName, lastName, password,contactNum, email);
+	}
+	
+	public Driver(Driver driver)
+	{
+		super(driver);
+	}
 
     public List<String> getPackages() {
        
@@ -39,8 +34,5 @@ public class Driver {
     public String getVehicleInfo() {
         return "Vehicle: Toyota Hiace (Reg #V-102)";
     }
-
-    public String getName() { return name; }
-    public String getLicenseNumber() { return licenseNumber; }
-    public int getDriverId() { return driverId; }
+	
 }
