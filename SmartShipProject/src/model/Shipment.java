@@ -1,15 +1,12 @@
 package model;
-import factories.DBConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.Random;
 
 
 public class Shipment 
 {
-	//Add Package Number
-	private int packageNo;
+	private String packageNo;
 	private String packageName;
 	private String packageType;
 	private String status;
@@ -24,8 +21,8 @@ public class Shipment
 	
 	public Shipment()
 	{
-		conn = DBConnection.getDatabaseConnection();
-		packageNo = 0;
+		conn = Database.getDatabaseConnection();
+		packageNo = "";
 		packageName = "";
 		packageType = "";
 		status = "";
@@ -41,7 +38,7 @@ public class Shipment
 	}
 
 	//Primary Constructor 1 - To read and write data to database
-	public Shipment(int packageNo, String packageName, String packageType, String status, int distance, String destination, double weight, double length, double width, double height, double cost, double surcharge, double discount, double total) 
+	public Shipment(String packageNo, String packageName, String packageType, String status, int distance, String destination, double weight, double length, double width, double height, double cost, double surcharge, double discount, double total) 
 	{
 		this.packageNo = packageNo;
 		this.packageName = packageName;
@@ -82,19 +79,6 @@ public class Shipment
 		this.cost = pack.cost;
 	}
 	
-	
-	
-	
-	
-	
-
-	public int getpackageNo() {
-		return packageNo;
-	}
-
-	public void setpackageNo(int packageNo) {
-		this.packageNo = packageNo;
-	}
 
 	public String getPackageName() {
 		return packageName;
@@ -168,11 +152,11 @@ public class Shipment
 		this.destination = destination;
 	}
 
-	public int getPackageNo() {
+	public String getPackageNo() {
 		return packageNo;
 	}
 
-	public void setPackageNo(int packageNo) {
+	public void setPackageNo(String packageNo) {
 		this.packageNo = packageNo;
 	}
 
