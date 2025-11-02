@@ -1,0 +1,178 @@
+CREATE TABLE `user`
+(
+	`trn` char(20),
+	`firstName` varchar(250) NOT NULL,
+	`lastName` varchar(250) NOT NULL,
+	`password` varchar(250) NOT NULL,
+	`contactNum` varchar(250) UNIQUE,
+	`email` varchar(250) UNIQUE,
+	`userType` varchar(250) NULL,
+	CONSTRAINT pk_user PRIMARY KEY(`trn`)
+);
+
+
+CREATE TABLE `customer`
+(
+	`custTRN` char(20),
+	`signUpDate` date,
+	CONSTRAINT pk_customer PRIMARY KEY(`custTRN`),
+	CONSTRAINT fk_customer FOREIGN KEY(`custTRN`) REFERENCES `user`(`trn`)
+);
+
+CREATE TABLE `driver`
+(
+	`dTRN` char(20),
+	CONSTRAINT pk_driver PRIMARY KEY(`dTRN`),
+	CONSTRAINT fk_driver FOREIGN KEY(`dTRN`) REFERENCES `user`(`trn`)
+);
+
+CREATE TABLE `clerk`
+(
+	`clerkTRN` char(20),
+	`employmentDate` date NOT NULL,
+	CONSTRAINT pk_clerk PRIMARY KEY(`clerkTRN`),
+	CONSTRAINT fk_clerk FOREIGN KEY(`clerkTRN`) REFERENCES `user`(`trn`)
+);
+
+CREATE TABLE `manager`
+(
+	`managerTRN` char(20),
+	`employmentDate` date NOT NULL,
+	CONSTRAINT pk_manager PRIMARY KEY(`managerTRN`),
+	CONSTRAINT fk_manager FOREIGN KEY (`managerTRN`) REFERENCES `user`(`trn`)
+);
+
+CREATE TABLE `supplier`
+(
+	`supplierID`varchar(250),
+	`supplierName` varchar(250) NOT NULL,
+	`supplierAddr` varchar(250) NOT NULL,
+	CONSTRAINT pk_supplier PRIMARY KEY (`supplierID`)
+);
+
+
+CREATE TABLE `shipment`
+(
+	`packageNo` varchar(250),
+	`custID` varchar(250),
+	`supplierID` varchar(250),
+	`packageName` varchar(250) NOT NULL,
+	`packageType` varchar(250),
+	`status` varchar(250),
+	`distance` integer NOT NULL,
+	`destination` varchar(250) NOT NULL,
+	`weight` double NOT NULL,
+	`length` double NOT NULL,
+	`width` double NOT NULL,
+	`height` double NOT NULL,
+	`cost` double NOT NULL,
+	CONSTRAINT pk_shipment PRIMARY KEY (`packageNo`),
+	CONSTRAINT fk_custID_shipment FOREIGN KEY (`custID`) REFERENCES customer(`custTRN`),
+	CONSTRAINT fk_supplierID_shipment FOREIGN KEY (`supplierID`) REFERENCES `supplier`(`supplierID`),
+	CONSTRAINT ck_shipment_type CHECK(`packageType` = 'Standard' or `packageType` = 'Express' or `packageType` = 'Fragile'),
+	CONSTRAINT ck_shipment_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
+);
+
+CREATE TABLE Vehicle
+(
+	`vehicleNo` varchar(250),
+	`driverID` varchar(250) UNIQUE,
+	`vehicleName` varchar(250) NOT NULL,
+	`quantityCap` integer NOT NULL,
+	`weightCap` double NOT NULL,
+	CONSTRAINT pk_vehicle PRIMARY KEY (`vehicleNo`),
+	CONSTRAINT fk_driverID FOREIGN KEY(`driverID`) REFERENCES `driver`(`dTRN`)
+
+);
+
+CREATE TABLE `invoice`
+(
+	`invoiceNo` varchar(250),
+	`packageNo`varchar(250) UNIQUE,
+	`custID` varchar(250),
+	`staffID` varchar(250),
+	`paymentMethod` varchar(250),
+	`paymentStatus` varchar(250),
+	`discount` double,
+	`surcharge` double,
+	`total` double NOT NULL,
+	CONSTRAINT pk_invoice PRIMARY KEY (`invoiceNo`),
+	CONSTRAINT fk_packageNo_invoice FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`)
+);
+
+CREATE TABLE `route`
+(
+	`routeID` varchar(250),
+	`vehicleNo` varchar(250),
+	`origin` varchar(250),
+	`destination` varchar(250),
+	CONSTRAINT pk_route PRIMARY KEY (`route`),
+	CONSTRAINT fk_vehicleNo_route FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`)
+)
+
+CREATE TABLE `assignment`
+(
+	`assignID` varchar(250),
+	`tripID` varchar(250),
+	`packageNo` varchar(250),
+	`custID` varchar(250),
+	`supplierID` varchar(250),
+	`vehicleNo` varchar(250),
+	`driverID` varchar(250),
+	`clerkID` varchar(250),
+	`date` date,
+	`time` time,
+	CONSTRAINT pk_assignment PRIMARY KEY (`assignID`, `tripID`, `packageNo`, `vehicleNo`,`date`,`time`),
+	CONSTRAINT fk_trip_assign FOREIGN KEY (`tripID`) REFERENCES `trip`(`tripID`),
+	CONSTRAINT fk_shipment_assign FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
+	CONSTRAINT fk_cust_assign FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`),
+	CONSTRAINT fk_supplier_assign FOREIGN KEY(`supplierID`) REFERENCES `supplier`(`supplierID`),
+	CONSTRAINT fk_vehicle_assign FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
+	CONSTRAINT fk_clerk_assign FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`)
+);
+
+CREATE TABLE `trip`
+(
+	`tripID` varchar(250),
+	`vehicleNo` varchar(250),
+	`driverID` varchar(250),
+	`clerkID` varchar(250),
+	`routeID` varchar(250),
+	`status` varchar(250),
+	`date` date,
+	`departureTime` time,
+	`arrivalTime` time NULL,
+	CONSTRAINT pk_tripID PRIMARY KEY (`tripID`,`vehicleNo`,`routeID`,`driverID`,`date`, `departureTime`),
+	CONSTRAINT fk_vehicle_trip FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
+	CONSTRAINT fk_driver_trip FOREIGN KEY (`driverID`) REFERENCES `driver`(`dTRN`),
+	CONSTRAINT fk_clerk_trip FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`),
+	CONSTRAINT fk_route_trip FOREIGN KEY (`routeID`) REFERENCES `route`(`routeID`)
+	CONSTRAINT ck_trip_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
+);
+
+CREATE TABLE `report`
+(
+	`reportID` varchar(250),
+	`managerID` varchar(250),
+	`reportType` varchar(250),
+	`date` date,
+	`time` time,
+	CONSTRAINT pk_report PRIMARY KEY (`reportID`),
+	CONSTRAINT fk_manager_report FOREIGN KEY (`managerID`) REFERENCES `manager`(`managerTRN`)
+);
+
+CREATE TABLE `trackPackage`
+(
+	`trackingNo` varchar(250),
+	`packageNo` varchar(250) UNIQUE,
+	`custID` varchar(250),
+	`date` date,
+	`time` time,
+	CONSTRAINT pk_track PRIMARY KEY (`trackingNo`, `packageNo`,`custID`,`date`,`time`),
+	CONSTRAINT fk_package_track FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
+	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`)
+
+)
+
+
+
