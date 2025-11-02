@@ -58,13 +58,6 @@ public class Invoice
 		this.invoiceNo = invoiceNo;
 	}
 
-	public String getPackageNo() {
-		return packageNo;
-	}
-
-	public void setPackageNo(String packageNo) {
-		this.packageNo = packageNo;
-	}
 
 	public String getCustNo() {
 		return custNo;
@@ -121,6 +114,16 @@ public class Invoice
 	public void setTotal(double total) {
 		this.total = total;
 	}
+
+	public String getPackageNo() {
+		return packageNo;
+	}
+
+	public void setPackageNo(String packageNo) {
+		this.packageNo = packageNo;
+	}
+
+	
 	
 	
 	
