@@ -7,6 +7,8 @@ import java.sql.Statement;
 public class Shipment 
 {
 	private String packageNo;
+	private String custNo;
+	private String supplierID;
 	private String packageName;
 	private String packageType;
 	private String status;
@@ -23,6 +25,8 @@ public class Shipment
 	{
 		conn = Database.getDatabaseConnection();
 		packageNo = "";
+		supplierID = "";
+		custNo = "";
 		packageName = "";
 		packageType = "";
 		status = "";
@@ -38,9 +42,11 @@ public class Shipment
 	}
 
 	//Primary Constructor 1 - To read and write data to database
-	public Shipment(String packageNo, String packageName, String packageType, String status, int distance, String destination, double weight, double length, double width, double height, double cost, double surcharge, double discount, double total) 
+	public Shipment(String packageNo, String custNo, String supplierID, String packageName, String packageType, String status, int distance, String destination, double weight, double length, double width, double height, double cost, double surcharge, double discount, double total) 
 	{
 		this.packageNo = packageNo;
+		this.custNo = custNo;
+		this.supplierID = supplierID;
 		this.packageName = packageName;
 		this.packageType = packageType;
 		this.status = status;
@@ -67,6 +73,8 @@ public class Shipment
 	public Shipment(Shipment pack) 
 	{
 		this.packageNo = pack.packageNo;
+		this.custNo = pack.custNo;
+		this.supplierID = pack.supplierID;
 		this.packageName = pack.packageName;
 		this.packageType = pack.packageType;
 		this.status = pack.status;
@@ -166,6 +174,22 @@ public class Shipment
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getCustNo() {
+		return custNo;
+	}
+
+	public void setCustNo(String custNo) {
+		this.custNo = custNo;
+	}
+
+	public String getSupplierID() {
+		return supplierID;
+	}
+
+	public void setSupplierID(String supplierID) {
+		this.supplierID = supplierID;
 	}
 
 
