@@ -73,7 +73,7 @@ CREATE TABLE `shipment`
 	CONSTRAINT ck_shipment_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
 );
 
-CREATE TABLE Vehicle
+CREATE TABLE `vehicle`
 (
 	`vehicleNo` varchar(250),
 	`driverID` varchar(250) UNIQUE,
@@ -106,9 +106,29 @@ CREATE TABLE `route`
 	`vehicleNo` varchar(250),
 	`origin` varchar(250),
 	`destination` varchar(250),
-	CONSTRAINT pk_route PRIMARY KEY (`route`),
+	CONSTRAINT pk_route PRIMARY KEY (`routeID`),
 	CONSTRAINT fk_vehicleNo_route FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`)
-)
+);
+
+CREATE TABLE `trip`
+(
+	`tripID` varchar(250),
+	`vehicleNo` varchar(250),
+	`driverID` varchar(250),
+	`clerkID` varchar(250),
+	`routeID` varchar(250),
+	`status` varchar(250),
+	`date` date,
+	`depTime` time,
+	`arrivalTime` time NULL,
+	CONSTRAINT pk_tripID PRIMARY KEY (`tripID`),
+	CONSTRAINT fk_veh_trip FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
+	CONSTRAINT fk_driver_trip FOREIGN KEY (`driverID`) REFERENCES `driver`(`dTRN`),
+	CONSTRAINT fk_clerk_trip FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`),
+	CONSTRAINT fk_route_trip FOREIGN KEY (`routeID`) REFERENCES `route`(`routeID`),
+	CONSTRAINT ck_trip_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
+);
+
 
 CREATE TABLE `assignment`
 (
@@ -122,7 +142,7 @@ CREATE TABLE `assignment`
 	`clerkID` varchar(250),
 	`date` date,
 	`time` time,
-	CONSTRAINT pk_assignment PRIMARY KEY (`assignID`, `tripID`, `packageNo`, `vehicleNo`,`date`,`time`),
+	CONSTRAINT pk_assignment PRIMARY KEY (`assignID`),
 	CONSTRAINT fk_trip_assign FOREIGN KEY (`tripID`) REFERENCES `trip`(`tripID`),
 	CONSTRAINT fk_shipment_assign FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
 	CONSTRAINT fk_cust_assign FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`),
@@ -131,24 +151,6 @@ CREATE TABLE `assignment`
 	CONSTRAINT fk_clerk_assign FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`)
 );
 
-CREATE TABLE `trip`
-(
-	`tripID` varchar(250),
-	`vehicleNo` varchar(250),
-	`driverID` varchar(250),
-	`clerkID` varchar(250),
-	`routeID` varchar(250),
-	`status` varchar(250),
-	`date` date,
-	`departureTime` time,
-	`arrivalTime` time NULL,
-	CONSTRAINT pk_tripID PRIMARY KEY (`tripID`,`vehicleNo`,`routeID`,`driverID`,`date`, `departureTime`),
-	CONSTRAINT fk_vehicle_trip FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
-	CONSTRAINT fk_driver_trip FOREIGN KEY (`driverID`) REFERENCES `driver`(`dTRN`),
-	CONSTRAINT fk_clerk_trip FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`),
-	CONSTRAINT fk_route_trip FOREIGN KEY (`routeID`) REFERENCES `route`(`routeID`)
-	CONSTRAINT ck_trip_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
-);
 
 CREATE TABLE `report`
 (
@@ -172,7 +174,7 @@ CREATE TABLE `trackPackage`
 	CONSTRAINT fk_package_track FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
 	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`)
 
-)
+);
 
 
 
