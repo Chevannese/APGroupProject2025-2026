@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import model.Customer;
 import model.User;
 
 
@@ -37,10 +38,11 @@ public class MainWindow extends JFrame
 	private String passText;
 	private boolean exception = false;
 	private CardLayout cardLayout, loginCardLayout;
-    private JPanel mainPanel, loginPanel, customerPanel, driverPanel, clerkPanel, managerPanel;
+    private JPanel mainPanel, loginPanel, customerPanel, driverPanel, clerkPanel, managerPanel,
+    custMainPanel;
 	private GridBagConstraints gc;
-	private User loggedInUser = new User();
-	private User newUser = new User();
+	private User loggedInUser;
+	private Customer newUser = new Customer();
 
 
     
@@ -66,15 +68,22 @@ public class MainWindow extends JFrame
 		managerPanel = new JPanel(cardLayout);
     }
     
+    
+    
     private void initializeLoginComponents()
     {
     	 // Create the two cards
         JPanel signInPanel = new JPanel(new GridBagLayout());
         JPanel signUpPanel = new JPanel(new GridBagLayout());
+    	custMainPanel = new JPanel(new GridBagLayout());
 
         loginPanel.add(signInPanel, "Login");
         loginPanel.add(signUpPanel, "Register");
+
+    	customerPanel.add(custMainPanel, "CustomerIndex");
+    	
         mainPanel.add(loginPanel, "LoginPage");
+        mainPanel.add(customerPanel, "CustomerPage");
 
         add(mainPanel);
         cardLayout.show(mainPanel, "LoginPage"); // start with sign-in
@@ -108,12 +117,30 @@ public class MainWindow extends JFrame
         signInBtn.addActionListener(e -> {
             String user = usernameFieldL.getText();
             String pass = new String(passwordFieldL.getPassword());
+            loggedInUser = new User();
+            loggedInUser = loggedInUser.get(user, pass);
             // Dummy check
-            if (user.equals("admin") && pass.equals("1234")) {
-                JOptionPane.showMessageDialog(this, "Welcome " + user + "!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Invalid username or password.");
-            }
+             
+             JOptionPane.showMessageDialog(this, "Welcome " + loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
+             
+             //Call upon another method
+             if(loggedInUser.getUserType().equals("Customer"))
+             {
+            	 initializeCustomerComponents();
+             }
+             else if(loggedInUser.getUserType().equals("Driver"))
+             {
+            	 cardLayout.show(driverPanel, "Main Menu");
+             }
+             else if(loggedInUser.getUserType().equals("Clerk"))
+             {
+            	 cardLayout.show(clerkPanel, "Main Menu");
+             }
+             else if(loggedInUser.getUserType().equals("Manager"))
+             {
+            	 cardLayout.show(managerPanel, "Main Menu");
+             }
+             
         });
 
         // sign up
@@ -234,7 +261,7 @@ public class MainWindow extends JFrame
 								+ trn + "\nContact Number: " + contactNum + "\nEmail: " + email
 								+ "\nPassword: " + passText);
 						
-						newUser = new User(trn,firstName,lastName,passText,contactNum,email,"Customer");
+						newUser = new Customer(trn,firstName,lastName,passText,contactNum,email,"Customer");
 						
 						newUser.createAccount();
 						
@@ -248,13 +275,37 @@ public class MainWindow extends JFrame
 
     }
     
-    
-    
-    private void initializeCustomerPanelComponents()
+    private void initializeCustomerComponents()
     {
     	
     	
+    	cardLayout.show(mainPanel, "CustomerPage");
+    	
+    	JButton accountBtn = new JButton("Account");
+    	JButton requestOrderBtn = new JButton("Order");
+    	JButton trackBtn = new JButton("Track Package");
+    	JButton billBtn = new JButton("Manage Bill");
+    	
+    	 gc = new GridBagConstraints();
+    	 gc.insets = new Insets(5, 5, 5, 5);
+    	 gc.fill = GridBagConstraints.HORIZONTAL;
+    	 
+    	 JLabel title = new JLabel("Customer Main Menu",SwingConstants.CENTER);
+    	 title.setFont(new Font("Arial", Font.BOLD, 20));
+    	 
+    	 JLabel welcome = new JLabel("Welcome back " + loggedInUser.getFirstName() + " " + loggedInUser.getLastName() + "! How may we assist you today");
+    	 addToGridBag(custMainPanel, title, gc, 0, 0, 2, 1);
+    	 addToGridBag(custMainPanel, welcome, gc, 0, 1, 2, 1);
+    	 
+    	 addToGridBag(custMainPanel, accountBtn, gc, 0, 2, 1, 1);
+    	 addToGridBag(custMainPanel, requestOrderBtn, gc, 0, 3, 1, 1);
+    	 addToGridBag(custMainPanel, trackBtn, gc, 0, 4, 1, 1);
+    	 addToGridBag(custMainPanel, billBtn, gc, 0, 5, 1, 1);
+    	 
+    	 
+    	 
     }
+    
     
     public void addToGridBag(JPanel panel, Component component, GridBagConstraints gbc, int column, int row,  int colspan, int rowspan)
 	{
