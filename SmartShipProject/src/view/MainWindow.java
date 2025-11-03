@@ -90,6 +90,7 @@ public class MainWindow extends JFrame
         final JPasswordField passwordFieldL = new JPasswordField(15);
         JButton signInBtn = new JButton("Sign In");
         JButton goToSignUpBtn = new JButton("Create Account");
+        JButton clearSignUpBtn = new JButton("Clear Form");
 
         addToGridBag(signInPanel, title, gc, 0, 0, 2, 1);
         addToGridBag(signInPanel, new JLabel("Username:"), gc, 0, 1, 1, 1);
@@ -155,9 +156,21 @@ public class MainWindow extends JFrame
         addToGridBag(signUpPanel, signUpBtn,gc, 0, 7, 2, 1);
 
         addToGridBag(signUpPanel, goToSignInBtn,gc, 0, 8, 2, 1);
+        addToGridBag(signUpPanel, clearSignUpBtn,gc, 0, 9, 2, 1);
 
         goToSignInBtn.addActionListener(e -> cardLayout.show(loginPanel, "Login"));
 
+        clearSignUpBtn.addActionListener(e ->{
+        	firstNameField.setText(null);
+        	lastNameField.setText(null);
+        	trnField.setText(null);
+        	emailField.setText(null);
+        	contactNumField.setText(null);
+        	passwordFieldR.setText(null);
+        	
+        });
+        
+        
         signUpBtn.addActionListener(e -> {
         	exception = false;
         	if(firstNameField.getText().compareTo("") == 0 || lastNameField.getText().compareTo("") == 0 ||
@@ -222,10 +235,11 @@ public class MainWindow extends JFrame
 								+ "\nPassword: " + passText);
 						
 						newUser = new User(trn,firstName,lastName,passText,contactNum,email,"Customer");
-						//clear user input
+						
 						newUser.createAccount();
-						//save to database
-						//need database validation too with TRN
+						
+						clearSignUpBtn.doClick();
+						
 			            cardLayout.show(loginPanel, "Login");
 					}
 	        }
