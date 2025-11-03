@@ -1,11 +1,17 @@
 package model;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 
 import javax.swing.JOptionPane;
+
+import com.mysql.cj.jdbc.exceptions.SQLError;
 
 public class User 
 {
@@ -51,24 +57,53 @@ public class User
 		this.userType = user.userType;
 	}
 	
-	public void createAccount() {
-		   System.out.println("trying <-result");
+	public User get(String input, String passCode)
+	{
+		User u = null;
+		System.out.println("trying <-result");
 		   try {
-		   String sql="INSERT INTO user VALUES ('"+trn+"','"+firstName+"', '"+lastName+"', '"+password+"','"+contactNum+"','"+email+"', '"+userType+"')";
-		   Statement stat=conn.createStatement();
-		   int  result=stat.executeUpdate(sql);
-		   System.out.println(result +"<-result");
-		   }
-		   
-		   catch(SQLIntegrityConstraintViolationException s)
+			   String sql="select * from  user where trn ='"+input+"' and password = '"+hashString(passCode)+ "'";
+			   Statement stat=conn.createStatement();
+			   ResultSet  result=stat.executeQuery(sql);
+			   if(result.next()) 
+			   {
+				   u = new User();
+				   u.setTrn(result.getString("trn"));
+				   u.setFirstName(result.getString("firstName"));
+				   u.setLastName(result.getString("lastName"));
+				   u.setContactNum(result.getString("contactNum"));
+				   u.setEmail(result.getString("email"));
+				   u.setPassword(result.getString("password"));
+				   u.setUserType(result.getString("userType"));
+				   System.out.println(u);}
+			   
+		   }catch(Exception e)
 		   {
-			   JOptionPane.showMessageDialog(null, "Whoops! Sorry the trn you entered exists.\nPlease check if you have registered already");
-			   s.printStackTrace();
-		   }catch (SQLException e) 
-		   	{
 			   e.printStackTrace();
-			 }
-	   }
+		   }
+		
+		return u;
+		
+	}
+	
+	 private String hashString(String in) {
+			try {
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+				byte[] hash = digest.digest(in.getBytes(StandardCharsets.UTF_8));
+				StringBuilder hexString = new StringBuilder();
+				for (byte b : hash) {
+					String hex = Integer.toHexString(0xff & b);
+					if (hex.length() == 1) hexString.append('0');
+					hexString.append(hex);
+				}
+				return hexString.toString();
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	
+	
+	
 
 	public String getTrn() {
 		return trn;
