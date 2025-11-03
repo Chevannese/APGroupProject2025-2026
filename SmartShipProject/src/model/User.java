@@ -1,7 +1,11 @@
 package model;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
+
+import javax.swing.JOptionPane;
 
 public class User 
 {
@@ -54,7 +58,16 @@ public class User
 		   Statement stat=conn.createStatement();
 		   int  result=stat.executeUpdate(sql);
 		   System.out.println(result +"<-result");
-		   }catch (Exception e) {e.printStackTrace();}
+		   }
+		   
+		   catch(SQLIntegrityConstraintViolationException s)
+		   {
+			   JOptionPane.showMessageDialog(null, "Whoops! Sorry the trn you entered exists.\nPlease check if you have registered already");
+			   s.printStackTrace();
+		   }catch (SQLException e) 
+		   	{
+			   e.printStackTrace();
+			 }
 	   }
 
 	public String getTrn() {
