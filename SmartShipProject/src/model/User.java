@@ -1,5 +1,8 @@
 package model;
 
+import java.sql.Connection;
+import java.sql.Statement;
+
 public class User 
 {
 	protected String trn;
@@ -8,6 +11,8 @@ public class User
 	protected String password;
 	protected String contactNum;
 	protected String email;
+	protected String userType;
+	private static final Connection conn = Database.getDatabaseConnection();
 	
 	public User()
 	{
@@ -17,15 +22,18 @@ public class User
 		password = "";
 		contactNum = "";
 		email = "";
+		userType = "";
 	}
 
-	public User(String trn, String firstName, String lastName, String password, String contactNum, String email) {
+	public User(String trn, String firstName, String lastName, String password, String contactNum, String email, String userType) {
+		
 		this.trn = trn;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;
 		this.contactNum = contactNum;
 		this.email = email;
+		this.userType = userType;
 	}
 
 	public User(User user) 
@@ -36,7 +44,18 @@ public class User
 		this.password = user.password;
 		this.contactNum = user.contactNum;
 		this.email = user.email;
+		this.userType = user.userType;
 	}
+	
+	public void createAccount() {
+		   System.out.println("trying <-result");
+		   try {
+		   String sql="INSERT INTO user VALUES ('"+trn+"','"+firstName+"', '"+lastName+"', '"+password+"','"+contactNum+"','"+email+"', '"+userType+"')";
+		   Statement stat=conn.createStatement();
+		   int  result=stat.executeUpdate(sql);
+		   System.out.println(result +"<-result");
+		   }catch (Exception e) {e.printStackTrace();}
+	   }
 
 	public String getTrn() {
 		return trn;
@@ -85,6 +104,16 @@ public class User
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+
 	
 	
 	
