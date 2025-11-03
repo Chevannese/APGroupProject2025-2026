@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,11 +33,14 @@ public class MainWindow extends JFrame
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private JTextField firstNameField, lastNameField, emailField, trnField, passwordFieldR, contactNumField;
+	private String passText;
 	private boolean exception = false;
 	private CardLayout cardLayout, loginCardLayout;
     private JPanel mainPanel, loginPanel, customerPanel, driverPanel, clerkPanel, managerPanel;
 	private GridBagConstraints gc;
 	private User loggedInUser = new User();
+	private User newUser = new User();
 
 
     
@@ -116,12 +122,12 @@ public class MainWindow extends JFrame
         title = new JLabel("Sign Up", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 20));
 
-        final JTextField trnField = new JTextField(9);
+        trnField = new JTextField(9);
         final JPasswordField passwordFieldR = new JPasswordField(15);
-        JTextField firstNameField = new JTextField(20);
-        JTextField lastNameField = new JTextField(20);
-        JTextField contactNumField = new JTextField(20);
-        JTextField emailField = new JTextField(20);
+         firstNameField = new JTextField(20);
+         lastNameField = new JTextField(20);
+         contactNumField = new JTextField(20);
+         emailField = new JTextField(20);
         
         JButton signUpBtn = new JButton("Register");
         JButton goToSignInBtn = new JButton("Back to Sign In");
@@ -169,6 +175,7 @@ public class MainWindow extends JFrame
 	        	String trn = trnField.getText();
 	        	String contactNum = contactNumField.getText();
 	        	String email = emailField.getText();
+	        	passText = new String(passwordFieldR.getPassword());
 	        	if(trn.length() != trnField.getColumns())
 				{
 					JOptionPane.showMessageDialog( 
@@ -176,6 +183,20 @@ public class MainWindow extends JFrame
 			        		 "TRN must be exactly 9 digits in the format: 123456789");
 					return;
 				}
+	        	else if(!isValidEmail(email))
+	        	{
+	        	    JOptionPane.showMessageDialog(this, "Invalid email address!");
+	        	    return;
+	        	}
+	        	else if(!isValidPhone(contactNum))
+	        	{
+	        		JOptionPane.showMessageDialog(this, "Invalid phone number!");
+	        		return;
+	        	}
+	        	else if(checkPasswordStrength() == false)
+	        	{
+	        		return;
+	        	}
 	        	else
 					
 					try
@@ -186,7 +207,7 @@ public class MainWindow extends JFrame
 
 					}catch(NumberFormatException nf)
 					{
-						JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(mainPanel),"Invalid Format for TRN field\n"
+						JOptionPane.showMessageDialog(this,"Invalid Format for TRN field\n"
 								+ "Must be in format: 123456789");
 						exception = true;
 					}
@@ -195,8 +216,16 @@ public class MainWindow extends JFrame
 					if(exception == false)
 					{
 
-
-						JOptionPane.showMessageDialog(this, "Account created for " + firstName + " " + lastName + "!");
+						passText = hashString(passText);
+						JOptionPane.showMessageDialog(this, "Account created for: \nName: " + firstName + " " + lastName + "\nTRN: "
+								+ trn + "\nContact Number: " + contactNum + "\nEmail: " + email
+								+ "\nPassword: " + passText);
+						
+						newUser = new User(trn,firstName,lastName,passText,contactNum,email,"Customer");
+						//clear user input
+						newUser.createRecord();
+						//save to database
+						//need database validation too with TRN
 			            cardLayout.show(loginPanel, "Login");
 					}
 	        }
@@ -239,13 +268,87 @@ public class MainWindow extends JFrame
 	        panel.add(component,gbc);
     }
     
+    public boolean isValidEmail(String email) {
+        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return email.matches(regex);
+    }
+    
+    public boolean isValidPhone(String phone) {
+        return phone.matches("^\\+?[0-9\\-\\s]{7,20}$");
+    }
+
+    
+    private boolean checkPasswordStrength()
+    {
+    	if (passText.length() < 8) {
+    		JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long.");
+			return false;
+		} else if (passText.length() > 30) {
+			JOptionPane.showMessageDialog(this,"Password must be at most 30 characters long.");
+			return false;
+		}
+
+		boolean hasUppercase = false;
+		boolean hasLowercase = false;
+		boolean hasDigit = false;
+		boolean hasSpecialChar = false;
+
+		/*for (char c : passText.toCharArray()) {
+			if (Character.isUpperCase(c)) {
+				hasUppercase = true;
+			} else if (Character.isLowerCase(c)) {
+				hasLowercase = true;
+			} else if (Character.isDigit(c)) {
+				hasDigit = true;
+			} else if (!Character.isLetterOrDigit(c)) {
+				hasSpecialChar = true;
+			}
+		}
+
+		if (!hasUppercase || !hasLowercase || !hasDigit || !hasSpecialChar) {
+			System.err.println("\nSYSTEM: Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
+			return false;
+		}*/
+
+		return true;
+    }
+    
+    private String hashString(String input) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+			StringBuilder hexString = new StringBuilder();
+			for (byte b : hash) {
+				String hex = Integer.toHexString(0xff & b);
+				if (hex.length() == 1) hexString.append('0');
+				hexString.append(hex);
+			}
+			return hexString.toString();
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+    
     
     public MainWindow()
     {
     	initializeSectionPanels();
     	initializeLoginComponents();
+    	WriteTestData();
+
 		setVisible(true);
 
+    	
+    }
+    
+    private void WriteTestData()
+    {
+    	firstNameField.setText("Chevannese");
+    	lastNameField.setText("Ellis");
+    	trnField.setText("123456789");
+    	emailField.setText("chev@gmail.com");
+    	contactNumField.setText("876-249-3133");
     	
     }
     public static void main(String[] args)
