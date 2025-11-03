@@ -223,7 +223,7 @@ public class MainWindow extends JFrame
 						
 						newUser = new User(trn,firstName,lastName,passText,contactNum,email,"Customer");
 						//clear user input
-						newUser.createRecord();
+						newUser.createAccount();
 						//save to database
 						//need database validation too with TRN
 			            cardLayout.show(loginPanel, "Login");
