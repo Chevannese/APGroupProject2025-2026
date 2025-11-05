@@ -1,10 +1,10 @@
-package smartship.ui;
 
-import smartship.model.Driver;
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.*;
+import model.Driver;
 
 public class DriverView extends JPanel {
     private CardLayout cardLayout;
@@ -90,13 +90,9 @@ public class DriverView extends JPanel {
             }
         });
 
-        viewRouteBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, driver.getRoute());
-        });
+        viewRouteBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, driver.getRoute()));
 
-        viewVehicleBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, driver.getVehicleInfo());
-        });
+        viewVehicleBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, driver.getVehicleInfo()));
 
         logoutBtn.addActionListener(e -> {
             driver = null;
