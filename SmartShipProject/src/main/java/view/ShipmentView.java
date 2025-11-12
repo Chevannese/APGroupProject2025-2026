@@ -76,6 +76,10 @@ public class ShipmentView extends JFrame
 		senderAddrTxt = new JTextField(50);
 		
 		lblReceiverSection = new JLabel("Receiver Information Section");
+		lblReceiverFName = new JLabel("Receiver First Name:");
+		lblReceiverLName = new JLabel("Receiver Last Name:");
+		receiverFNameTxt = new JTextField(30);
+		receiverLNameTxt = new JTextField(30);
 		lblReceiverAddr = new JLabel("Receiver Address: ");
 		receiverAddrTxt = new JTextField(50);
 		
