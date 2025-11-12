@@ -1,0 +1,22 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+	<!--Database Connection Settings--> 
+	<property name= "connection.url">jdbc:mysql://SmartShip_tubeablein:6b5e0a8b874847dbb9f33d20b1789a7b0b0e6c7c@zabwas.h.filess.io:61002/SmartShip_tubeablein</property>
+	<!--Choose Hibernate dialect for the specific database type -->
+	<property name="show_sql">true</property>
+	<property name="current_session_context_class">thread</property>
+	
+	<!--Classes that are being mapped to the Database--> 
+	<mapping class="model.User"/>
+	<mapping class="model.Customer"/>
+	<mapping class="model.Driver"/>
+	<mapping class="model.Clerk"/>
+	<mapping class="model.Manager"/>
+	
+	
+	</session-factory>
+</hibernate-configuration>

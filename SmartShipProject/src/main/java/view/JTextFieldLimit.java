@@ -3,8 +3,17 @@ package view;
 import javax.swing.JTextField;
 import javax.swing.text.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 public class JTextFieldLimit extends JTextField {
-    private LimitDocumentFilter filter;
+    /**
+	 * 
+	 */
+
+	private static final long serialVersionUID = 1L;
+	private LimitDocumentFilter filter;
     
     public JTextFieldLimit(int columns) {
         super(columns);
@@ -30,7 +39,9 @@ public class JTextFieldLimit extends JTextField {
 }
 
 class LimitDocumentFilter extends DocumentFilter {
-    private int limit;
+	private static final Logger logger = LogManager.getLogger(LimitDocumentFilter.class);
+
+	private int limit;
         
     public LimitDocumentFilter(int limit) {
         if (limit <= 0) {
@@ -41,14 +52,25 @@ class LimitDocumentFilter extends DocumentFilter {
 
     @Override
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-        int currentLength = fb.getDocument().getLength();
-        int overLimit = (currentLength + text.length()) - limit - length;
-        
-        if (overLimit > 0) {
-            text = text.substring(0, text.length() - overLimit);
+        try
+        {
+        	int currentLength = fb.getDocument().getLength();
+            int overLimit = (currentLength + text.length()) - limit - length;
+            
+            if (overLimit > 0) {
+                text = text.substring(0, text.length() - overLimit);
+            }
+            if (text.length() > 0) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }catch(NullPointerException e)
+        {
+        	logger.error(e.getMessage());
         }
-        if (text.length() > 0) {
-            super.replace(fb, offset, length, text, attrs); 
+        catch(Exception e)
+        {
+        	logger.error(e.getMessage());
         }
+    	
     }
 }

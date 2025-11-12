@@ -1,0 +1,39 @@
+[ INFO] 2025-11-12 00:07:38.111 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 00:09:16.982 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ WARN] 2025-11-12 00:10:19.912 [AWT-EventQueue-0] LoginController - Login failed: Incorrect password for TRN 123456789
+[ INFO] 2025-11-12 00:10:27.250 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 00:40:15.981 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 00:47:42.703 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 00:51:49.309 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 00:56:53.390 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 00:57:49.362 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:01:14.607 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:09:31.265 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:11:20.127 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:14:51.389 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:16:12.985 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:18:53.624 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:21:52.296 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:27:30.250 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:31:15.785 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:32:25.009 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:37:50.782 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:42:31.771 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:45:38.039 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ERROR] 2025-11-12 01:45:41.631 [AWT-EventQueue-0] LoginController - Cannot invoke "javax.swing.JPanel.add(java.awt.Component, Object)" because "this.mainPanel" is null
+[ INFO] 2025-11-12 01:46:05.546 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ERROR] 2025-11-12 01:46:09.890 [AWT-EventQueue-0] LoginController - Cannot invoke "javax.swing.JPanel.add(java.awt.Component, Object)" because "this.mainPanel" is null
+[ INFO] 2025-11-12 01:46:40.109 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:48:28.100 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 01:53:04.635 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 02:04:54.430 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 02:05:24.659 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 02:05:53.079 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ WARN] 2025-11-12 02:08:01.071 [AWT-EventQueue-0] LoginController - Login failed: Incorrect password for TRN 123456789
+[ INFO] 2025-11-12 02:08:08.326 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-12 10:59:01.198 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 987654321
+[ INFO] 2025-11-12 11:00:00.645 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ WARN] 2025-11-12 11:02:24.093 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-12 11:02:50.122 [AWT-EventQueue-0] LoginController - Login failed: TRN big dick not found
+[ WARN] 2025-11-12 11:02:59.878 [AWT-EventQueue-0] LoginController - Login failed: TRN big dick not found
+[ INFO] 2025-11-12 11:06:18.702 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789

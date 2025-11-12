@@ -7,6 +7,11 @@ public class Vehicle
 	private int quantityCap;
 	private double weightCap;
 	
+	/* 
+	 * Name: ISUZU Elf Box Van Truck
+	 Weight Limit: 2600 pounds
+	 Quantity Limit: 20
+	 */
 	
 	public Vehicle()
 	{
