@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 @DiscriminatorValue("Clerk")
 public class Clerk extends User
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Clerk()
 	{
 		super();

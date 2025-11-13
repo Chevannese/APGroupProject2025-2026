@@ -2,11 +2,15 @@ package view;
 
 import javax.swing.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import controller.LoginController;
 
 import model.*;
+import network.Client;
+
 import java.awt.*;
-import java.lang.System.Logger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(Login.class);
     private String passText;
     private LoginController controller;
 
@@ -39,7 +44,7 @@ public class Login extends JFrame {
         
 
         add(loginPanel);
-        cardLayout.show(mainPanel, "LoginPage"); // start with sign-in
+        cardLayout.show(loginPanel, "Login"); // start with sign-in
         
     	GridBagConstraints gc;
     	gc = new GridBagConstraints();
@@ -70,8 +75,16 @@ public class Login extends JFrame {
         signInBtn.addActionListener(e -> {
             String user = usernameFieldL.getText();
             String pass = new String(passwordFieldL.getPassword());
-            
             String hashPass = hashString(pass);
+
+            User dummy = new User();
+            dummy.setTrn(user);
+            dummy.setPassword(hashPass);
+            
+            Client client = new Client();
+            client.sendAction("SignIn");
+            client.sendUser(dummy);
+            
 			controller.login(user,hashPass);
              
         });
@@ -84,6 +97,7 @@ public class Login extends JFrame {
         title.setFont(new Font("Arial", Font.BOLD, 20));
 
         JTextFieldLimit trnField = new JTextFieldLimit(9);
+        trnField.setLimit(9);
         final JPasswordField passwordFieldR = new JPasswordField(15);
         JTextField firstNameField = new JTextField(20);
         JTextField lastNameField = new JTextField(20);
@@ -93,7 +107,6 @@ public class Login extends JFrame {
         JButton signUpBtn = new JButton("Register");
         JButton goToSignInBtn = new JButton("Back to Sign In");
 
-        trnField.setLimit(9);
         addToGridBag(signUpPanel, title, gc, 0, 0, 2, 1);
         
         addToGridBag(signUpPanel, new JLabel("First Name:"), gc, 0, 1, 1, 1);
@@ -124,14 +137,14 @@ public class Login extends JFrame {
         goToSignInBtn.addActionListener(e -> cardLayout.show(loginPanel, "Login"));
         goToSignUpBtn.addActionListener(e -> cardLayout.show(loginPanel, "Register"));
 
-        clearSignUpBtn.addActionListener(e -> {
-        	firstNameField.setText("");
-        	lastNameField.setText("");
-        	trnField.setText("");
-        	emailField.setText("");
-        	contactNumField.setText("");
-        	passwordFieldR.setText("");
-        	System.out.println("Cleared form");
+        clearSignUpBtn.addActionListener(e ->{
+        	firstNameField.setText(null);
+        	lastNameField.setText(null);
+        	trnField.setText(null);
+        	emailField.setText(null);
+        	contactNumField.setText(null);
+        	passwordFieldR.setText(null);
+        	
         });
         
         
@@ -198,14 +211,25 @@ public class Login extends JFrame {
 								+ trn + "\nContact Number: " + contactNum + "\nEmail: " + email
 								+ "\nPassword: " + passText);
 						
-						User newUser = new Customer(trn,firstName,lastName,passText,contactNum,email);
 						
-						Database customer = new Database();
-						customer.createAccount(newUser);
 						
-						clearSignUpBtn.doClick();
+						Client client = new Client();
+						User newUser = new Customer(trn, firstName, lastName, passText, contactNum, email);
 						
-			            cardLayout.show(this, "Login");
+						boolean success = client.createAccount(newUser);
+
+						if (success) {
+						    clearSignUpBtn.doClick();                       // clear form
+						    cardLayout.show(loginPanel, "Login");           // go to login page
+						}
+						
+						
+					
+
+						
+						
+						
+			            cardLayout.show(loginPanel, "Login");
 					}
 	        }
             
@@ -291,9 +315,7 @@ public class Login extends JFrame {
 
 	public Login()
 	{
-		new Thread(() -> {
-            Database.getSessionFactory(); // triggers SessionFactory build
-        }).start();
+	
            Login loginView = new Login(null);
     	   LoginController controller = new LoginController(loginView);
     	   loginView.setController(controller);

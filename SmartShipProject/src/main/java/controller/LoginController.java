@@ -4,6 +4,7 @@ package controller;
 import javax.swing.JOptionPane;
 
 import model.*;
+import network.Server;
 import view.*;
 import org.apache.logging.log4j.*;
 import org.hibernate.*;
@@ -23,7 +24,7 @@ public class LoginController {
 	    Session session = null;
 		try
 		{
-			session = Database.getSessionFactory().openSession();
+			session = Server.getSessionFactory().openSession();
 			
 			 User loggedInUser = session.find(User.class, trn);
 			 

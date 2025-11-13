@@ -38,5 +38,48 @@
 [ WARN] 2025-11-12 11:02:59.878 [AWT-EventQueue-0] LoginController - Login failed: TRN big dick not found
 [ INFO] 2025-11-12 11:06:18.702 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
 [ INFO] 2025-11-12 13:03:20.053 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
-[ INFO] 2025-11-13 12:14:18.270 [AWT-EventQueue-0] Database - Account created with trn:123450987
-[ERROR] 2025-11-13 12:15:04.009 [Thread-0] Database - Initial SessionFactory creation failed.org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver.connect() [User 'SmartShip_tubeablein' has exceeded the 'max_user_connections' resource (current value: 5)]
+[ WARN] 2025-11-12 16:13:51.560 [AWT-EventQueue-0] LoginController - Login failed: Incorrect password for TRN 300000001
+[ WARN] 2025-11-12 16:14:22.690 [AWT-EventQueue-0] LoginController - Login failed: Incorrect password for TRN 200000001
+[ WARN] 2025-11-12 16:15:05.818 [AWT-EventQueue-0] LoginController - Login failed: TRN 2000000001 not found
+[ WARN] 2025-11-12 16:15:12.211 [AWT-EventQueue-0] LoginController - Login failed: Incorrect password for TRN 200000001
+[ WARN] 2025-11-12 16:15:54.520 [AWT-EventQueue-0] LoginController - Login failed: Incorrect password for TRN 200000005
+[ INFO] 2025-11-12 16:27:37.004 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 200000001
+[ INFO] 2025-11-12 16:33:11.346 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 200000005
+[ WARN] 2025-11-12 23:41:21.970 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ERROR] 2025-11-13 02:02:53.241 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ERROR] 2025-11-13 02:03:32.089 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ERROR] 2025-11-13 02:03:32.708 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ INFO] 2025-11-13 02:14:09.562 [AWT-EventQueue-0] Login - Create Account Message sent to server
+[ INFO] 2025-11-13 02:14:09.595 [AWT-EventQueue-0] Login - Record sent to server
+[ INFO] 2025-11-13 02:14:11.728 [AWT-EventQueue-0] Login - Response received from server
+[ERROR] 2025-11-13 02:14:11.812 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ INFO] 2025-11-13 02:24:37.035 [AWT-EventQueue-0] Login - Create Account Message sent to server
+[ INFO] 2025-11-13 02:24:37.070 [AWT-EventQueue-0] Login - User record sent to server
+[ INFO] 2025-11-13 02:24:38.466 [AWT-EventQueue-0] Login - Response received from server. Task completed
+[ INFO] 2025-11-13 02:24:38.472 [AWT-EventQueue-0] Login - Close Client Connection
+[ERROR] 2025-11-13 02:24:38.549 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ WARN] 2025-11-13 02:31:46.431 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 02:31:49.488 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 02:33:45.192 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 03:38:15.545 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ERROR] 2025-11-13 03:52:05.674 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ WARN] 2025-11-13 10:37:06.147 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 10:37:10.893 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 10:37:17.432 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ INFO] 2025-11-13 10:38:45.852 [AWT-EventQueue-0] Login - Create Account Message sent to server
+[ INFO] 2025-11-13 10:38:45.852 [AWT-EventQueue-0] Login - User record sent to server
+[ WARN] 2025-11-13 10:42:24.352 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 10:42:31.916 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 10:42:37.791 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ WARN] 2025-11-13 10:44:04.844 [AWT-EventQueue-0] LoginController - Login failed: TRN  not found
+[ INFO] 2025-11-13 10:44:27.059 [AWT-EventQueue-0] LoginController - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-13 12:10:04.363 [AWT-EventQueue-0] Login - Create Account Message sent to server
+[ INFO] 2025-11-13 12:10:04.377 [AWT-EventQueue-0] Login - User record sent to server
+[ INFO] 2025-11-13 12:10:08.776 [AWT-EventQueue-0] Login - Response received from server. Create Account task completed
+[ INFO] 2025-11-13 12:10:08.785 [AWT-EventQueue-0] Login - Close Client Connection
+[ERROR] 2025-11-13 12:11:10.608 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ INFO] 2025-11-13 12:11:52.683 [AWT-EventQueue-0] Login - Create Account Message sent to server
+[ INFO] 2025-11-13 12:11:52.684 [AWT-EventQueue-0] Login - User record sent to server
+[ INFO] 2025-11-13 12:11:54.815 [AWT-EventQueue-0] Login - Response received from server. Create Account task completed
+[ INFO] 2025-11-13 12:11:54.817 [AWT-EventQueue-0] Login - Close Client Connection
+[ERROR] 2025-11-13 12:12:06.639 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
