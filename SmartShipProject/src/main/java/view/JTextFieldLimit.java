@@ -8,10 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 
 public class JTextFieldLimit extends JTextField {
-    /**
-	 * 
-	 */
-
 	private static final long serialVersionUID = 1L;
 	private LimitDocumentFilter filter;
     
@@ -44,6 +40,7 @@ class LimitDocumentFilter extends DocumentFilter {
 	private int limit;
         
     public LimitDocumentFilter(int limit) {
+    	super();
         if (limit <= 0) {
             throw new IllegalArgumentException("Limit can not be less than 0");
         }
