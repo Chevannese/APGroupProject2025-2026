@@ -77,13 +77,13 @@ public class Login extends JFrame {
             String pass = new String(passwordFieldL.getPassword());
             String hashPass = hashString(pass);
 
-            User dummy = new User();
-            dummy.setTrn(user);
-            dummy.setPassword(hashPass);
+            User loggedInUser = new User();
+            loggedInUser.setTrn(user);
+            loggedInUser.setPassword(hashPass);
             
             Client client = new Client();
-            client.sendAction("SignIn");
-            client.sendUser(dummy);
+            boolean response = client.signIn(loggedInUser);
+            
             
 			controller.login(user,hashPass);
              
@@ -207,9 +207,7 @@ public class Login extends JFrame {
 					{
 
 						passText = hashString(passText);
-						JOptionPane.showMessageDialog(this, "Account created for: \nName: " + firstName + " " + lastName + "\nTRN: "
-								+ trn + "\nContact Number: " + contactNum + "\nEmail: " + email
-								+ "\nPassword: " + passText);
+						
 						
 						
 						
@@ -218,10 +216,17 @@ public class Login extends JFrame {
 						
 						boolean success = client.createAccount(newUser);
 
-						if (success) {
+						if (!success) 
+						{
+							return;
+						}
+						
+							JOptionPane.showMessageDialog(this, "Account created for: \nName: " + firstName + " " + lastName + "\nTRN: "
+									+ trn + "\nContact Number: " + contactNum + "\nEmail: " + email
+									+ "\nPassword: " + passText);
 						    clearSignUpBtn.doClick();                       // clear form
 						    cardLayout.show(loginPanel, "Login");           // go to login page
-						}
+						
 						
 						
 					

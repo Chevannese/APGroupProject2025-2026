@@ -144,13 +144,21 @@ public class Client
 	        out.flush();
 
 	        // Read the server's response (a String)
-	        String response = (String) in.readObject();
+	        String response = ((String) in.readObject()).trim();
 
-	        if (response.startsWith("Error:")) {
+	        if (response.equals("error-duplicate-trn")) {
 	            logger.warn(response);
 	            JOptionPane.showMessageDialog(null, response, "Duplicate TRN", JOptionPane.WARNING_MESSAGE);
 	            return false;
-	        } else if ("done".equals(response)) {
+	        }
+	        else if (response.equals("error-database-issue"))
+	        {
+	        	logger.error(response);
+	            JOptionPane.showMessageDialog(null, response, "Database error", JOptionPane.ERROR_MESSAGE);
+	            return false;
+	        }		
+	        else if ("done".equals(response)) 
+	        {
 	            logger.info("Account created successfully");
 	            JOptionPane.showMessageDialog(null, "Account created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
 	            return true;
@@ -165,70 +173,28 @@ public class Client
 	    }
 		return false;
 	}
-
 	
-	
-	public void sendAction(String action)
+	public boolean signIn(User loggedInUser)
 	{
-		this.action = action;
-		try
+		try (
+		        Socket socket = new Socket("127.0.0.1", 8888);
+		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		    ) 
 		{
-			out.writeObject(action);
-		}catch(IOException io)
-		{
-			logger.error(io.getMessage());
-		}catch(Exception e)
-		{
-			logger.error(e.getMessage());
+			// Tell the server what action this is
+	        out.writeObject("SignIn");
+	        out.writeObject(loggedInUser);
+	        out.flush();
+	        
+	        
 		}
-	}
-	
-	public void sendUser(User uObj)
-	{
-		try
-		{
-			out.writeObject(uObj);
-		}catch(IOException io)
-		{
-			logger.error(io.getMessage());
-		}catch(Exception e)
-		{
-			logger.error(e.getMessage());
-		}
-	}
-	
-	public void sendUserTrn(String trn)
-	{
-		try
-		{
-			out.writeObject(trn);
-		}catch(IOException io)
-		{
-			logger.error(io.getMessage());
-		}
-	}
-	
-	public void sendLoginData(String trn, String passwordHash) {
-	    try {
-	        out.writeObject(trn);
-	        out.writeObject(passwordHash);
-	        out.flush(); // optional but recommended
-	        logger.info("Sent TRN and password hash to server.");
-	    } catch (IOException io) {
-	        logger.error("Error sending login data: " + io.getMessage());
+		catch (Exception e) {
+	        logger.error("Error communicating with server: " + e.getMessage(), e);
+	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 	    }
+		return false;
+		
 	}
-	
-	public void sendShipment(Shipment obj)
-	{
-		try
-		{
-			out.writeObject(obj);
-		}catch(IOException io)
-		{
-			logger.error(io.getMessage());
-		}
-	}
-	
 
 }

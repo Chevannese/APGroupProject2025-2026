@@ -70,7 +70,8 @@ public class Server {
             String action = (String) in.readObject();
             logger.info("Action received: " + action);
 
-            if ("Create Account".equals(action)) {
+            if ("Create Account".equals(action)) 
+            {
                 User user = (User) in.readObject();
 
                 try (Session session = getSessionFactory().openSession()) {
@@ -79,7 +80,7 @@ public class Server {
                     User existingUser = session.find(User.class, user.getTrn());
                     if (existingUser != null) {
                         logger.warn("Duplicate TRN attempt: " + user.getTrn());
-                        out.writeObject("Error: Duplicate TRN");
+                        out.writeObject("error-duplicate-trn");
                     } else {
                         session.persist(user);
                         session.getTransaction().commit();
@@ -89,17 +90,11 @@ public class Server {
                     out.flush();
                 } catch (Exception e) {
                     logger.error("Error - Database error: " + e.getMessage(), e);
-                    out.writeObject("Error: Database issue");
+                    out.writeObject("error-database-issue");
                     out.flush();
                 }
-            }
-
-        } catch (Exception e) {
-            logger.error("Client handling error: " + e.getMessage(), e);
-        }
-    }
-
-            /*
+            }//end of Create Account
+            
             else if(action.equalsIgnoreCase("SignIn"))
             {
             	 User user = (User) in.readObject();
@@ -110,19 +105,20 @@ public class Server {
                      User existingUser = session.find(User.class, user.getTrn());
                      if(existingUser == null)
                      {
-                    	 out.writeObject(false);
+                    	 logger.warn("User does not exist");
+                    	 out.writeObject("User-not-exist-error");
                      }
                      else if (existingUser.getTrn().compareTo(user.getTrn()) == 0 && existingUser.getPassword().compareTo(user.getPassword()) == 0) {
+                    	 
                     	 user.setContactNum(existingUser.getContactNum());
                     	 user.setEmail(existingUser.getEmail());
                     	 user.setFirstName(existingUser.getFirstName());
                     	 user.setLastName(existingUser.getLastName());
-                    	 out.writeObject(true);
-     		            return;
+                    	 out.writeObject("User-Exist");
      		        }else if (existingUser.getTrn().compareTo(user.getTrn()) == 0 && !(existingUser.getPassword().compareTo(user.getPassword()) == 0))
      		        {
      		        	logger.warn("Username and password does not match" + user.getTrn());
-                        out.writeObject(false);
+                        out.writeObject("user-not-match-error");
      		        }else if(!(existingUser.getTrn().compareTo(user.getTrn()) == 0) && !(existingUser.getPassword().compareTo(user.getPassword()) == 0))
      		        {
      		        	logger.warn("Username and password does not exist" + user.getTrn());
@@ -144,7 +140,16 @@ public class Server {
                  {
                 	 logger.error(e.getMessage());
                  }
-                 }*/
+                 }
+
+        } catch (Exception e) {
+            logger.error("Client handling error: " + e.getMessage(), e);
+        }
+    }
+    
+
+            
+            
      		
       
     public static void main(String[] args) {
