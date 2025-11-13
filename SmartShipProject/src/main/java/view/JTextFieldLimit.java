@@ -7,71 +7,73 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+/**
+ * A JTextField that limits the number of characters that can be in the field at once
+ */
 public class JTextFieldLimit extends JTextField {
 	private static final long serialVersionUID = 1L;
-	private LimitDocumentFilter filter;
-    
     public JTextFieldLimit(int columns) {
         super(columns);
     }
-
-    public JTextFieldLimit(String text) {
-        super(text);
-    }
-
-    public JTextFieldLimit(String text, int columns) {
-        super(text, columns);
-    }
     
-    public JTextFieldLimit(Document doc, String text, int columns) {
-        super(doc, text, columns);
-    }
-    
+    /**
+     * @param limit The maximum number of characters allowed.
+     */
     public void setLimit(int limit) {
-        AbstractDocument doc = (AbstractDocument) this.getDocument();
-        filter = new LimitDocumentFilter(limit);
-        doc.setDocumentFilter(filter);
+        PlainDocument doc = (PlainDocument) this.getDocument();
+        doc.setDocumentFilter(new MaxLengthDocumentFilter(limit));
     }
 }
 
-class LimitDocumentFilter extends DocumentFilter {
-	private static final Logger logger = LogManager.getLogger(LimitDocumentFilter.class);
+class MaxLengthDocumentFilter extends DocumentFilter {
+    private int maxLength;
 
-	private int limit;
-        
-    public LimitDocumentFilter(int limit) {
-    	super();
-        if (limit <= 0) {
-            throw new IllegalArgumentException("Limit can not be less than 0");
+    public MaxLengthDocumentFilter(int maxLength) {
+        if (maxLength < 0) {
+            throw new IllegalArgumentException("Maximum length must be non-negative");
         }
-        this.limit = limit;
+        this.maxLength = maxLength;
+    }
+
+    @Override
+    public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+        if (string == null) {
+            return;
+        }
+
+        // Check the new total length
+        int currentLength = fb.getDocument().getLength();
+        int insertLength = string.length();
+        if (currentLength + insertLength <= maxLength) {
+            // If it's within limits, allow the insertion
+            super.insertString(fb, offset, string, attr);
+        }
+        else {
+            // If it would exceed the limit, do nothing (or beep)
+            // For a better user experience, you could optionally insert
+            // only the part of the string that fits.
+            // java.awt.Toolkit.getDefaultToolkit().beep();
+        }
     }
 
     @Override
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-      	if (text == null) {
-      		return;
-      	}
-    	
-        try {
-        	int currentLength = fb.getDocument().getLength();
-            int overLimit = (currentLength + text.length()) - limit - length;
-            
-            if (overLimit > 0) {
-                text = text.substring(0, text.length() - overLimit);
-            }
-            if (text.length() > 0) {
-                super.replace(fb, offset, length, text, attrs);
-            }
-        }catch(NullPointerException e)
-        {
-        	logger.error(e.getMessage());
+        if (text == null) {
+            text = "";
         }
-        catch(Exception e)
-        {
-        	logger.error(e.getMessage());
+
+        // Calculate the resulting length after the replace
+        int currentLength = fb.getDocument().getLength();
+        int newLength = currentLength - length + text.length();
+
+        if (newLength <= maxLength) {
+            // If it's within limits, allow the replacement
+            super.replace(fb, offset, length, text, attrs);
         }
-    	
+        else {
+            // If it would exceed the limit, do nothing (or beep)
+            // java.awt.Toolkit.getDefaultToolkit().beep();
+        }
     }
 }
 

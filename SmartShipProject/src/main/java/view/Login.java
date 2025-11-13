@@ -6,6 +6,7 @@ import controller.LoginController;
 
 import model.*;
 import java.awt.*;
+import java.lang.System.Logger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -83,7 +84,6 @@ public class Login extends JFrame {
         title.setFont(new Font("Arial", Font.BOLD, 20));
 
         JTextFieldLimit trnField = new JTextFieldLimit(9);
-        trnField.setLimit(9);
         final JPasswordField passwordFieldR = new JPasswordField(15);
         JTextField firstNameField = new JTextField(20);
         JTextField lastNameField = new JTextField(20);
@@ -93,6 +93,7 @@ public class Login extends JFrame {
         JButton signUpBtn = new JButton("Register");
         JButton goToSignInBtn = new JButton("Back to Sign In");
 
+        trnField.setLimit(9);
         addToGridBag(signUpPanel, title, gc, 0, 0, 2, 1);
         
         addToGridBag(signUpPanel, new JLabel("First Name:"), gc, 0, 1, 1, 1);
@@ -123,14 +124,14 @@ public class Login extends JFrame {
         goToSignInBtn.addActionListener(e -> cardLayout.show(loginPanel, "Login"));
         goToSignUpBtn.addActionListener(e -> cardLayout.show(loginPanel, "Register"));
 
-        clearSignUpBtn.addActionListener(e ->{
-        	firstNameField.setText(null);
-        	lastNameField.setText(null);
-        	trnField.setText(null);
-        	emailField.setText(null);
-        	contactNumField.setText(null);
-        	passwordFieldR.setText(null);
-        	
+        clearSignUpBtn.addActionListener(e -> {
+        	firstNameField.setText("");
+        	lastNameField.setText("");
+        	trnField.setText("");
+        	emailField.setText("");
+        	contactNumField.setText("");
+        	passwordFieldR.setText("");
+        	System.out.println("Cleared form");
         });
         
         
