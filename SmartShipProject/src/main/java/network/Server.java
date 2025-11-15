@@ -105,8 +105,11 @@ public class Server {
                      User existingUser = session.find(User.class, user.getTrn());
                      if(existingUser == null)
                      {
-                    	 logger.warn("User does not exist");
-                    	 out.writeObject("User-not-exist-error");
+                    	 logger.warn("User-does-not-exist");
+                    	 existingUser = null;
+                    	 
+                    	 out.writeObject("User-does-not-exist");
+                    	 out.writeObject(existingUser);
                      }
                      else if (existingUser.getTrn().compareTo(user.getTrn()) == 0 && existingUser.getPassword().compareTo(user.getPassword()) == 0) {
                     	 
@@ -114,19 +117,30 @@ public class Server {
                     	 user.setEmail(existingUser.getEmail());
                     	 user.setFirstName(existingUser.getFirstName());
                     	 user.setLastName(existingUser.getLastName());
-                    	 out.writeObject("User-Exist");
+                    	 
+                    	 out.writeObject("success");
+                    	 out.writeObject(existingUser);
      		        }else if (existingUser.getTrn().compareTo(user.getTrn()) == 0 && !(existingUser.getPassword().compareTo(user.getPassword()) == 0))
      		        {
-     		        	logger.warn("Username and password does not match" + user.getTrn());
-                        out.writeObject("user-not-match-error");
+     		        	existingUser = null;
+     		        	logger.warn("The password that was entered by the user is incorrect: " + user.getTrn());
+     		        	
+     		        	out.writeObject("The password that was entered by the user is incorrect");
+     		        	
+     		        	
+                        out.writeObject(existingUser);
      		        }else if(!(existingUser.getTrn().compareTo(user.getTrn()) == 0) && !(existingUser.getPassword().compareTo(user.getPassword()) == 0))
      		        {
+     		        	
      		        	logger.warn("Username and password does not exist" + user.getTrn());
-     		        	out.writeObject(false);
+     		        	existingUser = null;
+     		        	out.writeObject("Username and password does not exist");
 
      		        }else
      		        {
-     		        	logger.warn("Error");
+     		        	logger.warn("Unknown Error");
+     		        	existingUser = null;
+     		        	out.writeObject("Unknown Error");
 
      		        }
                      

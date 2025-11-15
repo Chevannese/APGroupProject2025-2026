@@ -54,7 +54,8 @@ public class Login extends JFrame {
         JLabel title = new JLabel("Sign In", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 20));
 
-        final JTextField usernameFieldL = new JTextField(15);
+        JTextFieldLimit usernameFieldL = new JTextFieldLimit(9);
+        usernameFieldL.setLimit(9);
         final JPasswordField passwordFieldL = new JPasswordField(15);
         JButton signInBtn = new JButton("Sign In");
         JButton goToSignUpBtn = new JButton("Create Account");
@@ -82,10 +83,15 @@ public class Login extends JFrame {
             loggedInUser.setPassword(hashPass);
             
             Client client = new Client();
-            boolean response = client.signIn(loggedInUser);
+            loggedInUser = client.signIn(loggedInUser);
             
+            if(loggedInUser == null)
+            {
+            	return;
+            }
             
-			controller.login(user,hashPass);
+            controller.login(loggedInUser.getTrn(),loggedInUser.getPassword());
+			
              
         });
 
@@ -138,12 +144,12 @@ public class Login extends JFrame {
         goToSignUpBtn.addActionListener(e -> cardLayout.show(loginPanel, "Register"));
 
         clearSignUpBtn.addActionListener(e ->{
-        	firstNameField.setText(null);
-        	lastNameField.setText(null);
-        	trnField.setText(null);
-        	emailField.setText(null);
-        	contactNumField.setText(null);
-        	passwordFieldR.setText(null);
+        	firstNameField.setText("");
+        	lastNameField.setText("");
+        	trnField.setText("");
+        	emailField.setText("");
+        	contactNumField.setText("");
+        	passwordFieldR.setText("");
         	
         });
         
@@ -226,15 +232,7 @@ public class Login extends JFrame {
 									+ "\nPassword: " + passText);
 						    clearSignUpBtn.doClick();                       // clear form
 						    cardLayout.show(loginPanel, "Login");           // go to login page
-						
-						
-						
-					
-
-						
-						
-						
-			            cardLayout.show(loginPanel, "Login");
+						client.closeConnection();
 					}
 	        }
             

@@ -1,8 +1,6 @@
 package network;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -12,8 +10,6 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import controller.LoginController;
-import model.Shipment;
 import model.User;
 
 public class Client 
@@ -77,61 +73,6 @@ public class Client
 		}
 	}
 	
-	public String receiveResponse() throws ClassNotFoundException, IOException
-	{
-		return (String) in.readObject();
-		/*boolean flag = false;
-		try
-		{
-			if(action.equalsIgnoreCase("Create Account"))
-			{
-				try
-				{
-					 flag = (boolean) in.readObject();
-				}catch(Exception e)
-				{
-					logger.error(e.getMessage());
-				}
-				
-				if(flag == true)
-				{
-					logger.info("Client Record Added Successfully");
-				}
-			}
-			if(action.equalsIgnoreCase("SignIn"))
-			{
-				User user = new User();
-				user = (User) in.readObject();
-				if(user == null)
-				{
-					logger.info("User could not be found for Client");
-					return;
-				}
-						
-			}
-			if(action.equalsIgnoreCase("Login"));
-			{
-				
-			}
-			if(action.equalsIgnoreCase("Logout"));
-			{
-				
-			}
-			if(action.equalsIgnoreCase("SignUp"))
-			{
-				
-			}
-		}catch(ClassCastException ex)
-		{
-			logger.error(ex.getMessage());
-		}catch(ClassNotFoundException ex)
-		{
-			logger.error(ex.getMessage());
-		}catch(IOException io)
-		{
-			logger.error(io.getMessage());
-		}*/
-	}
 	public boolean createAccount(User newUser) {
 	    try (
 	        Socket socket = new Socket("127.0.0.1", 8888);
@@ -174,7 +115,7 @@ public class Client
 		return false;
 	}
 	
-	public boolean signIn(User loggedInUser)
+	public User signIn(User loggedInUser)
 	{
 		try (
 		        Socket socket = new Socket("127.0.0.1", 8888);
@@ -188,12 +129,34 @@ public class Client
 	        out.flush();
 	        
 	        
+	        String response = ((String) in.readObject()).trim();
+	        User test = ((User) in.readObject());
+	        if(response.equalsIgnoreCase("User-does-not-exist"))
+	        {
+	        	JOptionPane.showMessageDialog(null,response,"User does not exist", JOptionPane.WARNING_MESSAGE);
+	        	
+	        	return test;
+	        }else if(response.equalsIgnoreCase("success"))
+	        {
+	        	JOptionPane.showMessageDialog(null,response,"User has successfully logged on with TRN: " + test.getTrn(), JOptionPane.WARNING_MESSAGE);
+	        	return test;
+	        }else if(response.equalsIgnoreCase("Username and password does not match"))
+	        {
+	        	JOptionPane.showMessageDialog(null,response,"The password that was entered by the user is incorrect", JOptionPane.WARNING_MESSAGE);
+	        	return test;
+	        }else if(response.equalsIgnoreCase("Unknown Error"))
+	        {
+	        	JOptionPane.showMessageDialog(null,response,"Unknown Error", JOptionPane.WARNING_MESSAGE);
+	        	return test;
+	        }
+	        out.flush();
+	        
 		}
 		catch (Exception e) {
 	        logger.error("Error communicating with server: " + e.getMessage(), e);
 	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 	    }
-		return false;
+		return null;
 		
 	}
 
