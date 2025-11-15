@@ -205,6 +205,7 @@ public class Login extends JFrame {
 					{
 						JOptionPane.showMessageDialog(this,"Invalid Format for TRN field\n"
 								+ "Must be in format: 123456789");
+						
 						exception = true;
 					}
 	        		
@@ -302,6 +303,7 @@ public class Login extends JFrame {
    			}
    			return hexString.toString();
    		} catch (NoSuchAlgorithmException e) {
+   			logger.error(e.getMessage());
    			throw new RuntimeException(e);
    		}
    	}

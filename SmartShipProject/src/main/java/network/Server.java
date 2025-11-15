@@ -20,8 +20,7 @@ public class Server {
 
     private ServerSocket serverSocket;
     private Socket connectionSocket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+
 
     static {
         System.out.println("Before building SessionFactory...");
@@ -120,21 +119,16 @@ public class Server {
                     	 out.writeObject(existingUser);
      		        }else if (existingUser.getTrn().compareTo(user.getTrn()) == 0 && !(existingUser.getPassword().compareTo(user.getPassword()) == 0))
      		        {
-     		        	existingUser = null;
+     		        	
      		        	logger.warn("The password that was entered by the user is incorrect: " + user.getTrn());
      		        	
      		        	out.writeObject("The password that was entered by the user is incorrect");
+     		        	existingUser = null;
      		        	
      		        	
                         out.writeObject(existingUser);
-     		        }else if(!(existingUser.getTrn().compareTo(user.getTrn()) == 0) && !(existingUser.getPassword().compareTo(user.getPassword()) == 0))
-     		        {
-     		        	
-     		        	logger.warn("Username and password does not exist" + user.getTrn());
-     		        	existingUser = null;
-     		        	out.writeObject("Username and password does not exist");
-
-     		        }else
+     		        }
+     		        else
      		        {
      		        	logger.warn("Unknown Error");
      		        	existingUser = null;

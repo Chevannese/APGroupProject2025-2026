@@ -13,9 +13,7 @@ import javax.swing.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 
-import model.Database;
 import model.User;
 
 public class CustomerView extends JFrame 
@@ -25,7 +23,6 @@ public class CustomerView extends JFrame
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(CustomerView.class);
-	private User loggedInUser;
 	private GridBagConstraints gc;
 	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3;
 	private CardLayout cardLayout;
@@ -114,13 +111,7 @@ public class CustomerView extends JFrame
     		new Login();
     	});
     	
-    	
-	
-		
-    	 
-    	 
-    	 
-    	 
+   
     	JLabel lblSenderSection = new JLabel("Sender Information Section", SwingConstants.CENTER);
  		lblSenderSection.setFont(new Font("Verdana", Font.BOLD, 20));
  		JLabel lblSenderName = new JLabel("Sender Name: ");
@@ -191,7 +182,7 @@ public class CustomerView extends JFrame
 	
 	public static void main(String[] args)
 	{
-		//new CustomerView(trn)
+		new CustomerView(new User("123", "BOB", "Brown", "cat123","876-911-9111","bob.brown@gmail.com"));
 	}
       
 }

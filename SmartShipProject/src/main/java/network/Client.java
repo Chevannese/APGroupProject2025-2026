@@ -19,7 +19,6 @@ public class Client
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Socket connectionSocket;
-	private String action = "";
 	
 	public Client()
 	{
@@ -134,23 +133,31 @@ public class Client
 	        if(response.equalsIgnoreCase("User-does-not-exist"))
 	        {
 	        	JOptionPane.showMessageDialog(null,response,"User does not exist", JOptionPane.WARNING_MESSAGE);
-	        	
+	        	logger.info("User does not exist: " + test.getTrn());
 	        	return test;
 	        }else if(response.equalsIgnoreCase("success"))
 	        {
 	        	JOptionPane.showMessageDialog(null,response,"User has successfully logged on with TRN: " + test.getTrn(), JOptionPane.WARNING_MESSAGE);
+	        	logger.info("User has successfully logged on with TRN: " + test.getTrn());
+
 	        	return test;
-	        }else if(response.equalsIgnoreCase("Username and password does not match"))
+	        }else if(response.equalsIgnoreCase("The password that was entered by the user is incorrect"))
 	        {
 	        	JOptionPane.showMessageDialog(null,response,"The password that was entered by the user is incorrect", JOptionPane.WARNING_MESSAGE);
+	        	logger.info("The password that was entered by the user is incorrect: " + test.getTrn());
 	        	return test;
 	        }else if(response.equalsIgnoreCase("Unknown Error"))
 	        {
 	        	JOptionPane.showMessageDialog(null,response,"Unknown Error", JOptionPane.WARNING_MESSAGE);
+	        	logger.info("Unknown Error: " + test.getTrn());
 	        	return test;
 	        }
 	        out.flush();
 	        
+		}
+		catch(NullPointerException e)
+		{
+			logger.error("User TRN null due to not existing in database");
 		}
 		catch (Exception e) {
 	        logger.error("Error communicating with server: " + e.getMessage(), e);
