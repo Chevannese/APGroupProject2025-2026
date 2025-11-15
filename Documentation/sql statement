@@ -175,6 +175,78 @@ CREATE TABLE `trackPackage`
 	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`)
 
 );
+/* Raw Passwords
+String[][] clerks = {
+    {"200000001", "Alicia", "Graham", "clerk123", "8765551010", "alicia.graham@example.com"},
+    {"200000002", "Brian", "Thompson", "secure456", "8765552020", "brian.thompson@example.com"},
+    {"200000003", "Camille", "Reid", "pass789", "8765553030", "camille.reid@example.com"},
+    {"200000004", "Dwayne", "Morgan", "hello321", "8765554040", "dwayne.morgan@example.com"},
+    {"200000005", "Elena", "Smith", "key987", "8765555050", "elena.smith@example.com"},
+    {"200000006", "Frank", "Johnson", "lock654", "8765556060", "frank.johnson@example.com"},
+    {"200000007", "Georgia", "Williams", "admin111", "8765557070", "georgia.williams@example.com"}
+};
 
+  String[][] drivers = 
+  {
+{"300000001", "Leroy", "Anderson","drive123", "8765558080", "leroy.anderson@example.com", "Driver"},
+{"300000002", "Tanya", "Brown", "fast456", "8765559090", "tanya.brown@example.com", "Driver"},
+{"300000003", "Marlon", "Green", "truck789", "8765551111", "marlon.green@example.com", "Driver"},
+{"300000004", "Kimberly", "Davis", "road321", "8765552222", "kimberly.davis@example.com", "Driver"},
+{"300000005", "Orville", "Campbell", "gear987", "8765553333", "orville.campbell@example.com", "Driver"},
+{"300000006", "Sasha", "Stewart","load654", "8765554444", "sasha.stewart@example.com", "Driver"},
+{"300000007", "Jason", "Williams", "shacman", "8765555555", "jason.williams@example.com", "Driver"}
+  };
+  
+  String[][] managers = 
+  {
+{"400000001", "Oniel", "Charles","chess123", "876-123-4567", "oniel.charles@example.com", "Manager"},
+{"400000002", "Oral", "Robinson", "late123", "876-890-7654", "oral.robinson@example.com", "Manager"},
+{"400000003", "Rorron", "Clarke", "admin123", "876-752-8931", "rorron.clarke@example.com", "Manager"},
+{"400000004", "Arnett", "Campbell", "mrabc123", "876-772-8831", "arnett.Campbell@example.com", "Manager"},
+{"400000005", "Christine", "Anuli", "strict123", "876-097-8657", "christine.anuli@example.com", "Manager"},
+{"400000006", "Christopher", "Udeagha","load654", "876-434-7573", "Christopher.Udeagha@example.com", "Manager"},
+{"400000007", "Shawn", "Storm", "music101", "876-339-2831", "shawn.storm@example.com", "Manager"}
+  };*/
 
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000001', 'Alicia', 'Graham', 'a3630b8b8f6c82d33b0695f77f915e69ed7b0c5214062f8b870219845e069d30', '8765551010', 'alicia.graham@example.com', 'Clerk');
+
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000002', 'Brian', 'Thompson', '80e9d0efe2d4f822c2ca5539dc8065b0cac985998e10929324221d8223d97db7', '8765552020', 'brian.thompson@example.com', 'Clerk');
+
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000003', 'Camille', 'Reid', '9dbd5c893b5b573a1aa909c8cade58df194310e411c590d9fb0d63431841fd67', '8765553030', 'camille.reid@example.com', 'Clerk');
+
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000004', 'Dwayne', 'Morgan', '8628edb69671fa39e5241f7fe28eec30b5394f996740826b809e5b004aa99a75', '8765554040', 'dwayne.morgan@example.com', 'Clerk');
+
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000005', 'Elena', 'Smith', 'c25618eb321e2d870c1e9aea332292b8b69c5612a7c43aa1a43f695bf319176f', '8765555050', 'elena.smith@example.com', 'Clerk');
+
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000006', 'Frank', 'Johnson', 'de6a5650ec9ac4fa8ba79e3bbf0cf9485bf316b0f381b6413d21396d9fc3d3de', '8765556060', 'frank.johnson@example.com', 'Clerk');
+
+INSERT INTO User (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('200000007', 'Georgia', 'Williams', 'ffd33f577660793809c7070ed3509cdcaf1db683996f19fb10b96ca33268a5cb', '8765557070', 'georgia.williams@example.com', 'Clerk');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000001', 'Leroy', 'Anderson', '4ec57e40ead21285bbeabada28293c89c0ca4e3f063295c96cab9ee2a155340f', '8765558080', 'leroy.anderson@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000002', 'Tanya', 'Brown', 'b33b206299938c987f3be110711f2e9a7a4b38cf78c69e8b4e371c7c079d90fc', '8765559090', 'tanya.brown@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000003', 'Marlon', 'Green', '88ac43dd0d18097780abc0de106fbb3101cf0d02d5f79e1c1dbb5e8c0c6cd18f', '8765551111', 'marlon.green@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000004', 'Kimberly', 'Davis', '3e39b51d11a428359791b7941f8d5847e0094d9a0fa5c1ead92e271b9fef3cd7', '8765552222', 'kimberly.davis@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000005', 'Orville', 'Campbell', '18f14aa1df4f1b7d7ffa9278a865b473cc58ad2c8938ad4a38048b01b0524e65', '8765553333', 'orville.campbell@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000006', 'Sasha', 'Stewart', '07c9952f5b8535d9390c7fca4cfab217237a30cea134b9fc92245952a83c14af', '8765554444', 'sasha.stewart@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('300000007', 'Jason', 'Williams', '8db93ef66696da7f01230c8694fb5d3513371f03ffa1da6ed3c15b49c3df0b6f', '8765555555', 'jason.williams@example.com', 'Driver');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000001', 'Oniel', 'Charles', '83a75bd68c35339c8ba42777a48e4c7e48065e584409d8d12bb84b8032b70248', '876-123-4567', 'oniel.charles@example.com', 'Manager');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000002', 'Oral', 'Robinson', '2aa548b6a822c7abb6ebcfc7e4893a91618a17e3b81cc610c4c6054d4f859dd9', '876-890-7654', 'oral.robinson@example.com', 'Manager');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000003', 'Rorron', 'Clarke', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', '876-752-8931', 'rorron.clarke@example.com', 'Manager');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000004', 'Arnett', 'Campbell', '5fc553f77289b67c156599f25f4382128433b02185d640cb131dcdcd3b8d0462', '876-772-8831', 'arnett.Campbell@example.com', 'Manager');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000005', 'Christine', 'Anuli', 'f465fae4257dd11b88bdad9e447349e6860bc73511f0ba7c7fb11da0d27b08c0', '876-097-8657', 'christine.anuli@example.com', 'Manager');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000006', 'Christopher', 'Udeagha', '07c9952f5b8535d9390c7fca4cfab217237a30cea134b9fc92245952a83c14af', '876-434-7573', 'Christopher.Udeagha@example.com', 'Manager');
+
+INSERT INTO users (trn, firstName, lastName, password, contactNum, email, DTYPE) VALUES ('400000007', 'Shawn', 'Storm', '4cb6c57fc5da95dc044c4ff3e0a93f73ac7f221fbbb864613efed0f7e8735f7a', '876-339-2831', 'shawn.storm@example.com', 'Manager');
 
