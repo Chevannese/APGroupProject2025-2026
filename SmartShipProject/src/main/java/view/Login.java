@@ -155,7 +155,6 @@ public class Login extends JFrame {
         
         
         signUpBtn.addActionListener(e -> {
-        	boolean exception = false;
         	if(firstNameField.getText().compareTo("") == 0 || lastNameField.getText().compareTo("") == 0 ||
         		trnField.getText().compareTo("") == 0 || contactNumField.getText().compareTo("") == 0 ||
         		emailField.getText().compareTo("") == 0)
@@ -205,19 +204,13 @@ public class Login extends JFrame {
 					{
 						JOptionPane.showMessageDialog(this,"Invalid Format for TRN field\n"
 								+ "Must be in format: 123456789");
-						
-						exception = true;
+						logger.warn("Invalid Format for TRN field\n"
+								+ "Must be in format: 123456789");
+						return;
 					}
-	        		
-
-					if(exception == false)
-					{
 
 						passText = hashString(passText);
-						
-						
-						
-						
+	
 						Client client = new Client();
 						User newUser = new Customer(trn, firstName, lastName, passText, contactNum, email);
 						
@@ -235,7 +228,7 @@ public class Login extends JFrame {
 						    cardLayout.show(loginPanel, "Login");           // go to login page
 						client.closeConnection();
 					}
-	        }
+	        
             
         });
         

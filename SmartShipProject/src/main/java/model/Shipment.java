@@ -1,5 +1,6 @@
 package model;
 
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,11 +14,9 @@ public class Shipment
 	
 	private String packageNo;
 	private String custNo;
-	private String supplierFName;
-	private String supplierLName;
+	private String supplierName;
 	private String supplierAddr;
-	private String receiverFName;
-	private String receiverLName;
+	private String receiverName;
 	private String receiverAddr;
 	private String packageName;
 	private String packageType;
@@ -34,11 +33,9 @@ public class Shipment
 	{
 		packageNo = "";
 		custNo = "";
-		supplierFName = "";
-		supplierLName = "";
+		supplierName = "";
 		supplierAddr = "";
-		receiverFName = "";
-		receiverLName = "";
+		receiverName = "";
 		receiverAddr = "";
 		packageName = "";
 		packageType = "";
@@ -52,18 +49,16 @@ public class Shipment
 		cost = 0;	
 	}
 
-	public Shipment(String packageNo, String custNo, String supplierFName, String supplierLName, String supplierAddr,
-			String receiverFName, String receiverLName, String receiverAddr, String packageName, String packageType,
+	public Shipment(String packageNo, String custNo, String supplierName, String supplierAddr,
+			String receiverName, String receiverAddr, String packageName, String packageType,
 			String status, int distance, String destination, double weight, double length, double width, double height,
 			double cost) {
 		
 		this.packageNo = packageNo;
 		this.custNo = custNo;
-		this.supplierFName = supplierFName;
-		this.supplierLName = supplierLName;
+		this.supplierName = supplierName;
 		this.supplierAddr = supplierAddr;
-		this.receiverFName = receiverFName;
-		this.receiverLName = receiverLName;
+		this.receiverName = receiverName;
 		this.receiverAddr = receiverAddr;
 		this.packageName = packageName;
 		this.packageType = packageType;
@@ -83,11 +78,9 @@ public class Shipment
 	{
 		this.packageNo = pack.packageNo;
 		this.custNo = pack.custNo;
-		this.supplierFName = pack.supplierFName;
-		this.supplierLName = pack.supplierLName;
+		this.supplierName = pack.supplierName;
 		this.supplierAddr = pack.supplierAddr;
-		this.receiverFName = pack.receiverFName;
-		this.receiverLName = pack.receiverLName;
+		this.receiverName = pack.receiverName;
 		this.receiverAddr = pack.receiverAddr;
 		this.packageName = pack.packageName;
 		this.packageType = pack.packageType;
@@ -101,6 +94,94 @@ public class Shipment
 		this.cost = pack.cost;
 	}
 	
+	public double packageTypeRate()
+	{
+		if(packageType.equals("Standard"))
+		{
+			return 1;
+		}
+		else if(packageType.equals("Express"))
+		{
+			return 1.5;
+		}
+		else if(packageType.equals("Fragile"))
+		{
+			return 1.75;
+		}
+		return 0;	
+	}
+	
+	public double shippingZoneRate(String input)
+	{
+		if(input.equals("Local"))
+		{
+			return 1;
+		}
+		else if(input.equals("International"))
+		{
+			return 1.5;
+		}
+		return 0;
+	}
+	
+	 public double calculateShippingCost() {
+
+		double ratePerPound = 2.0;  // $2 per lb
+		double ratePerZone = 0.10;    // $0.10 per zone #
+		
+		double baseCost = (weight * ratePerPound)
+		+ (distance * ratePerZone);
+		
+		return cost = 150 * baseCost * packageTypeRate();
+		}
+
+	public String getPackageNo() {
+		return packageNo;
+	}
+
+	public void setPackageNo(String packageNo) {
+		this.packageNo = packageNo;
+	}
+
+	public String getCustNo() {
+		return custNo;
+	}
+
+	public void setCustNo(String custNo) {
+		this.custNo = custNo;
+	}
+
+	public String getSupplierName() {
+		return supplierName;
+	}
+
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+	}
+
+	public String getSupplierAddr() {
+		return supplierAddr;
+	}
+
+	public void setSupplierAddr(String supplierAddr) {
+		this.supplierAddr = supplierAddr;
+	}
+
+	public String getReceiverName() {
+		return receiverName;
+	}
+
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
+	}
+
+	public String getReceiverAddr() {
+		return receiverAddr;
+	}
+
+	public void setReceiverAddr(String receiverAddr) {
+		this.receiverAddr = receiverAddr;
+	}
 
 	public String getPackageName() {
 		return packageName;
@@ -116,6 +197,30 @@ public class Shipment
 
 	public void setPackageType(String packageType) {
 		this.packageType = packageType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getDistance() {
+		return distance;
+	}
+
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
 	}
 
 	public double getWeight() {
@@ -150,14 +255,6 @@ public class Shipment
 		this.height = height;
 	}
 
-	public int getDistance() {
-		return distance;
-	}
-
-	public void setDistance(int distance) {
-		this.distance = distance;
-	}
-
 	public double getCost() {
 		return cost;
 	}
@@ -166,112 +263,8 @@ public class Shipment
 		this.cost = cost;
 	}
 
-	public String getDestination() {
-		return destination;
-	}
-
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
-
-	public String getPackageNo() {
-		return packageNo;
-	}
-
-	public void setPackageNo(String packageNo) {
-		this.packageNo = packageNo;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getCustNo() {
-		return custNo;
-	}
-
 	
-
-	public String getsupplierLName() {
-		return supplierLName;
-	}
-
-	public void setsupplierLName(String supplierLName) {
-		this.supplierLName = supplierLName;
-	}
-
-	public String getSupplierAddr() {
-		return supplierAddr;
-	}
-
-	public void setSupplierAddr(String supplierAddr) {
-		this.supplierAddr = supplierAddr;
-	}
-
-	public String getreceiverFName() {
-		return receiverFName;
-	}
-
-	public void setreceiverFName(String receiverFName) {
-		this.receiverFName = receiverFName;
-	}
-
-	public String getreceiverLName() {
-		return receiverLName;
-	}
-
-	public void setreceiverLName(String receiverLName) {
-		this.receiverLName = receiverLName;
-	}
-
-	public String getReceiverAddr() {
-		return receiverAddr;
-	}
-
-	public void setReceiverAddr(String receiverAddr) {
-		this.receiverAddr = receiverAddr;
-	}
-
-	public String getSupplierFName() {
-		return supplierFName;
-	}
-
-	public void setSupplierFName(String supplierFName) {
-		this.supplierFName = supplierFName;
-	}
-
-	public String getSupplierLName() {
-		return supplierLName;
-	}
-
-	public void setSupplierLName(String supplierLName) {
-		this.supplierLName = supplierLName;
-	}
-
-	public String getReceiverFName() {
-		return receiverFName;
-	}
-
-	public void setReceiverFName(String receiverFName) {
-		this.receiverFName = receiverFName;
-	}
-
-	public String getReceiverLName() {
-		return receiverLName;
-	}
-
-	public void setReceiverLName(String receiverLName) {
-		this.receiverLName = receiverLName;
-	}
-
-	public void setCustNo(String custNo) {
-		this.custNo = custNo;
-	}
-
+	
 
 		
 	
