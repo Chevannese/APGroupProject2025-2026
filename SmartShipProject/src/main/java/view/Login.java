@@ -90,7 +90,7 @@ public class Login extends JFrame {
             	return;
             }
             
-            controller.login(loggedInUser.getTrn(),loggedInUser.getPassword());
+            controller.login(loggedInUser);
 			
              
         });

@@ -32,19 +32,9 @@ public class CustomerView extends JFrame
 	private JMenu account, nav;
 	private JMenuItem track,order,bill,home,logout,info;
 	
-	public CustomerView(String trn)
+	public CustomerView(User loggedInUser)
     {
-		 Session session = null;
-			try
-			{
-				session = Database.getSessionFactory().openSession();
-				
-				  loggedInUser = session.find(User.class, trn);
-			}catch(Exception e)
-			{
-			    session.getTransaction().rollback();
-				logger.error(e.getMessage());
-			}
+		
 			
 			setTitle("Customer System");
 			setSize(1000,600);
