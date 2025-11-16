@@ -38,6 +38,7 @@ public class CustomerView extends JFrame
 	private int distance;
     private boolean zoneChance = true;
     private String senderName, senderAddr, receiverName, receiverAddr, shippingLocation;
+    private Shipment newShipment;ButtonGroup btnGrpPackages;
 	private ArrayList<Shipment> shipments;
 
 
@@ -110,7 +111,7 @@ public class CustomerView extends JFrame
   
     	order.addActionListener(e ->{
      		 	
- 				cardLayout.show(customerPanel, "ShipmentForm1");
+ 				cardLayout.show(customerPanel, "ShipmentForm2");
           });
     	
     	home.addActionListener(e ->{
@@ -130,12 +131,12 @@ public class CustomerView extends JFrame
  		JLabel lblSenderName = new JLabel("Sender Name: ");
  		
  		JTextField senderNameTxt = new JTextField(30);
- 		JLabel lblSenderAddr = new JLabel("Shipping From: ");
+ 		JLabel lblSenderAddr = new JLabel("Sender Address: ");
  		JTextField senderAddrTxt = new JTextField(50);
  		
  		JLabel lblReceiverSection = new JLabel("Receiver Information Section",SwingConstants.CENTER);
  		lblReceiverSection.setFont(new Font("Arial", Font.BOLD, 20));
- 		JLabel lblReceiverAddr = new JLabel("Shipping To: ");
+ 		JLabel lblReceiverAddr = new JLabel("Receiver Address: ");
  		JTextField receiverAddrTxt = new JTextField(50);
  		JLabel lblReceiverName = new JLabel("Receiver Name:");
 		JTextField receiverNameTxt = new JTextField(30);
@@ -173,7 +174,7 @@ public class CustomerView extends JFrame
 		JRadioButton rdbFragile = new JRadioButton("Fragile");
 		rdbFragile.setActionCommand("Fragile");
 		
-		ButtonGroup btnGrpPackages = new ButtonGroup();
+		btnGrpPackages = new ButtonGroup();
 		btnGrpPackages.add(rdbStandard);
 		btnGrpPackages.add(rdbExpress);
 		btnGrpPackages.add(rdbFragile);
@@ -204,7 +205,9 @@ public class CustomerView extends JFrame
 		JButton checkCartBtn = new JButton("Check Cart");
 		JButton clearCartBtn = new JButton("Clear Cart");
 		JButton delPackageBtn = new JButton("Delete Package");
-		
+		JButton goToOrderPage3Btn = new JButton("Next");
+		JButton prevOrderPage1Btn = new JButton("Previous");
+		JButton clearOrderPage2Btn = new JButton("Clear Form");
 		shipments = new ArrayList<Shipment>();
  		
  		
@@ -238,8 +241,8 @@ public class CustomerView extends JFrame
 		addToGridBag(orderPage1,zoneTxt,gc2,1,8,1,1);
 		addToGridBag(orderPage1,zoneBtn,gc2,2,8,1,1);
 
-		addToGridBag(orderPage1,goToOrderPage2Btn, gc2,0,9,1,1);
-		addToGridBag(orderPage1,clearOrderPage1Btn,gc2,1,9,1,1);
+		addToGridBag(orderPage1,goToOrderPage2Btn, gc2,1,9,1,1);
+		addToGridBag(orderPage1,clearOrderPage1Btn,gc2,2,9,1,1);
 		
 		zoneBtn.addActionListener( e->
 		{
@@ -284,19 +287,8 @@ public class CustomerView extends JFrame
 					receiverAddr = receiverAddrTxt.getText();
 					shippingLocation = btnGrpLocation.getSelection().getActionCommand();
 					distance = Integer.parseInt(zoneTxt.getText());
-					
-					
-		
-					
-		
-		
 		                 // show the value of currentcard
-		                 cardLayout.show(customerPanel, "ShipmentForm2");
-					
-					
-				
-				
-				
+		            cardLayout.show(customerPanel, "ShipmentForm2");
 			}
 		
 		});
@@ -365,7 +357,11 @@ public class CustomerView extends JFrame
 		addToGridBag(orderPage2,checkCartBtn,gc3,2,8,1,1);
 		addToGridBag(orderPage2,delPackageBtn,gc3,1,9,1,1);
 		addToGridBag(orderPage2,clearCartBtn,gc3,2,9,1,1);
+		addToGridBag(orderPage2,goToOrderPage3Btn,gc3,1,10,1,1);
+		addToGridBag(orderPage2,prevOrderPage1Btn,gc3,2,10,1,1);
+		addToGridBag(orderPage2,clearOrderPage2Btn,gc3,3,10,1,1);
 
+		
 		
 		addToCartBtn.addActionListener(e -> {
 			
@@ -375,134 +371,181 @@ public class CustomerView extends JFrame
 			boolean flagF = rdbFragile.isSelected();
 			
 			
-			
-			if(packageNameTxt.getText().compareTo("") == 0 || weightTxt.getText().compareTo("") == 0
-					|| lengthTxt.getText().compareTo("") == 0 ||
-					widthTxt.getText().compareTo("") == 0 ||
-					heightTxt.getText().compareTo("") == 0 
-				|| flagS == false && flagE == false && flagF == false)
+			try
 			{
-					JOptionPane.showMessageDialog(customerPanel,
-			        		 "One or two fields were not filled");
-			}
-			else if (!weightTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
-					!lengthTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
-					!widthTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
-					!heightTxt.getText().matches("^\\d+(\\.\\d+)?$")) 
+
+				if(packageNameTxt.getText().compareTo("") == 0 || weightTxt.getText().compareTo("") == 0
+						|| lengthTxt.getText().compareTo("") == 0 ||
+						widthTxt.getText().compareTo("") == 0 ||
+						heightTxt.getText().compareTo("") == 0 
+					|| flagS == false && flagE == false && flagF == false)
+				{
+						JOptionPane.showMessageDialog(customerPanel,
+				        		 "One or two fields were not filled");
+				}
+				else if (!weightTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
+						!lengthTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
+						!widthTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
+						!heightTxt.getText().matches("^\\d+(\\.\\d+)?$")) 
+				{
+					logger.warn("Invalid number format. Must be like 3 or 3.14");
+				    JOptionPane.showMessageDialog(customerPanel,"Invalid number format. Must be like 3 or 3.14");
+				    return;
+				}
+				else 
+				{
+					String packageType = btnGrpPackages.getSelection().getActionCommand();
+					String packageName = packageNameTxt.getText();
+					double weight = Double.parseDouble(weightTxt.getText());
+					double length = Double.parseDouble(lengthTxt.getText());
+					double width = Double.parseDouble(widthTxt.getText());
+					double height = Double.parseDouble(heightTxt.getText());
+					
+					if(weight <= 0 || length <=0 || width <=0 || height <=0)
+					{
+						logger.warn("No dimensions should be zero or a negative number");
+						JOptionPane.showMessageDialog(customerPanel,"No dimensions should be zero or a negative number");
+						return;
+					}
+					
+					if( (currentWeight + weight) > weightCap)
+					{
+						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the weight limit\n"
+								+ "Weight Limit: " + weightCap + "\nCurrent Weight: " + currentWeight);
+						return;
+					}
+					
+					if((currentQuantity + 1) > quantityCap)
+					{
+						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the quantity limit\n"
+								+ "Quantity Limit: " + quantityCap + "\nCurrent Quantity: " + currentQuantity);
+						return;
+					}
+					
+					if(length > lengthCap)
+					{
+						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the length limit\n"
+								+ "Quantity Limit: " + lengthCap);
+						return;
+					}
+					if(width > widthCap)
+					{
+						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the width limit\n"
+								+ "Width Limit: " + lengthCap);
+						return;
+					}
+					
+					if(height > heightCap)
+					{
+						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the height limit\n"
+								+ "Height Limit: " + heightCap);
+						return;
+					}
+					
+					currentWeight += weight;
+					currentQuantity += 1;
+					
+					newShipment = new Shipment();
+					
+					newShipment = new Shipment(String.valueOf(currentQuantity) , loggedInUser.getTrn(), 
+							senderName, senderAddr, 
+							receiverName, receiverAddr, 
+							packageName, packageType, 
+							"Pending",  distance, "" + receiverAddr + " Zone#" + zoneTxt.getText(), 
+							weight, length,width,height, 0);
+					newShipment.calculateShippingCost();
+					
+					
+					JOptionPane.showMessageDialog (customerPanel, "Package Number: " + newShipment.getPackageNo() +
+							"\nPackage Name: " + newShipment.getPackageName() +
+							"\nType: " + newShipment.getPackageType() +
+							"\nStatus: " + newShipment.getStatus() +
+							"\nWeight: " + newShipment.getWeight() + " lbs" +
+							"\nDimensions: " + newShipment.getLength() + " '' " + "x " + newShipment.getWidth() + " '' " + "x " + newShipment.getHeight() + " '' " + 
+							"\nCost: $" + newShipment.getCost()
+							);	
+					shipments.add(newShipment);
+				}
+			}catch(NumberFormatException nf)
 			{
 			    logger.warn("Invalid number format. Must be like 3 or 3.14");
-			    throw new NumberFormatException("Invalid number format. Must be like 3 or 3.14");
-			}
-			else 
+			    JOptionPane.showMessageDialog(customerPanel,"Invalid number format. Must be like 3 or 3.14");
+			    return;
+			}catch(Exception u)
 			{
-				String packageType = btnGrpPackages.getSelection().getActionCommand();
-				String packageName = packageNameTxt.getText();
-				double weight = Double.parseDouble(weightTxt.getText());
-				double length = Double.parseDouble(lengthTxt.getText());
-				double width = Double.parseDouble(widthTxt.getText());
-				double height = Double.parseDouble(heightTxt.getText());
-				
-				
-				
-				if( (currentWeight + weight) > weightCap)
-				{
-					JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the weight limit\n"
-							+ "Weight Limit: " + weightCap + "\nCurrent Weight: " + currentWeight);
-					return;
-				}
-				
-				if((currentQuantity + 1) > quantityCap)
-				{
-					JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the quantity limit\n"
-							+ "Quantity Limit: " + quantityCap + "\nCurrent Quantity: " + currentQuantity);
-					return;
-				}
-				
-				if(length > lengthCap)
-				{
-					JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the length limit\n"
-							+ "Quantity Limit: " + lengthCap);
-					return;
-				}
-				if(width > widthCap)
-				{
-					JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the width limit\n"
-							+ "Width Limit: " + lengthCap);
-					return;
-				}
-				
-				if(height > heightCap)
-				{
-					JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the height limit\n"
-							+ "Height Limit: " + heightCap);
-					return;
-				}
-				
-				currentWeight += weight;
-				currentQuantity += 1;
-				
-				Shipment newShipment = new Shipment();
-				
-				newShipment = new Shipment("PACK#" + currentQuantity, loggedInUser.getTrn(), 
-						senderName, senderAddr, 
-						receiverName, receiverAddr, 
-						packageName, packageType, 
-						"Pending",  distance, "" + receiverAddr + " Zone " + zoneTxt.getText(), 
-						weight, length,width,height, 0);
-				newShipment.calculateShippingCost();
-				
-				
-				JOptionPane.showMessageDialog (customerPanel, "Package Number: " + newShipment.getPackageNo() +
-						"\nPackage Name: " + newShipment.getPackageName() +
-						"\nType: " + newShipment.getPackageType() +
-						"\nStatus: " + newShipment.getStatus() +
-						"\nWeight: " + newShipment.getWeight() + " lbs" +
-						"\nDimensions: " + newShipment.getLength() + " '' " + "x " + newShipment.getWidth() + " '' " + "x " + newShipment.getHeight() + " '' " + 
-						"\nCost: $" + newShipment.getCost()
-						);	
-				shipments.add(newShipment);
-
-				
+				logger.error(u.getMessage());
 			}
-			
-
-			
-			
 		});
 		
-		//addToGridBag(orderPage2,goToOrderBtn3,gc3,0,9,1,1);
-		//addToGridBag(orderPage2,prevOrderBtn1,gc,1,9,1,1);
-	
 		
 
-/*nextShipBtn2.addActionListener(new ActionListener() {
-
-	@Override
-	public void actionPerformed(ActionEvent e) 
-	{
-		if(exception == false)
+		goToOrderPage3Btn.addActionListener(e -> 
 		{
-
-
-             // show the value of currentcard
-             cardLayout.show(shipmentPanel, "3");
-		}
-	}
 	
-});
+	            if(newShipment == null)
+	            {
+	            	JOptionPane.showMessageDialog(customerPanel, "No items were added to list.\nPlease add item/s in order to proceed");
+	            	logger.warn("No items were added to list.\nPlease add item(s) in order to proceed");
+	            	return;
+	            }
+	   	
+	             cardLayout.show(customerPanel, "ShipmentForm3");
+		});
 
 
+		prevOrderPage1Btn.addActionListener(e ->
+		 {
+		    cardLayout.show(customerPanel, "ShipmentForm1"); 
+		 });
+		
+		clearCartBtn.addActionListener( e->{
+			
+			shipments = null;
+			shipments = new ArrayList<Shipment>();
+			currentQuantity = 0;
+			currentWeight = 0;
 
- // add previousbtn in ActionListener
- prevShipBtn2.addActionListener(new ActionListener() 
- {
-     public void actionPerformed(ActionEvent arg0)
-     {	            
+		});
+		
+		
 
-             cardLayout.show(shipmentPanel, "1");
-         
-     }
- });*/
+		checkCartBtn.addActionListener( e->{
+			if(shipments == null)
+			{
+				JOptionPane.showMessageDialog(customerPanel,"Item list is currently empty", "Check Cart", JOptionPane.INFORMATION_MESSAGE);
+			}
+			StringBuilder sb = new StringBuilder();
+
+			for (Object item : shipments) {
+			    sb.append(item.toString()).append("\n");
+			}
+			
+			JOptionPane.showMessageDialog(customerPanel, sb.toString(), "Check Cart", JOptionPane.INFORMATION_MESSAGE);
+		});
+		
+		clearOrderPage2Btn.addActionListener(e -> {
+			
+			btnGrpPackages.clearSelection();
+			packageNameTxt.setText("");
+			weightTxt.setText("");
+			lengthTxt.setText("");
+			widthTxt.setText("");
+			heightTxt.setText("");			
+		});
+		
+		delPackageBtn.addActionListener(e ->{
+			
+			if(shipments == null)
+			{
+				JOptionPane.showMessageDialog(customerPanel, "Item list is empty\nUnable to delete item", "Delete Package",JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+				
+			 String num = JOptionPane.showInputDialog(customerPanel,"Enter the package number to delete:");
+			 shipments.removeIf(y -> y.getPackageNo().equals(num));
+
+		});
+		
 		
 		
 		
