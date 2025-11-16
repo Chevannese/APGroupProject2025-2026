@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.*;
@@ -26,7 +27,7 @@ public class CustomerView extends JFrame
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(CustomerView.class);
 	private GridBagConstraints gc;
-	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3;
+	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3, invoicePage;
 	private CardLayout cardLayout;
 	private JMenu account, nav;
 	private JMenuItem track,order,bill,home,logout,info;
@@ -34,12 +35,15 @@ public class CustomerView extends JFrame
 	private final double weightCap =  2600, lengthCap = 250, widthCap = 100,heightCap = 115;
 	private double currentWeight = 0;
 	private final int quantityCap = 20;
-	private int currentQuantity = 0; 
+	private int currentQuantity = 0, packageID = 0; 
+
 	private int distance;
     private boolean zoneChance = true;
     private String senderName, senderAddr, receiverName, receiverAddr, shippingLocation;
     private Shipment newShipment;ButtonGroup btnGrpPackages;
 	private ArrayList<Shipment> shipments;
+	private JTable table;
+	private JScrollPane scrollPane;
 
 
 	
@@ -48,7 +52,7 @@ public class CustomerView extends JFrame
 		
 			
 			setTitle("Customer System");
-			setSize(1000,600);
+			setSize(1000,650);
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 	        setLocationRelativeTo(null);
 	    
@@ -62,11 +66,13 @@ public class CustomerView extends JFrame
 		 orderPage1 = new JPanel(new GridBagLayout());
 		 orderPage2 = new JPanel(new GridBagLayout());
 		 orderPage3 = new JPanel(new GridBagLayout());
+		 invoicePage = new JPanel(new GridBagLayout());
 		
 		customerPanel.add(menu, "Menu");
 		customerPanel.add(orderPage1,"ShipmentForm1");
 		customerPanel.add(orderPage2,"ShipmentForm2");
 		customerPanel.add(orderPage3, "ShipmentForm3");
+		customerPanel.add(invoicePage, "InvoicePage");
 		    	   
 		add(customerPanel);
     	cardLayout.show(customerPanel, "Menu");
@@ -209,7 +215,21 @@ public class CustomerView extends JFrame
 		JButton prevOrderPage1Btn = new JButton("Previous");
 		JButton clearOrderPage2Btn = new JButton("Clear Form");
 		shipments = new ArrayList<Shipment>();
+		
+		JLabel lblCartSection = new JLabel("Cart Detail Section", SwingConstants.CENTER);
+		lblCartSection.setFont(new Font("Arial", Font.BOLD,20));
+		JLabel lblPaymentMethod = new JLabel("Payment Method:");
+		JRadioButton rdbCash = new JRadioButton("Cash");
+		JRadioButton rdbCard = new JRadioButton("Card");
+		ButtonGroup btnGrpPayment = new ButtonGroup();
+		btnGrpPayment.add(rdbCash);
+		btnGrpPayment.add(rdbCard);
+		JButton checkoutBtn = new JButton("Checkout");
+		JButton prevOrderPage2Btn = new JButton("Back");
+		JButton cancelOrderBtn = new JButton("Cancel Order");
  		
+ 		table = new JTable();
+ 		scrollPane = new JScrollPane();
  		
  		GridBagConstraints gc2 = new GridBagConstraints();
  		gc2 = new GridBagConstraints();
@@ -362,6 +382,13 @@ public class CustomerView extends JFrame
 		addToGridBag(orderPage2,clearOrderPage2Btn,gc3,3,10,1,1);
 
 		
+		GridBagConstraints gc4 = new GridBagConstraints();
+		
+		
+
+		
+		
+		
 		
 		addToCartBtn.addActionListener(e -> {
 			
@@ -432,6 +459,8 @@ public class CustomerView extends JFrame
 					{
 						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the width limit\n"
 								+ "Width Limit: " + lengthCap);
+						logger.warn("Failed to add item\n Adding this item would exceed the width limit. "
+								+ "Width Limit: " + lengthCap);
 						return;
 					}
 					
@@ -439,15 +468,18 @@ public class CustomerView extends JFrame
 					{
 						JOptionPane.showMessageDialog(customerPanel,"Failed to add item\n Adding this item would exceed the height limit\n"
 								+ "Height Limit: " + heightCap);
+						logger.warn("Failed to add item\n Adding this item would exceed the height limit. "
+								+ "Height Limit: " + heightCap);
 						return;
 					}
 					
 					currentWeight += weight;
 					currentQuantity += 1;
+					packageID += 1;
 					
 					newShipment = new Shipment();
 					
-					newShipment = new Shipment(String.valueOf(currentQuantity) , loggedInUser.getTrn(), 
+					newShipment = new Shipment(String.valueOf(packageID) , loggedInUser.getTrn(), 
 							senderName, senderAddr, 
 							receiverName, receiverAddr, 
 							packageName, packageType, 
@@ -481,15 +513,70 @@ public class CustomerView extends JFrame
 
 		goToOrderPage3Btn.addActionListener(e -> 
 		{
-	
-	            if(newShipment == null)
-	            {
-	            	JOptionPane.showMessageDialog(customerPanel, "No items were added to list.\nPlease add item/s in order to proceed");
-	            	logger.warn("No items were added to list.\nPlease add item(s) in order to proceed");
+			
+				try
+				{
+					if(newShipment == null || shipments.get(0).getPackageNo().equals(""))
+		            {
+		            	JOptionPane.showMessageDialog(customerPanel, "No items were added to list.\nPlease add item/s in order to proceed");
+		            	logger.warn("No items were added to list.\nPlease add item(s) in order to proceed");
+		            	return;
+		            }
+				}catch(IndexOutOfBoundsException in)
+				{
+					JOptionPane.showMessageDialog(customerPanel, "No items were added to list.\nPlease add item/s in order to proceed");
+	            	logger.warn("No items were added to list.\nPlease add item(s) in order to proceed: " + in.getMessage());
 	            	return;
-	            }
-	   	
-	             cardLayout.show(customerPanel, "ShipmentForm3");
+				}
+	            
+	            
+	            table = new JTable();
+	            currentQuantity = shipments.size();
+	            String[][] data = new String [currentQuantity][4];
+	    		String[] columnNames = {"ItemID", "Name", "Price", "Weight"};
+	    		
+	    		
+	    		for (int i = 0; i < data.length; i++) {
+
+	    		    Shipment s = shipments.get(i);
+
+	    		    data[i][0] = s.getPackageNo();
+	    		    data[i][1] = s.getPackageName();
+	    		    data[i][2] = "$"+ String.valueOf(s.getCost());
+	    		    data[i][3] = String.valueOf(s.getWeight());
+	    		}
+	    		
+	    		for (int i = 0; i < data.length; i++) {
+	    		   logger.info( Arrays.toString(data[i]) + "was added");
+	    		}
+	    		
+	    		table = new JTable(data, columnNames);
+	    		scrollPane = new JScrollPane(table);
+	    		
+	    		orderPage3.removeAll();
+	    		
+	    		gc4.insets = new Insets(10,10,10,10);
+	    		gc4.anchor = GridBagConstraints.CENTER;
+	            gc4.fill = GridBagConstraints.HORIZONTAL;
+	            
+	    		addToGridBag(orderPage3,lblCartSection,gc4,0,0,3,1);
+	            
+	    		addToGridBag(orderPage3,checkoutBtn,gc4,0,1,1,1);
+	    		addToGridBag(orderPage3,prevOrderPage2Btn,gc4,1,1,1,1);
+	    		addToGridBag(orderPage3,cancelOrderBtn,gc4,2,1,1,1);
+
+	    		addToGridBag(orderPage3,lblPaymentMethod,gc4,0,2,1,1);
+	    		addToGridBag(orderPage3,rdbCash,gc4,1,2,1,1);
+	    		addToGridBag(orderPage3,rdbCard,gc4,2,2,1,1);
+	    		gc4.fill = GridBagConstraints.BOTH; 
+
+	    		addToGridBag(orderPage3,scrollPane,gc4,0,3,1,1);
+	    		
+	    		
+	    	    orderPage3.revalidate();
+	    	    orderPage3.repaint();
+
+	            cardLayout.show(customerPanel, "ShipmentForm3");
 		});
 
 
@@ -542,14 +629,60 @@ public class CustomerView extends JFrame
 			}
 				
 			 String num = JOptionPane.showInputDialog(customerPanel,"Enter the package number to delete:");
+			 shipments.forEach(u ->{
+				 if(u.getPackageNo().equals(num))
+				 {
+					 currentWeight -= u.getWeight();
+					 return;
+				 }
+			 });
 			 shipments.removeIf(y -> y.getPackageNo().equals(num));
 
+			 
+			 currentQuantity -= 1;
 		});
 		
 		
 		
+		checkoutBtn.addActionListener(e->{
+			
+			boolean flagCard = rdbCard.isSelected();
+			boolean flagCash = rdbCash.isSelected();
+
+			
+			if(flagCard == false && flagCash == false)
+			{
+				JOptionPane.showMessageDialog(customerPanel, "Payment method has not been select\nPlease choose either cash or card to proceed with order", "Check Out",JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog(customerPanel, "Are you sure you want to confirm your order?\nThis action cannot be undone once you confirm","Checkout Order", dialogButton);
+			 if(dialogResult == 0) {
+				 JOptionPane.showMessageDialog(customerPanel, "Cofirmation Successful", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
+					cardLayout.show(customerPanel, "InvoicePage");
+			 }
+			
+			
+		});
 		
- 		
+		prevOrderPage2Btn.addActionListener(e->{
+			
+			cardLayout.show(customerPanel, "ShipmentForm2");
+		});
+		
+		cancelOrderBtn.addActionListener(e->{
+			int dialogButton = JOptionPane.YES_NO_OPTION;
+			int dialogResult = JOptionPane.showConfirmDialog(customerPanel, "Are you sure you want to cancel your order?\nThis cannot be undone once you confirm","Cancel Order", dialogButton);
+			 if(dialogResult == 0) {
+				 JOptionPane.showMessageDialog(customerPanel, "All shipment items have been cancelled", "Cancel Order",JOptionPane.INFORMATION_MESSAGE);
+				 clearOrderPage1Btn.doClick();
+				 clearOrderPage2Btn.doClick();
+				 clearCartBtn.doClick();
+				 cardLayout.show(customerPanel, "Menu");
+				} 
+		});
+		
+
     	 
          this.setVisible(true); 	 
     }
