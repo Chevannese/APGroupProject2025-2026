@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import model.Shipment;
 import model.User;
 
 public class Server {
@@ -67,6 +68,7 @@ public class Server {
             String action = (String) in.readObject();
             logger.info("Action received: " + action);
 
+            
             if ("Create Account".equals(action)) 
             {
                 User user = (User) in.readObject();
@@ -147,6 +149,27 @@ public class Server {
                 	 logger.error(e.getMessage());
                  }
                  }
+            else if("Request Order".equalsIgnoreCase(action))
+            {
+            	Shipment newShipment = (Shipment)in.readObject();
+            	   try (Session session = getSessionFactory().openSession()) {
+                       session.beginTransaction();
+                       session.persist(newShipment);
+                       session.getTransaction().commit();
+                       logger.info("New user created with TRN: " + newShipment.getPackageNo());
+                       out.writeObject("done");
+            	   }catch(Exception e)
+            	   {
+            		   logger.error("Error - Database error: " + e.getMessage(), e);
+                       out.writeObject("error-database-issue");
+                       out.flush();
+            	   }
+            	
+            }else if("Next".equalsIgnoreCase(action))
+            {
+            	out.writeObject("done");
+            	out.flush();
+            }
 
         } catch (Exception e) {
             logger.error("Client handling error: " + e.getMessage(), e);
