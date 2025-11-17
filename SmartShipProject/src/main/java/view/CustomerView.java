@@ -8,16 +8,19 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 
+import model.Database;
 import model.Shipment;
 import model.User;
+import network.Client;
+import network.Server;
 
 public class CustomerView extends JFrame 
 {
@@ -44,6 +47,8 @@ public class CustomerView extends JFrame
 	private ArrayList<Shipment> shipments;
 	private JTable table;
 	private JScrollPane scrollPane;
+	private Client client = new Client();
+
 
 
 	
@@ -126,8 +131,9 @@ public class CustomerView extends JFrame
       });
     	
     	logout.addActionListener(e ->{
- 		 	
-    		this.dispose();
+            logger.info("" + loggedInUser.getTrn() + "has successfully logged out");
+    		client.closeConnection();
+            this.dispose();
     		new Login();
     	});
     	
@@ -479,7 +485,7 @@ public class CustomerView extends JFrame
 					
 					newShipment = new Shipment();
 					
-					newShipment = new Shipment(String.valueOf(packageID) , loggedInUser.getTrn(), 
+					newShipment = new Shipment(packageID , loggedInUser.getTrn(), 
 							senderName, senderAddr, 
 							receiverName, receiverAddr, 
 							packageName, packageType, 
@@ -497,6 +503,7 @@ public class CustomerView extends JFrame
 							"\nCost: $" + newShipment.getCost()
 							);	
 					shipments.add(newShipment);
+					logger.info("Shipment item added");
 				}
 			}catch(NumberFormatException nf)
 			{
@@ -516,16 +523,16 @@ public class CustomerView extends JFrame
 			
 				try
 				{
-					if(newShipment == null || shipments.get(0).getPackageNo().equals(""))
+					if(newShipment == null || shipments.get(0).getPackageName().equals(""))
 		            {
 		            	JOptionPane.showMessageDialog(customerPanel, "No items were added to list.\nPlease add item/s in order to proceed");
-		            	logger.warn("No items were added to list.\nPlease add item(s) in order to proceed");
+		            	logger.warn("No items were added to list. Please add item(s) in order to proceed");
 		            	return;
 		            }
 				}catch(IndexOutOfBoundsException in)
 				{
 					JOptionPane.showMessageDialog(customerPanel, "No items were added to list.\nPlease add item/s in order to proceed");
-	            	logger.warn("No items were added to list.\nPlease add item(s) in order to proceed: " + in.getMessage());
+	            	logger.warn("No items were added to list. Please add item(s) in order to proceed: " + in.getMessage());
 	            	return;
 				}
 	            
@@ -540,14 +547,10 @@ public class CustomerView extends JFrame
 
 	    		    Shipment s = shipments.get(i);
 
-	    		    data[i][0] = s.getPackageNo();
+	    		    data[i][0] = String.valueOf(s.getPackageNo());
 	    		    data[i][1] = s.getPackageName();
 	    		    data[i][2] = "$"+ String.valueOf(s.getCost());
 	    		    data[i][3] = String.valueOf(s.getWeight());
-	    		}
-	    		
-	    		for (int i = 0; i < data.length; i++) {
-	    		   logger.info( Arrays.toString(data[i]) + "was added");
 	    		}
 	    		
 	    		table = new JTable(data, columnNames);
@@ -577,12 +580,15 @@ public class CustomerView extends JFrame
 	    	    orderPage3.repaint();
 
 	            cardLayout.show(customerPanel, "ShipmentForm3");
+	            logger.info("Customer went to page 3 of Shipment Form");
+	            
 		});
 
 
 		prevOrderPage1Btn.addActionListener(e ->
 		 {
 		    cardLayout.show(customerPanel, "ShipmentForm1"); 
+            logger.info("Customer went to page 1 of Shipment Form");
 		 });
 		
 		clearCartBtn.addActionListener( e->{
@@ -591,6 +597,7 @@ public class CustomerView extends JFrame
 			shipments = new ArrayList<Shipment>();
 			currentQuantity = 0;
 			currentWeight = 0;
+			logger.info("Item list has been cleared");
 
 		});
 		
@@ -608,6 +615,8 @@ public class CustomerView extends JFrame
 			}
 			
 			JOptionPane.showMessageDialog(customerPanel, sb.toString(), "Check Cart", JOptionPane.INFORMATION_MESSAGE);
+            logger.info("Customer checked cart");
+
 		});
 		
 		clearOrderPage2Btn.addActionListener(e -> {
@@ -630,16 +639,17 @@ public class CustomerView extends JFrame
 				
 			 String num = JOptionPane.showInputDialog(customerPanel,"Enter the package number to delete:");
 			 shipments.forEach(u ->{
-				 if(u.getPackageNo().equals(num))
+				 if(u.getPackageNo() == Integer.parseInt(num))
 				 {
 					 currentWeight -= u.getWeight();
 					 return;
 				 }
 			 });
-			 shipments.removeIf(y -> y.getPackageNo().equals(num));
+			 shipments.removeIf(y -> y.getPackageNo() == Integer.parseInt(num));
 
 			 
 			 currentQuantity -= 1;
+			 logger.info("Shipment Item Deleted");
 		});
 		
 		
@@ -653,16 +663,25 @@ public class CustomerView extends JFrame
 			if(flagCard == false && flagCash == false)
 			{
 				JOptionPane.showMessageDialog(customerPanel, "Payment method has not been select\nPlease choose either cash or card to proceed with order", "Check Out",JOptionPane.WARNING_MESSAGE);
+				logger.warn("Payment method has not been select\nPlease choose either cash or card to proceed with order");
 				return;
 			}
 			int dialogButton = JOptionPane.YES_NO_OPTION;
 			int dialogResult = JOptionPane.showConfirmDialog(customerPanel, "Are you sure you want to confirm your order?\nThis action cannot be undone once you confirm","Checkout Order", dialogButton);
 			 if(dialogResult == 0) {
-				 JOptionPane.showMessageDialog(customerPanel, "Cofirmation Successful", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
-					cardLayout.show(customerPanel, "InvoicePage");
+				 JOptionPane.showMessageDialog(customerPanel, "Generating Invoice...", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
+					logger.info("Generating Invoice");
+
+				 	shipments.forEach(g -> 
+				 	{
+				 		g.setPackageNo(null);
+				 		boolean task =  client.requestOrder(g);
+				 	});
+				 	
+					 JOptionPane.showMessageDialog(customerPanel, "Successfully created Invoices\nPlease check the menu - [Manage Bills]", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
+					 cancelOrderBtn.doClick();
+					 cardLayout.show(customerPanel, "Menu");
 			 }
-			
-			
 		});
 		
 		prevOrderPage2Btn.addActionListener(e->{
@@ -681,9 +700,6 @@ public class CustomerView extends JFrame
 				 cardLayout.show(customerPanel, "Menu");
 				} 
 		});
-		
-
-    	 
          this.setVisible(true); 	 
     }
 	
@@ -692,13 +708,13 @@ public class CustomerView extends JFrame
    	{
 
    		if (panel == null ) {
-   		        System.err.println("Panel is null!");
+   		        logger.error("addToGridBag - Panel is null!");
    		        return;
    		    }
    		
    		if(component == null)
    		{
-   			logger.error("Component is null!");
+   			logger.error("addToGridBag - Component is null!");
    	        return;
    		}
    			
@@ -713,6 +729,12 @@ public class CustomerView extends JFrame
    	        
    	        panel.add(component,gbc);
        }
+	
+	private void populateInvoice()
+	{
+		GridBagConstraints gc4 = new GridBagConstraints();
+		JScrollPane scroll = new JScrollPane();
+	}
 	
 	private int setZone()
 	{

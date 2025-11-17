@@ -12,35 +12,29 @@ import org.apache.logging.log4j.Logger;
 
 import model.User;
 
-public class Client 
-{
+public class Client {
 	private static final Logger logger = LogManager.getLogger(Client.class);
 	
 	private ObjectInputStream in;
 	private ObjectOutputStream out;
 	private Socket connectionSocket;
 	
-	public Client()
-	{
+	public Client() {
 		this.createConnection();
 		this.configureStreams();
 	}
 	
-	private void createConnection()
-	{
-		try
-		{
+	private void createConnection() {
+		try {
 			connectionSocket = new Socket("127.0.0.1", 8888);
-		}catch(IOException io)
-		{
+		}
+		catch(IOException io) {
 			logger.error(io.getMessage());
 		}
 	}
 	
-	private void configureStreams()
-    {
-    	try
-    	{
+	private void configureStreams() {
+    	try {
     		//Create input stream to receive data from the server
     		
     		in = new ObjectInputStream(connectionSocket.getInputStream());
@@ -49,27 +43,27 @@ public class Client
     		out = new ObjectOutputStream(connectionSocket.getOutputStream());
     		
     	}
-    	catch(IOException io)
-    	{
+    	catch(IOException io) {
     		JOptionPane.showMessageDialog(null, "Could not connect to server - from input/output");
-
-    	}catch(Exception e)
-    	{
+    	}
+    	catch(Exception e) {
     		JOptionPane.showMessageDialog(null, "Could not connect to server");
     	}
     }
 	
-	public void closeConnection()
-	{
-		try
-		{
+	public void closeConnection() {
+		try {
 			out.close();
 			in.close();
 			connectionSocket.close();
-		}catch(IOException io)
-		{
+		}
+		catch(IOException io) {
 			logger.error(io.getMessage());
 		}
+	}
+	
+	public void sendAction(String action) throws IOException {
+		out.writeObject(action);
 	}
 	
 	public boolean createAccount(User newUser) {

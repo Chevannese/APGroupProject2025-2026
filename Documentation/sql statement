@@ -53,9 +53,12 @@ CREATE TABLE `supplier`
 
 CREATE TABLE `shipment`
 (
-	`packageNo` varchar(250),
+	`packageNo` int AUTO_INCREMENT,
 	`custID` varchar(250),
-	`supplierID` varchar(250),
+	`supplierName` varchar(250),
+	`supplierAddr` varchar(250),
+	`receiverName` varchar(250),
+	`receiverAddr` varchar(250),
 	`packageName` varchar(250) NOT NULL,
 	`packageType` varchar(250),
 	`status` varchar(250),
@@ -67,8 +70,7 @@ CREATE TABLE `shipment`
 	`height` double NOT NULL,
 	`cost` double NOT NULL,
 	CONSTRAINT pk_shipment PRIMARY KEY (`packageNo`),
-	CONSTRAINT fk_custID_shipment FOREIGN KEY (`custID`) REFERENCES customer(`custTRN`),
-	CONSTRAINT fk_supplierID_shipment FOREIGN KEY (`supplierID`) REFERENCES `supplier`(`supplierID`),
+	CONSTRAINT fk_custID_shipment FOREIGN KEY (`custID`) REFERENCES users(`trn`),
 	CONSTRAINT ck_shipment_type CHECK(`packageType` = 'Standard' or `packageType` = 'Express' or `packageType` = 'Fragile'),
 	CONSTRAINT ck_shipment_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
 );
