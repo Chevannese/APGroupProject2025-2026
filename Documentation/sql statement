@@ -11,45 +11,6 @@ CREATE TABLE `user`
 );
 
 
-CREATE TABLE `customer`
-(
-	`custTRN` char(20),
-	`signUpDate` date,
-	CONSTRAINT pk_customer PRIMARY KEY(`custTRN`),
-	CONSTRAINT fk_customer FOREIGN KEY(`custTRN`) REFERENCES `user`(`trn`)
-);
-
-CREATE TABLE `driver`
-(
-	`dTRN` char(20),
-	CONSTRAINT pk_driver PRIMARY KEY(`dTRN`),
-	CONSTRAINT fk_driver FOREIGN KEY(`dTRN`) REFERENCES `user`(`trn`)
-);
-
-CREATE TABLE `clerk`
-(
-	`clerkTRN` char(20),
-	`employmentDate` date NOT NULL,
-	CONSTRAINT pk_clerk PRIMARY KEY(`clerkTRN`),
-	CONSTRAINT fk_clerk FOREIGN KEY(`clerkTRN`) REFERENCES `user`(`trn`)
-);
-
-CREATE TABLE `manager`
-(
-	`managerTRN` char(20),
-	`employmentDate` date NOT NULL,
-	CONSTRAINT pk_manager PRIMARY KEY(`managerTRN`),
-	CONSTRAINT fk_manager FOREIGN KEY (`managerTRN`) REFERENCES `user`(`trn`)
-);
-
-CREATE TABLE `supplier`
-(
-	`supplierID`varchar(250),
-	`supplierName` varchar(250) NOT NULL,
-	`supplierAddr` varchar(250) NOT NULL,
-	CONSTRAINT pk_supplier PRIMARY KEY (`supplierID`)
-);
-
 
 CREATE TABLE `shipment`
 (
@@ -78,19 +39,19 @@ CREATE TABLE `shipment`
 CREATE TABLE `vehicle`
 (
 	`vehicleNo` varchar(250),
-	`driverID` varchar(250) UNIQUE,
+	`driverID` varchar(250),
 	`vehicleName` varchar(250) NOT NULL,
 	`quantityCap` integer NOT NULL,
 	`weightCap` double NOT NULL,
 	CONSTRAINT pk_vehicle PRIMARY KEY (`vehicleNo`),
-	CONSTRAINT fk_driverID FOREIGN KEY(`driverID`) REFERENCES `driver`(`dTRN`)
+	CONSTRAINT fk_driverID FOREIGN KEY(`driverID`) REFERENCES `users`(`trn`)
 
 );
 
 CREATE TABLE `invoice`
 (
-	`invoiceNo` varchar(250),
-	`packageNo`varchar(250) UNIQUE,
+	`invoiceNo` int NOT NULL AUTO_INCREMENT,
+	`packageNo`int,
 	`custID` varchar(250),
 	`staffID` varchar(250),
 	`paymentMethod` varchar(250),
@@ -98,8 +59,11 @@ CREATE TABLE `invoice`
 	`discount` double,
 	`surcharge` double,
 	`total` double NOT NULL,
+	`remainingCost` double,
 	CONSTRAINT pk_invoice PRIMARY KEY (`invoiceNo`),
-	CONSTRAINT fk_packageNo_invoice FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`)
+	CONSTRAINT fk_packageNo_invoice FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
+	CONSTRAINT fk_invoice_cust FOREIGN KEY (`custID`) REFERENCES `users`(`trn`),
+	CONSTRAINT fk_invoice_staff FOREIGN KEY (`staffID`) REFERENCES `users`(`trn`)
 );
 
 CREATE TABLE `route`
@@ -125,8 +89,8 @@ CREATE TABLE `trip`
 	`arrivalTime` time NULL,
 	CONSTRAINT pk_tripID PRIMARY KEY (`tripID`),
 	CONSTRAINT fk_veh_trip FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
-	CONSTRAINT fk_driver_trip FOREIGN KEY (`driverID`) REFERENCES `driver`(`dTRN`),
-	CONSTRAINT fk_clerk_trip FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`),
+	CONSTRAINT fk_driver_trip FOREIGN KEY (`driverID`) REFERENCES `users`(`trn`),
+	CONSTRAINT fk_clerk_trip FOREIGN KEY (`clerkID`) REFERENCES `users`(`trn`),
 	CONSTRAINT fk_route_trip FOREIGN KEY (`routeID`) REFERENCES `route`(`routeID`),
 	CONSTRAINT ck_trip_status CHECK(`status` = 'Pending' or `status` = 'Assigned' or `status` = 'In Transit' or `status` = 'Delivered' or `status` = 'Cancelled')
 );
@@ -138,7 +102,6 @@ CREATE TABLE `assignment`
 	`tripID` varchar(250),
 	`packageNo` varchar(250),
 	`custID` varchar(250),
-	`supplierID` varchar(250),
 	`vehicleNo` varchar(250),
 	`driverID` varchar(250),
 	`clerkID` varchar(250),
@@ -147,10 +110,9 @@ CREATE TABLE `assignment`
 	CONSTRAINT pk_assignment PRIMARY KEY (`assignID`),
 	CONSTRAINT fk_trip_assign FOREIGN KEY (`tripID`) REFERENCES `trip`(`tripID`),
 	CONSTRAINT fk_shipment_assign FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
-	CONSTRAINT fk_cust_assign FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`),
-	CONSTRAINT fk_supplier_assign FOREIGN KEY(`supplierID`) REFERENCES `supplier`(`supplierID`),
+	CONSTRAINT fk_cust_assign FOREIGN KEY (`custID`) REFERENCES `users`(`trn`),
 	CONSTRAINT fk_vehicle_assign FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
-	CONSTRAINT fk_clerk_assign FOREIGN KEY (`clerkID`) REFERENCES `clerk`(`clerkTRN`)
+	CONSTRAINT fk_clerk_assign FOREIGN KEY (`clerkID`) REFERENCES `users`(`trn`)
 );
 
 
@@ -174,7 +136,7 @@ CREATE TABLE `trackPackage`
 	`time` time,
 	CONSTRAINT pk_track PRIMARY KEY (`trackingNo`, `packageNo`,`custID`,`date`,`time`),
 	CONSTRAINT fk_package_track FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
-	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `customer`(`custTRN`)
+	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `users`(`trn`)
 
 );
 /* Raw Passwords
