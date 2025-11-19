@@ -1,21 +1,43 @@
 package model;
 
-public class Route 
+import java.io.Serializable;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table (name = "route")
+public class Route implements Serializable
 {
-	private String routeID;
+	
+	/**
+	 * 
+	 */
+	
+	@Id
+	@Column(name = "routeID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
+	
+	private static final long serialVersionUID = 1L;
+	private Integer routeID;
 	private String origin;
 	private String destination;
 	
 	
 	public Route()
 	{
-		routeID = "";
+		routeID = 0;
 		origin = "";
 		destination = "";
 	}
 
 
-	public Route(String routeID, String origin, String destination) {
+	public Route(Integer routeID, String origin, String destination) {
 		this.routeID = routeID;
 		this.origin = origin;
 		this.destination = destination;
@@ -28,12 +50,12 @@ public class Route
 	}
 
 
-	public String getRouteID() {
+	public Integer getRouteID() {
 		return routeID;
 	}
 
 
-	public void setRouteID(String routeID) {
+	public void setRouteID(Integer routeID) {
 		this.routeID = routeID;
 	}
 
@@ -56,11 +78,6 @@ public class Route
 	public void setDestination(String destination) {
 		this.destination = destination;
 	}
-	
-	
-	
-	
-	
 
 	
 }

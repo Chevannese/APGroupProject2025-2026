@@ -16,6 +16,19 @@
 	<mapping class="model.Driver"/>
 	<mapping class="model.Clerk"/>
 	<mapping class="model.Manager"/>
+	<mapping class="model.Shipment"/>
+	<mapping class="model.Invoice"/>
+	<mapping class="model.Vehicle"/>
+	<mapping class="model.Trip"/>
+	<mapping class="model.Assignment"/>
+	<mapping class="model.TrackPackage"/>
+	<mapping class="model.Route"/>
+	<mapping class="model.Report"/>
+	
+
+
+
+	
 	
 	
 	</session-factory>

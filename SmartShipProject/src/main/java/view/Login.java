@@ -83,6 +83,7 @@ public class Login extends JFrame {
             loggedInUser.setPassword(hashPass);
             
             Client client = new Client();
+            logger.info("Connection open for client");
             loggedInUser = client.signIn(loggedInUser);
             
             if(loggedInUser == null)
@@ -91,6 +92,9 @@ public class Login extends JFrame {
             }
             
             controller.login(loggedInUser);
+            client.closeConnection();
+            logger.info("Connection closed for client");
+
 			
              
         });
@@ -161,7 +165,7 @@ public class Login extends JFrame {
 	        {
 	        	JOptionPane.showMessageDialog( 
 		        		SwingUtilities.getWindowAncestor(mainPanel),
-		        		 "One or two fields were not filled");
+		        		 "One or more fields were not filled");
 	        }
 	        else
 	        {
@@ -212,6 +216,7 @@ public class Login extends JFrame {
 						passText = hashString(passText);
 	
 						Client client = new Client();
+			            logger.info("Connection open for client");
 						User newUser = new Customer(trn, firstName, lastName, passText, contactNum, email);
 						
 						boolean success = client.createAccount(newUser);
@@ -227,6 +232,8 @@ public class Login extends JFrame {
 						    clearSignUpBtn.doClick();                       // clear form
 						    cardLayout.show(loginPanel, "Login");           // go to login page
 						client.closeConnection();
+			            logger.info("Connection closed for client");
+
 					}
 	        
             

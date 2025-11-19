@@ -1,30 +1,52 @@
 package model;
 
-public class Trip 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table (name = "trip")
+
+public class Trip implements Serializable
 {
-	private String tripID;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@Id
+	@Column(name = "tripID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
+	private Integer tripID;
 	private String vehicleNo;
 	private String clerkID;
 	private String routeID;
-	private String date;
-	private String departureTime;
-	private String arrivalTime;
+	private LocalDate date;
+	private LocalTime departureTime;
+	private LocalTime arrivalTime;
 	
 	
 	public Trip()
 	{
-		tripID = "";
+		tripID = 0;
 		vehicleNo = "";
 		clerkID = "";
 		routeID = "";
-		date = "";
-		departureTime = "";
-		arrivalTime = "";
+		date = LocalDate.now();
+		departureTime = LocalTime.now();
+		arrivalTime = LocalTime.now();
 	}
 
 
-	public Trip(String tripID, String vehicleNo, String clerkID, String routeID, String date, String departureTime,
-			String arrivalTime) {
+	public Trip(Integer tripID, String vehicleNo, String clerkID, String routeID, LocalDate date, LocalTime departureTime,
+			LocalTime arrivalTime) {
 		this.tripID = tripID;
 		this.vehicleNo = vehicleNo;
 		this.clerkID = clerkID;
@@ -45,12 +67,12 @@ public class Trip
 	}
 
 
-	public String getTripID() {
+	public Integer getTripID() {
 		return tripID;
 	}
 
 
-	public void setTripID(String tripID) {
+	public void setTripID(Integer tripID) {
 		this.tripID = tripID;
 	}
 
@@ -85,37 +107,36 @@ public class Trip
 	}
 
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
 
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
 
-	public String getDepartureTime() {
+	public LocalTime getDepartureTime() {
 		return departureTime;
 	}
 
 
-	public void setDepartureTime(String departureTime) {
+	public void setDepartureTime(LocalTime departureTime) {
 		this.departureTime = departureTime;
 	}
 
 
-	public String getArrivalTime() {
+	public LocalTime getArrivalTime() {
 		return arrivalTime;
 	}
 
 
-	public void setArrivalTime(String arrivalTime) {
+	public void setArrivalTime(LocalTime arrivalTime) {
 		this.arrivalTime = arrivalTime;
 	}
-	
-	
-	
+
+
 	
 	
 

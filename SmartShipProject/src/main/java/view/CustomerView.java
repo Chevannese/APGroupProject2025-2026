@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,9 +25,8 @@ import network.Server;
 
 public class CustomerView extends JFrame 
 {
-	/**
-	 * 
-	 */
+	
+	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(CustomerView.class);
 	private GridBagConstraints gc;
@@ -153,6 +153,7 @@ public class CustomerView extends JFrame
  		JLabel lblReceiverName = new JLabel("Receiver Name:");
 		JTextField receiverNameTxt = new JTextField(30);
 		
+		/*
  		JLabel lblshippingLocation = new JLabel("Shipping Zone:");
  		JRadioButton rdbLocal = new JRadioButton("Local");
  		rdbLocal.setActionCommand("Local");
@@ -161,7 +162,7 @@ public class CustomerView extends JFrame
  		ButtonGroup btnGrpLocation = new ButtonGroup();
  		btnGrpLocation.add(rdbLocal);
  		btnGrpLocation.add(rdbInternational);
- 		
+ 		*/
  		
  		JLabel lblZone = new JLabel("Zone #: ");
  		JButton zoneBtn = new JButton("Generate Zone");
@@ -254,10 +255,11 @@ public class CustomerView extends JFrame
 		addToGridBag(orderPage1,lblReceiverAddr,gc2,0,5,1,1);
 		addToGridBag(orderPage1,receiverAddrTxt,gc2,1,5,2,1);
 		
-		
+		/*
 		addToGridBag(orderPage1,lblshippingLocation,gc2,0,6,1,1);
 		addToGridBag(orderPage1,rdbLocal,gc2,1,6,1,1);
 		addToGridBag(orderPage1,rdbInternational,gc2,1,7,1,1);
+		*/
 		
 		addToGridBag(orderPage1,lblZone,gc2,0,8,1,1);
         gc2.fill = GridBagConstraints.WEST;
@@ -287,17 +289,17 @@ public class CustomerView extends JFrame
 		goToOrderPage2Btn.addActionListener(e ->
 		{
 				//validation checks
-				boolean flag1 = rdbLocal.isSelected();
-				boolean flag2 = rdbInternational.isSelected();
+				//boolean flag1 = rdbLocal.isSelected();
+				//boolean flag2 = rdbInternational.isSelected();
 				
 				if(senderNameTxt.getText().compareTo("") == 0 || senderAddrTxt.getText().compareTo("") == 0
 						|| receiverNameTxt.getText().compareTo("") == 0 ||
 						receiverAddrTxt.getText().compareTo("") == 0 ||
-						zoneTxt.getText().compareTo("") == 0 
-					|| flag1 == false && flag2 == false)
+						zoneTxt.getText().compareTo("") == 0)
+					//|| flag1 == false && flag2 == false)
 				{
 						JOptionPane.showMessageDialog(customerPanel,
-				        		 "One or two fields were not filled");
+				        		 "One or more fields were not filled");
 				}
 				else if(receiverNameTxt.getText().length() < 3 || senderNameTxt.getText().length() < 3 || 
 						receiverAddrTxt.getText().length()< 3 || senderAddrTxt.getText().length() < 3) 
@@ -311,7 +313,7 @@ public class CustomerView extends JFrame
 					senderAddr = senderAddrTxt.getText();
 					receiverName = receiverNameTxt.getText();
 					receiverAddr = receiverAddrTxt.getText();
-					shippingLocation = btnGrpLocation.getSelection().getActionCommand();
+					//shippingLocation = btnGrpLocation.getSelection().getActionCommand();
 					distance = Integer.parseInt(zoneTxt.getText());
 		                 // show the value of currentcard
 		            cardLayout.show(customerPanel, "ShipmentForm2");
@@ -327,7 +329,7 @@ public class CustomerView extends JFrame
 						receiverNameTxt.setText("");
 						receiverAddrTxt.setText("");
 						zoneTxt.setText("");
-						btnGrpLocation.clearSelection();
+					//	btnGrpLocation.clearSelection();
 						zoneChance = true;
 		
 					});
@@ -414,7 +416,7 @@ public class CustomerView extends JFrame
 					|| flagS == false && flagE == false && flagF == false)
 				{
 						JOptionPane.showMessageDialog(customerPanel,
-				        		 "One or two fields were not filled");
+				        		 "One or more fields were not filled");
 				}
 				else if (!weightTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
 						!lengthTxt.getText().matches("^\\d+(\\.\\d+)?$") ||
@@ -490,7 +492,7 @@ public class CustomerView extends JFrame
 							receiverName, receiverAddr, 
 							packageName, packageType, 
 							"Pending",  distance, "" + receiverAddr + " Zone#" + zoneTxt.getText(), 
-							weight, length,width,height, 0);
+							weight, length,width,height, 0, LocalDate.now());
 					newShipment.calculateShippingCost();
 					
 					
@@ -679,7 +681,9 @@ public class CustomerView extends JFrame
 				 	});
 				 	
 					 JOptionPane.showMessageDialog(customerPanel, "Successfully created Invoices\nPlease check the menu - [Manage Bills]", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
-					 cancelOrderBtn.doClick();
+					 clearOrderPage1Btn.doClick();
+					 clearOrderPage2Btn.doClick();
+					 clearCartBtn.doClick();
 					 cardLayout.show(customerPanel, "Menu");
 			 }
 		});

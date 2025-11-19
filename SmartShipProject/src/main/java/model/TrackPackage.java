@@ -1,23 +1,46 @@
 package model;
 
-public class TrackPackage 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+
+@Entity
+@Table (name = "trackPackage")
+
+public class TrackPackage implements Serializable 
 {
-	private String trackingNo;
-	private String packageNo;
+	/**
+	 * 
+	 */
+	@Id
+	@Column(name = "trackingNo")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private static final long serialVersionUID = 1L;
+	
+	private Integer trackingNo;
+	private Integer packageNo;
 	private String custNo;
-	private String date;
-	private String time;
+	private LocalDate date;
+	private LocalTime time;
 	
 	public TrackPackage()
 	{
-		trackingNo = "";
-		packageNo = "";
+		trackingNo = 0;
+		packageNo = 0;
 		custNo = "";
-		date = "";
-		time = "";
+		date = LocalDate.now();
+		time = LocalTime.now();
 	}
 
-	public TrackPackage(String trackingNo, String packageNo, String custNo, String date, String time) {
+	public TrackPackage(Integer trackingNo, Integer packageNo, String custNo, LocalDate date, LocalTime time) {
 		this.trackingNo = trackingNo;
 		this.packageNo = packageNo;
 		this.custNo = custNo;
@@ -33,19 +56,19 @@ public class TrackPackage
 		this.time = tp.time;
 	}
 
-	public String getTrackingNo() {
+	public Integer getTrackingNo() {
 		return trackingNo;
 	}
 
-	public void setTrackingNo(String trackingNo) {
+	public void setTrackingNo(Integer trackingNo) {
 		this.trackingNo = trackingNo;
 	}
 
-	public String getPackageNo() {
+	public Integer getPackageNo() {
 		return packageNo;
 	}
 
-	public void setPackageNo(String packageNo) {
+	public void setPackageNo(Integer packageNo) {
 		this.packageNo = packageNo;
 	}
 
@@ -57,23 +80,22 @@ public class TrackPackage
 		this.custNo = custNo;
 	}
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
-	public String getTime() {
+	public LocalTime getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(LocalTime time) {
 		this.time = time;
 	}
-	
-	
+
 	
 	
 	

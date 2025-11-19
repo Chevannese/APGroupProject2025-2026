@@ -1,21 +1,42 @@
 package model;
 
-public class Report 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+@Entity
+@Table(name = "report")
+
+public class Report implements Serializable
 {
-	private String reportID;
+	/**
+	 * 
+	 */
+	@Id
+	@Column(name = "reportID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private static final long serialVersionUID = 1L;
+	private Integer reportID;
 	private String reportType;
-	private String date;
-	private String time;
+	private LocalDate date;
+	private LocalTime time;
+	
 	
 	public Report()
 	{
-		reportID = "";
+		reportID = 0;
 		reportType = "";
-		date = "";
-		time = "";
+		date = LocalDate.now();
+		time = LocalTime.now();
 	}
 
-	public Report(String reportID, String reportType, String date, String time) {
+	public Report(Integer reportID, String reportType, LocalDate date, LocalTime time) {
 		this.reportID = reportID;
 		this.reportType = reportType;
 		this.date = date;
@@ -29,11 +50,11 @@ public class Report
 		this.time = rep.time;
 	}
 
-	public String getReportID() {
+	public Integer getReportID() {
 		return reportID;
 	}
 
-	public void setReportID(String reportID) {
+	public void setReportID(Integer reportID) {
 		this.reportID = reportID;
 	}
 
@@ -45,22 +66,22 @@ public class Report
 		this.reportType = reportType;
 	}
 
-	public String getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
-	public String getTime() {
+	public LocalTime getTime() {
 		return time;
 	}
 
-	public void setTime(String time) {
+	public void setTime(LocalTime time) {
 		this.time = time;
 	}
-	
+
 	
 	
 	

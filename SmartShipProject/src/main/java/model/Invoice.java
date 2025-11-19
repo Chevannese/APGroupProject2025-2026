@@ -1,9 +1,31 @@
 package model;
 
-public class Invoice 
+import java.io.Serializable;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table (name = "invoice")
+
+
+public class Invoice implements Serializable
 {
-	private String invoiceNo;
-	private String packageNo;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@Column(name = "invoiceNo")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
+	private Integer invoiceNo;
+	private Integer packageNo;
 	private String custNo;
 	private String staffNo;
 	private String paymentMethod;
@@ -11,11 +33,12 @@ public class Invoice
 	private double discount;
 	private double surcharge;
 	private double total;
+	private double remainingCost;
 	
 	public Invoice()
 	{
-		invoiceNo = "";
-		packageNo = "";
+		invoiceNo = 0;
+		packageNo = 0;
 		custNo = "";
 		staffNo = "";
 		paymentMethod = "";
@@ -23,10 +46,11 @@ public class Invoice
 		discount  = 0;
 		surcharge = 0;
 		total = 0;
+		remainingCost = 0;
 	}
 
-	public Invoice(String invoiceNo, String packageNo, String custNo, String staffNo, String paymentMethod,
-			String paymentStatus, double discount, double surcharge, double total) {
+	public Invoice(Integer invoiceNo, Integer packageNo, String custNo, String staffNo, String paymentMethod,
+			String paymentStatus, double discount, double surcharge, double total, double remainingCost) {
 		this.invoiceNo = invoiceNo;
 		this.packageNo = packageNo;
 		this.custNo = custNo;
@@ -36,6 +60,7 @@ public class Invoice
 		this.discount = discount;
 		this.surcharge = surcharge;
 		this.total = total;
+		this.remainingCost = remainingCost;
 	}
 	
 	public Invoice(Invoice invo) {
@@ -48,13 +73,14 @@ public class Invoice
 		this.discount = invo.discount;
 		this.surcharge = invo.surcharge;
 		this.total = invo.total;
+		this.remainingCost = invo.remainingCost;
 	}
 
-	public String getInvoiceNo() {
+	public Integer getInvoiceNo() {
 		return invoiceNo;
 	}
 
-	public void setInvoiceNo(String invoiceNo) {
+	public void setInvoiceNo(Integer invoiceNo) {
 		this.invoiceNo = invoiceNo;
 	}
 
@@ -115,12 +141,20 @@ public class Invoice
 		this.total = total;
 	}
 
-	public String getPackageNo() {
+	public Integer getPackageNo() {
 		return packageNo;
 	}
 
-	public void setPackageNo(String packageNo) {
+	public void setPackageNo(Integer packageNo) {
 		this.packageNo = packageNo;
+	}
+
+	public double getRemainingCost() {
+		return remainingCost;
+	}
+
+	public void setRemainingCost(double remainingCost) {
+		this.remainingCost = remainingCost;
 	}
 
 	
