@@ -25,6 +25,7 @@ public class Route implements Serializable
 	
 	private static final long serialVersionUID = 1L;
 	private Integer routeID;
+	private String vehicleNo;
 	private String origin;
 	private String destination;
 	
@@ -32,19 +33,22 @@ public class Route implements Serializable
 	public Route()
 	{
 		routeID = 0;
+		vehicleNo = "";
 		origin = "";
 		destination = "";
 	}
 
 
-	public Route(Integer routeID, String origin, String destination) {
+	public Route(Integer routeID, String vehicleNo, String origin, String destination) {
 		this.routeID = routeID;
+		this.vehicleNo = vehicleNo;
 		this.origin = origin;
 		this.destination = destination;
 	}
 	
 	public Route(Route r) {
 		this.routeID = r.routeID;
+		this.vehicleNo = r.vehicleNo;
 		this.origin = r.origin;
 		this.destination = r.destination;
 	}
@@ -78,6 +82,22 @@ public class Route implements Serializable
 	public void setDestination(String destination) {
 		this.destination = destination;
 	}
+
+
+	public String getVehicleNo() {
+		return vehicleNo;
+	}
+
+
+	public void setVehicleNo(String vehicleNo) {
+		this.vehicleNo = vehicleNo;
+	}
+
+
+	
+	
+	
+	
 
 	
 }

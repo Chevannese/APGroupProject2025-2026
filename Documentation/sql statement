@@ -68,7 +68,7 @@ CREATE TABLE `invoice`
 
 CREATE TABLE `route`
 (
-	`routeID` varchar(250),
+	`routeID` int NOT NULL AUTO_INCREMENT,
 	`vehicleNo` varchar(250),
 	`origin` varchar(250),
 	`destination` varchar(250),
@@ -78,11 +78,11 @@ CREATE TABLE `route`
 
 CREATE TABLE `trip`
 (
-	`tripID` varchar(250),
+	`tripID` int,
 	`vehicleNo` varchar(250),
 	`driverID` varchar(250),
 	`clerkID` varchar(250),
-	`routeID` varchar(250),
+	`routeID` int,
 	`status` varchar(250),
 	`date` date,
 	`depTime` time,
@@ -98,9 +98,9 @@ CREATE TABLE `trip`
 
 CREATE TABLE `assignment`
 (
-	`assignID` varchar(250),
-	`tripID` varchar(250),
-	`packageNo` varchar(250),
+	`assignID` int NOT NULL AUTO_INCREMENT,
+	`tripID` int,
+	`packageNo` int,
 	`custID` varchar(250),
 	`vehicleNo` varchar(250),
 	`driverID` varchar(250),
@@ -129,12 +129,12 @@ CREATE TABLE `report`
 
 CREATE TABLE `trackPackage`
 (
-	`trackingNo` varchar(250),
-	`packageNo` varchar(250) UNIQUE,
+	`trackingNo` int NOT NULL AUTO_INCREMENT,
+	`packageNo` int,
 	`custID` varchar(250),
 	`date` date,
 	`time` time,
-	CONSTRAINT pk_track PRIMARY KEY (`trackingNo`, `packageNo`,`custID`,`date`,`time`),
+	CONSTRAINT pk_track PRIMARY KEY (`trackingNo`),
 	CONSTRAINT fk_package_track FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
 	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `users`(`trn`)
 
