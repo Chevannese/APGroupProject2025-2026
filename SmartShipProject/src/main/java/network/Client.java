@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import model.Route;
 import model.User;
+import model.Shipment;
+import model.Vehicle;
 
 public class Client {
 	private static final Logger logger = LogManager.getLogger(Client.class);
@@ -159,6 +163,46 @@ public class Client {
 	    }
 		return null;
 		
+	}@SuppressWarnings("unchecked")
+	public List<Shipment> getDriverShipments(String trn) throws Exception {
+	    out.writeObject("GetDriverShipments");
+	    out.writeObject(trn);
+	    out.flush();
+	    String status = (String) in.readObject();
+	    if ("success".equalsIgnoreCase(status)) {
+	        return (List<Shipment>) in.readObject();
+	    }
+	    return null;
 	}
+	public String updateShipmentStatus(String pkgId, String newStatus) throws Exception {
+	    out.writeObject("UpdateShipmentStatus");
+	    out.writeObject(pkgId);
+	    out.writeObject(newStatus);
+	    out.flush();
+	    return (String) in.readObject();
+	}
+	public Route getDriverRoute(String trn) throws Exception {
+	    out.writeObject("GetDriverRoute");
+	    out.writeObject(trn);
+	    out.flush();
+	    String status = (String) in.readObject();
+	    if ("success".equalsIgnoreCase(status)) {
+	        return (Route) in.readObject();
+	    }
+	    return null;
+	}
+	public Vehicle getDriverVehicle(String trn) throws Exception {
+	    out.writeObject("GetDriverVehicle");
+	    out.writeObject(trn);
+	    out.flush();
+	    String status = (String) in.readObject();
+	    if ("success".equalsIgnoreCase(status)) {
+	        return (Vehicle) in.readObject();
+	    }
+	    return null;
+	}
+}
+
+
 
 }
