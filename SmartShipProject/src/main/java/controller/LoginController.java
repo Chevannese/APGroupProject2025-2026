@@ -29,7 +29,7 @@ public class LoginController {
 	        }
 	        else if(loggedInUser instanceof Driver)
 	        {
-	        	
+	        	new DriverView(loggedInUser);
 	        }
 	        else if(loggedInUser instanceof Clerk)
 	        {
