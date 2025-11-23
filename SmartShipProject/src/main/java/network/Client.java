@@ -176,7 +176,6 @@ public class Client {
 	        out.writeObject("create-shipment");
 	        out.writeObject(shipment);
 	        out.flush();
-
 	        // Server returns saved shipment WITH ID
 	        Shipment savedShipment = (Shipment) in.readObject();
 
