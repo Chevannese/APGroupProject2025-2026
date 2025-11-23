@@ -19,6 +19,7 @@ import org.hibernate.Session;
 
 import model.Invoice;
 import model.Shipment;
+import model.TrackPackage;
 import model.User;
 import network.Client;
 import network.Server;
@@ -680,6 +681,7 @@ public class CustomerView extends JFrame
 					logger.info("Generating Invoice");
 
 					Invoice newInvoice = new Invoice();
+					TrackPackage newTrack = new TrackPackage();
 					User staff = new User();
 					shipments.forEach(g -> {
 
@@ -700,7 +702,9 @@ public class CustomerView extends JFrame
 					        loggedInUser,
 					        staff,
 					        btnGrpPayment.getSelection().getActionCommand()
-					    );
+					    		 );
+					    client.generateTrack(savedShipment, newTrack, loggedInUser);
+					   
 					});
 
 				 	
