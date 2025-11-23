@@ -83,7 +83,6 @@ CREATE TABLE `trip`
 	`driverID` varchar(250),
 	`clerkID` varchar(250),
 	`routeID` int,
-	`status` varchar(250),
 	`date` date,
 	`depTime` time,
 	`arrivalTime` time NULL,
@@ -104,7 +103,7 @@ CREATE TABLE `assignment`
 	`custID` varchar(250),
 	`vehicleNo` varchar(250),
 	`driverID` varchar(250),
-	`clerkID` varchar(250),
+	`staffID` varchar(250),
 	`date` date,
 	`time` time,
 	CONSTRAINT pk_assignment PRIMARY KEY (`assignID`),
@@ -131,12 +130,12 @@ CREATE TABLE `trackPackage`
 (
 	`trackingNo` int NOT NULL AUTO_INCREMENT,
 	`packageNo` int,
-	`custID` varchar(250),
+	`custNo` varchar(250),
 	`date` date,
 	`time` time,
 	CONSTRAINT pk_track PRIMARY KEY (`trackingNo`),
 	CONSTRAINT fk_package_track FOREIGN KEY (`packageNo`) REFERENCES `shipment`(`packageNo`),
-	CONSTRAINT fk_cust_track FOREIGN KEY (`custID`) REFERENCES `users`(`trn`)
+	CONSTRAINT fk_cust_track FOREIGN KEY (`custNo`) REFERENCES `users`(`trn`)
 
 );
 /* Raw Passwords

@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 
-import model.Database;
+import model.Invoice;
 import model.Shipment;
 import model.User;
 import network.Client;
@@ -48,6 +48,7 @@ public class CustomerView extends JFrame
 	private JTable table;
 	private JScrollPane scrollPane;
 	private Client client = new Client();
+	private ButtonGroup btnGrpPayment;
 
 
 
@@ -122,7 +123,7 @@ public class CustomerView extends JFrame
   
     	order.addActionListener(e ->{
      		 	
- 				cardLayout.show(customerPanel, "ShipmentForm2");
+ 				cardLayout.show(customerPanel, "ShipmentForm1");
           });
     	
     	home.addActionListener(e ->{
@@ -187,6 +188,8 @@ public class CustomerView extends JFrame
 		JRadioButton rdbFragile = new JRadioButton("Fragile");
 		rdbFragile.setActionCommand("Fragile");
 		
+		
+		
 		btnGrpPackages = new ButtonGroup();
 		btnGrpPackages.add(rdbStandard);
 		btnGrpPackages.add(rdbExpress);
@@ -227,8 +230,10 @@ public class CustomerView extends JFrame
 		lblCartSection.setFont(new Font("Arial", Font.BOLD,20));
 		JLabel lblPaymentMethod = new JLabel("Payment Method:");
 		JRadioButton rdbCash = new JRadioButton("Cash");
+		rdbCash.setActionCommand("Cash");
 		JRadioButton rdbCard = new JRadioButton("Card");
-		ButtonGroup btnGrpPayment = new ButtonGroup();
+		rdbCard.setActionCommand("Card");
+		btnGrpPayment = new ButtonGroup();
 		btnGrpPayment.add(rdbCash);
 		btnGrpPayment.add(rdbCard);
 		JButton checkoutBtn = new JButton("Checkout");
@@ -674,11 +679,31 @@ public class CustomerView extends JFrame
 				 JOptionPane.showMessageDialog(customerPanel, "Generating Invoice...", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
 					logger.info("Generating Invoice");
 
-				 	shipments.forEach(g -> 
-				 	{
-				 		g.setPackageNo(null);
-				 		boolean task =  client.requestOrder(g);
-				 	});
+					Invoice newInvoice = new Invoice();
+					User staff = new User();
+					shipments.forEach(g -> {
+
+					    g.setPackageNo(null);   // let DB auto-generate
+
+					    // STEP 1 — Save shipment and get the generated ID
+					    Shipment savedShipment = client.requestOrder(g);
+
+					    if (savedShipment == null) {
+					        logger.error("Shipment failed to save. Skipping invoice creation.");
+					        return;
+					    }
+
+					    // STEP 2 — Generate invoice using REAL ID
+					    client.generateInvoices(
+					        savedShipment,
+					        newInvoice,
+					        loggedInUser,
+					        staff,
+					        btnGrpPayment.getSelection().getActionCommand()
+					    );
+					});
+
+				 	
 				 	
 					 JOptionPane.showMessageDialog(customerPanel, "Successfully created Invoices\nPlease check the menu - [Manage Bills]", "Checkout Order",JOptionPane.INFORMATION_MESSAGE);
 					 clearOrderPage1Btn.doClick();
@@ -749,7 +774,7 @@ public class CustomerView extends JFrame
 	
 	public static void main(String[] args)
 	{
-		new CustomerView(new User("123", "BOB", "Brown", "cat123","876-911-9111","bob.brown@gmail.com"));
+		new CustomerView(new User("123456789", "Chevannese", "Ellis", "9f8a1359ecc402f73edc297d120d42c2c85a055d33d925bca5244f2885a03f9e","876-249-3133","Customer"));
 	}
       
 }

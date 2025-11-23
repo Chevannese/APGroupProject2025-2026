@@ -8,6 +8,11 @@ import jakarta.persistence.*;
 
 public class Manager extends User
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public Manager()
 	{
 		super();

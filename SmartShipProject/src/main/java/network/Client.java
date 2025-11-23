@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import model.Invoice;
+import model.Route;
 import model.User;
+import model.Shipment;
+import model.Vehicle;
 
 public class Client {
 	private static final Logger logger = LogManager.getLogger(Client.class);
@@ -160,5 +165,110 @@ public class Client {
 		return null;
 		
 	}
+	
+	public Shipment requestOrder(Shipment shipment)
+	{
+	    try (
+	        Socket socket = new Socket("127.0.0.1", 8888);
+	        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	    ) {
+	        out.writeObject("create-shipment");
+	        out.writeObject(shipment);
+	        out.flush();
 
+	        // Server returns saved shipment WITH ID
+	        Shipment savedShipment = (Shipment) in.readObject();
+
+	        if (savedShipment != null && savedShipment.getPackageNo() != null) {
+	            logger.info("Shipment saved with ID " + savedShipment.getPackageNo());
+	            return savedShipment;
+	        }
+
+	        logger.error("Failed to save shipment");
+	        return null;
+
+	    } catch (Exception e) {
+	        logger.error("Error creating shipment: " + e.getMessage(), e);
+	        return null;
+	    }
+	}
+
+
+	public boolean generateInvoices(Shipment shipment, Invoice newInvoice, User customer, User staff, String paymentMethod)
+	{
+		
+		try (
+		        Socket socket = new Socket("127.0.0.1", 8888);
+		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		    ) {
+		        // Tell the server what action this is
+		        out.writeObject("generate-invoice");
+		        out.writeObject(shipment);
+		        out.writeObject(customer);
+		        out.writeObject(staff);
+		        out.writeObject(paymentMethod);
+		        out.writeObject(newInvoice);
+		        out.flush();
+		        
+		        
+		        String response = ((String) in.readObject()).trim();
+		        
+		        if(response.equals("done"))
+		        {
+		        	logger.info("Invoice created successfully");
+		            return true;
+		        }else
+		        {
+		        	logger.info("generate - Error Saving to Database");
+		        	return false;
+		        }
+	  } catch (Exception e) {
+	        logger.error("Error communicating with server: " + e.getMessage(), e);
+	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	    }   
+		        
+	return false;
+	}
+
+
+	public List<Shipment> getDriverShipments(String trn) throws Exception {
+	    out.writeObject("GetDriverShipments");
+	    out.writeObject(trn);
+	    out.flush();
+	    String status = (String) in.readObject();
+	    if ("success".equalsIgnoreCase(status)) {
+	        return (List<Shipment>) in.readObject();
+	    }
+	    return null;
+	}
+	public String updateShipmentStatus(String pkgId, String newStatus) throws Exception {
+	    out.writeObject("UpdateShipmentStatus");
+	    out.writeObject(pkgId);
+	    out.writeObject(newStatus);
+	    out.flush();
+	    return (String) in.readObject();
+	}
+	public Route getDriverRoute(String trn) throws Exception {
+	    out.writeObject("GetDriverRoute");
+	    out.writeObject(trn);
+	    out.flush();
+	    String status = (String) in.readObject();
+	    if ("success".equalsIgnoreCase(status)) {
+	        return (Route) in.readObject();
+	    }
+	    return null;
+	}
+	public Vehicle getDriverVehicle(String trn) throws Exception {
+	    out.writeObject("GetDriverVehicle");
+	    out.writeObject(trn);
+	    out.flush();
+	    String status = (String) in.readObject();
+	    if ("success".equalsIgnoreCase(status)) {
+	        return (Vehicle) in.readObject();
+	    }
+	    return null;
+	}
 }
+

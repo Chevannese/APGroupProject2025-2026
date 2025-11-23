@@ -1,7 +1,13 @@
 package model;
 
-public class Vehicle 
+import java.io.Serializable;
+
+public class Vehicle implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String vehicleNo;
 	private String vehicleName;
 	private int quantityCap;
@@ -11,6 +17,9 @@ public class Vehicle
 	 * Name: ISUZU Elf Box Van Truck
 	 Weight Limit: 2600 pounds
 	 Quantity Limit: 20
+	 Max Length: 250
+	 Max Width: 100
+	 Max Height: 115
 	 */
 	
 	public Vehicle()

@@ -1,19 +1,26 @@
 package model;
 
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table (name = "shipment")
 
-public class Shipment 
+public class Shipment implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name = "packageNo")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	
-	private String packageNo;
-	private String custNo;
+	private Integer packageNo;
+	private String custID;
 	private String supplierName;
 	private String supplierAddr;
 	private String receiverName;
@@ -28,11 +35,12 @@ public class Shipment
 	private double width;
 	private double height;
 	private double cost;
+	private LocalDate date;
 	
 	public Shipment()
 	{
-		packageNo = "";
-		custNo = "";
+		packageNo = 0;
+		custID = "";
 		supplierName = "";
 		supplierAddr = "";
 		receiverName = "";
@@ -47,15 +55,16 @@ public class Shipment
 		width = 0;
 		height = 0;
 		cost = 0;	
+		date = LocalDate.now();
 	}
 
-	public Shipment(String packageNo, String custNo, String supplierName, String supplierAddr,
+	public Shipment(Integer packageNo, String custID, String supplierName, String supplierAddr,
 			String receiverName, String receiverAddr, String packageName, String packageType,
 			String status, int distance, String destination, double weight, double length, double width, double height,
-			double cost) {
+			double cost, LocalDate date) {
 		
 		this.packageNo = packageNo;
-		this.custNo = custNo;
+		this.custID = custID;
 		this.supplierName = supplierName;
 		this.supplierAddr = supplierAddr;
 		this.receiverName = receiverName;
@@ -70,6 +79,7 @@ public class Shipment
 		this.width = width;
 		this.height = height;
 		this.cost = cost;
+		this.date = date;
 	}
 
 
@@ -77,7 +87,7 @@ public class Shipment
 	public Shipment(Shipment pack) 
 	{
 		this.packageNo = pack.packageNo;
-		this.custNo = pack.custNo;
+		this.custID = pack.custID;
 		this.supplierName = pack.supplierName;
 		this.supplierAddr = pack.supplierAddr;
 		this.receiverName = pack.receiverName;
@@ -92,6 +102,7 @@ public class Shipment
 		this.width = pack.width;
 		this.height = pack.height;
 		this.cost = pack.cost;
+		this.date = pack.date;
 	}
 	
 	public double packageTypeRate()
@@ -126,29 +137,21 @@ public class Shipment
 	
 	 public double calculateShippingCost() {
 
-		double ratePerPound = 2.0;  // $2 per lb
-		double ratePerZone = 0.10;    // $0.10 per zone #
+		double ratePerPound = 300.0;  // $2 per lb
+		double ratePerZone = 15;    // $0.10 per zone #
 		
 		double baseCost = (weight * ratePerPound)
 		+ (distance * ratePerZone);
 		
-		return cost = 150 * baseCost * packageTypeRate();
+		return cost = baseCost * packageTypeRate();
 		}
 
-	public String getPackageNo() {
+	public Integer getPackageNo() {
 		return packageNo;
 	}
 
-	public void setPackageNo(String packageNo) {
+	public void setPackageNo(Integer packageNo) {
 		this.packageNo = packageNo;
-	}
-
-	public String getCustNo() {
-		return custNo;
-	}
-
-	public void setCustNo(String custNo) {
-		this.custNo = custNo;
 	}
 
 	public String getSupplierName() {
@@ -261,6 +264,31 @@ public class Shipment
 
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+	
+	
+	
+
+	public String getCustID() {
+		return custID;
+	}
+
+	public void setCustID(String custID) {
+		this.custID = custID;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	@Override
+	public String toString() {
+		return "Shipment [packageNo = " + packageNo + ", packageName = " + packageName + ", packageType = " + packageType
+				+ ", status = " + status + ", cost = $" + cost + "]";
 	}
 
 	

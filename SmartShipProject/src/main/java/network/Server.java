@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import model.Invoice;
 import model.Shipment;
 import model.User;
 
@@ -57,9 +59,10 @@ public class Server {
         }
     }
 
-    private void handleClient(Socket socket) {
+    private void handleClient(Socket socket) 
+    {
         try (
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        	ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         ) {
             out.flush(); // send header
@@ -101,7 +104,7 @@ public class Server {
                  try (Session session = getSessionFactory().openSession()) {
                      session.beginTransaction();
 
-                     User existingUser = session.find(User.class, user.getTrn());
+                     User existingUser = session.find(User.class,  user.getTrn());
                      if(existingUser == null)
                      {
                     	 logger.warn("User-does-not-exist");
@@ -149,27 +152,91 @@ public class Server {
                 	 logger.error(e.getMessage());
                  }
                  }
-            else if("Request Order".equalsIgnoreCase(action))
+            else if ("create-shipment".equals(action)) 
             {
-            	Shipment newShipment = (Shipment)in.readObject();
-            	   try (Session session = getSessionFactory().openSession()) {
-                       session.beginTransaction();
-                       session.persist(newShipment);
-                       session.getTransaction().commit();
-                       logger.info("New user created with TRN: " + newShipment.getPackageNo());
-                       out.writeObject("done");
-            	   }catch(Exception e)
-            	   {
-            		   logger.error("Error - Database error: " + e.getMessage(), e);
-                       out.writeObject("error-database-issue");
-                       out.flush();
-            	   }
+                Shipment shipment = (Shipment) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    session.persist(shipment);   // ID auto-generated here
+                    session.flush();             // Forces Hibernate to fetch ID NOW
+
+                    session.getTransaction().commit();
+
+                    // Send back the shipment with the generated ID
+                    out.writeObject(shipment);
+                    out.flush();
+
+                    logger.info("Shipment saved with ID: " + shipment.getPackageNo());
+
+                } catch (Exception e) {
+                    logger.error("Error saving shipment:", e);
+                    out.writeObject(null);
+                    out.flush();
+                }
+
             	
             }else if("Next".equalsIgnoreCase(action))
             {
             	out.writeObject("done");
             	out.flush();
             }
+            else if ("generate-invoice".equals(action)) {
+
+                Shipment shipment = (Shipment) in.readObject();
+                User customer = (User) in.readObject();
+                in.readObject(); // ignore staff sent by client
+                String paymentMethod = (String) in.readObject();
+                Invoice newInvoice = (Invoice) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+
+                    session.beginTransaction();
+
+                    shipment = session.find(Shipment.class, shipment.getPackageNo());
+                    customer = session.find(User.class, customer.getTrn());
+
+                    // Assign staff safely
+                    User staff = session.find(User.class, assignToClerk());
+                    if (staff == null)
+                        throw new Exception("Generated clerk TRN does not exist");
+
+                    if("Express".equals(shipment.getPackageType()))
+                    {
+                        newInvoice.setSurcharge(500);
+                    }
+                    else if("Fragile".equals(shipment.getPackageType()))
+                    {
+                    	newInvoice.setSurcharge(750);
+                    }
+
+                    newInvoice.setPackageNo(shipment.getPackageNo());
+                    newInvoice.setInvoiceNo(null);
+                    newInvoice.setCustNo(customer.getTrn());
+                    newInvoice.setStaffNo(staff.getTrn());
+                    newInvoice.setPaymentMethod(paymentMethod);
+                    newInvoice.setPaymentStatus("Unpaid");
+                    newInvoice.setDiscount(0);
+                    newInvoice.setRemainingCost(shipment.getCost());
+                    newInvoice.setTotal(shipment.getCost());
+
+                    session.persist(newInvoice);
+                    session.getTransaction().commit();
+
+                    out.writeObject("done");
+                    out.flush();
+                    logger.info("Invoice created");
+
+                } catch (Exception y) {
+
+                    out.writeObject("error");
+                    out.flush();
+                    logger.error("Error generating invoice: ", y);
+                }
+            }
+
+            	
 
         } catch (Exception e) {
             logger.error("Client handling error: " + e.getMessage(), e);
@@ -177,7 +244,12 @@ public class Server {
     }
     
 
-            
+    private String assignToClerk()
+	{
+		Random clerk = new Random();
+		 
+		return String.valueOf(clerk.nextInt(200000007 - 200000001 + 1) + 200000001);
+	}   
             
      		
       

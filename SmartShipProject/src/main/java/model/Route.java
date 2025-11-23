@@ -17,13 +17,12 @@ public class Route implements Serializable
 	/**
 	 * 
 	 */
-	
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name = "routeID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	
 	
-	private static final long serialVersionUID = 1L;
 	private Integer routeID;
 	private String vehicleNo;
 	private String origin;
@@ -93,11 +92,4 @@ public class Route implements Serializable
 		this.vehicleNo = vehicleNo;
 	}
 
-
-	
-	
-	
-	
-
-	
 }

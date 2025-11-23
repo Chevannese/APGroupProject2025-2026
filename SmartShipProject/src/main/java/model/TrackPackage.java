@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 
+
+
 @Entity
 @Table (name = "trackPackage")
 
@@ -20,10 +22,12 @@ public class TrackPackage implements Serializable
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name = "trackingNo")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private static final long serialVersionUID = 1L;
+	
+	
 	
 	private Integer trackingNo;
 	private Integer packageNo;
