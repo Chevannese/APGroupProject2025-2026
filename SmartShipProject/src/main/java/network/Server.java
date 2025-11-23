@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +17,7 @@ import org.hibernate.cfg.Configuration;
 
 import model.Invoice;
 import model.Shipment;
+import model.TrackPackage;
 import model.User;
 
 public class Server {
@@ -233,6 +236,37 @@ public class Server {
                     out.writeObject("error");
                     out.flush();
                     logger.error("Error generating invoice: ", y);
+                }
+            }
+            else if ("generate-track".equals(action)) {
+
+                Shipment shipment = (Shipment) in.readObject();
+                TrackPackage newTrack = (TrackPackage)in.readObject();
+                User customer = (User) in.readObject();
+                try (Session session = getSessionFactory().openSession()) {
+
+                    session.beginTransaction();
+
+                    shipment = session.find(Shipment.class, shipment.getPackageNo());
+                    customer = session.find(User.class, customer.getTrn());
+
+                    newTrack.setPackageNo(shipment.getPackageNo());
+                    newTrack.setTrackingNo(null);
+                    newTrack.setCustNo(customer.getTrn());
+                    newTrack.setDate(LocalDate.now());
+                    newTrack.setTime(LocalTime.now());
+                    session.persist(newTrack);
+                    session.getTransaction().commit();
+
+                    out.writeObject("done");
+                    out.flush();
+                    logger.info("TrackPackage created");
+
+                } catch (Exception y) {
+
+                    out.writeObject("error");
+                    out.flush();
+                    logger.error("Error trackPackage invoice: ", y);
                 }
             }
 

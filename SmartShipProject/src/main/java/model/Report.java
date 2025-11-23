@@ -18,10 +18,10 @@ public class Report implements Serializable
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@Column(name = "reportID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private static final long serialVersionUID = 1L;
 	private Integer reportID;
 	private String reportType;
 	private LocalDate date;

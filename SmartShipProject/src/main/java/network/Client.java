@@ -15,6 +15,7 @@ import model.Invoice;
 import model.Route;
 import model.User;
 import model.Shipment;
+import model.TrackPackage;
 import model.Vehicle;
 
 public class Client {
@@ -176,6 +177,7 @@ public class Client {
 	        out.writeObject("create-shipment");
 	        out.writeObject(shipment);
 	        out.flush();
+
 	        // Server returns saved shipment WITH ID
 	        Shipment savedShipment = (Shipment) in.readObject();
 
@@ -230,6 +232,42 @@ public class Client {
 		        
 	return false;
 	}
+	
+	public boolean generateTrack(Shipment shipment, TrackPackage tp, User customer)
+	{
+		
+		try (
+		        Socket socket = new Socket("127.0.0.1", 8888);
+		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		    ) {
+		        // Tell the server what action this is
+		        out.writeObject("generate-track");
+		        out.writeObject(shipment);
+		        out.writeObject(tp);
+		        out.writeObject(customer);
+		        out.flush();
+		        
+		        
+		        String response = ((String) in.readObject()).trim();
+		        
+		        if(response.equals("done"))
+		        {
+		        	logger.info("TrackPackage created successfully");
+		            return true;
+		        }else
+		        {
+		        	logger.info("generate - Error Saving to Database");
+		        	return false;
+		        }
+	  } catch (Exception e) {
+	        logger.error("Error communicating with server: " + e.getMessage(), e);
+	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	    }   
+		        
+	return false;
+	}
+
 
 
 	public List<Shipment> getDriverShipments(String trn) throws Exception {
