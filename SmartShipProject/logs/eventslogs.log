@@ -83,3 +83,47 @@
 [ INFO] 2025-11-13 12:11:54.815 [AWT-EventQueue-0] Login - Response received from server. Create Account task completed
 [ INFO] 2025-11-13 12:11:54.817 [AWT-EventQueue-0] Login - Close Client Connection
 [ERROR] 2025-11-13 12:12:06.639 [AWT-EventQueue-0] LimitDocumentFilter - Cannot invoke "String.length()" because "text" is null
+[ INFO] 2025-11-23 14:41:24.012 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:42:23.935 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:42:30.389 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:42:35.770 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:43:47.930 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:43:49.857 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 14:44:34.624 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:44:35.980 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 14:47:47.482 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:47:52.208 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 14:48:19.276 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:48:20.537 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 14:54:26.076 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:54:27.680 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 14:56:42.233 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 14:56:44.021 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:04:06.265 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:04:07.804 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:13:56.433 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:13:58.198 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:18:15.578 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:18:17.115 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:22:29.677 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:22:31.126 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:26:12.969 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:26:14.419 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:26:48.644 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:26:53.714 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:26:54.994 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:29:28.914 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:29:30.456 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:38:10.500 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:38:12.178 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:45:01.721 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:45:03.183 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:58:56.208 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:58:57.884 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 15:59:23.545 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:59:31.103 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 15:59:32.531 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 16:05:17.132 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 16:05:18.953 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-23 16:13:06.877 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-23 16:13:08.121 [AWT-EventQueue-0] Login - Connection closed for client

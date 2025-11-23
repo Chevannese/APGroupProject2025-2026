@@ -1,91 +1,55 @@
 package model;
 
 import java.io.Serializable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-public class Vehicle implements Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String vehicleNo;
-	private String vehicleName;
-	private int quantityCap;
-	private double weightCap;
-	
-	/* 
-	 * Name: ISUZU Elf Box Van Truck
-	 Weight Limit: 2600 pounds
-	 Quantity Limit: 20
-	 Max Length: 250
-	 Max Width: 100
-	 Max Height: 115
-	 */
-	
-	public Vehicle()
-	{
-		vehicleNo = "";
-		vehicleName = "";
-		quantityCap = 0;
-		weightCap = 0;
-	}
+@Entity
+@Table(name = "vehicle")
+public class Vehicle implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
-	public Vehicle(String vehicleNo, String vehicleName, int quantityCap, double weightCap) {
-		this.vehicleNo = vehicleNo;
-		this.vehicleName = vehicleName;
-		this.quantityCap = quantityCap;
-		this.weightCap = weightCap;
-	}
-	
-	public Vehicle(Vehicle vehicle) {
-		this.vehicleNo = vehicle.vehicleNo;
-		this.vehicleName = vehicle.vehicleName;
-		this.quantityCap = vehicle.quantityCap;
-		this.weightCap = vehicle.weightCap;
-	}
+    @Id
+    @Column(name = "vehicleNo")
+    private String vehicleNo;
 
+    @Column(name = "vehicleName")
+    private String vehicleName;
 
-	public String getVehicleNo() {
-		return vehicleNo;
-	}
+    @Column(name = "quantityCap")
+    private int quantityCap;
 
+    @Column(name = "weightCap")
+    private double weightCap;
 
-	public void setVehicleNo(String vehicleNo) {
-		this.vehicleNo = vehicleNo;
-	}
+    public Vehicle() {}
 
+    public Vehicle(String vehicleNo, String vehicleName, int quantityCap, double weightCap) {
+        this.vehicleNo = vehicleNo;
+        this.vehicleName = vehicleName;
+        this.quantityCap = quantityCap;
+        this.weightCap = weightCap;
+    }
 
-	public String getVehicleName() {
-		return vehicleName;
-	}
+    public Vehicle(Vehicle vehicle) {
+        this.vehicleNo = vehicle.vehicleNo;
+        this.vehicleName = vehicle.vehicleName;
+        this.quantityCap = vehicle.quantityCap;
+        this.weightCap = vehicle.weightCap;
+    }
 
+    public String getVehicleNo() { return vehicleNo; }
+    public void setVehicleNo(String vehicleNo) { this.vehicleNo = vehicleNo; }
 
-	public void setVehicleName(String vehicleName) {
-		this.vehicleName = vehicleName;
-	}
+    public String getVehicleName() { return vehicleName; }
+    public void setVehicleName(String vehicleName) { this.vehicleName = vehicleName; }
 
+    public int getQuantityCap() { return quantityCap; }
+    public void setQuantityCap(int quantityCap) { this.quantityCap = quantityCap; }
 
-	public int getQuantityCap() {
-		return quantityCap;
-	}
-
-
-	public void setQuantityCap(int quantityCap) {
-		this.quantityCap = quantityCap;
-	}
-
-
-	public double getWeightCap() {
-		return weightCap;
-	}
-
-
-	public void setWeightCap(double weightCap) {
-		this.weightCap = weightCap;
-	}
-	
-	
-	
-	
+    public double getWeightCap() { return weightCap; }
+    public void setWeightCap(double weightCap) { this.weightCap = weightCap; }
 }
