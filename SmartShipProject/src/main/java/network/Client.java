@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -193,6 +194,19 @@ public class Client {
 	        logger.error("Error creating shipment: " + e.getMessage(), e);
 	        return null;
 	    }
+	}
+	
+	public List<Shipment> getShipments() throws Exception {
+		List<Shipment> shipments = null;
+		Socket socket = new Socket("127.0.0.1", 8888);
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        
+        out.writeObject("get-shipments");
+        out.flush();
+        shipments = (List<Shipment>) in.readObject();
+        
+		return shipments;
 	}
 
 

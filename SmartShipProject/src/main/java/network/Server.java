@@ -7,13 +7,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.query.*;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
+import com.mysql.cj.Query;
+
 
 import model.Invoice;
 import model.Shipment;
@@ -74,11 +82,20 @@ public class Server {
             String action = (String) in.readObject();
             logger.info("Action received: " + action);
 
-            
-            if ("Create Account".equals(action)) 
+            if (action.equals("get-shipments")) {
+            	try {
+            		List<Shipment> shipments = getShipments();
+            		out.writeObject(shipments);
+            		out.flush();
+            	}
+            	catch (Exception e) {
+            		out.writeObject("error-database-issue");
+				}
+            }
+            else if ("Create Account".equals(action)) 
             {
                 User user = (User) in.readObject();
-
+                out.writeObject("create-shipment");
                 try (Session session = getSessionFactory().openSession()) {
                     session.beginTransaction();
 
@@ -278,7 +295,20 @@ public class Server {
     }
     
 
-    private String assignToClerk()
+    private List<Shipment> getShipments() throws HibernateException {
+    	Session session = sessionFactory.openSession();
+    	Transaction tx = session.beginTransaction();
+
+    	List<Shipment> shipments = session
+    	        .createQuery("from Shipment", Shipment.class)
+    	        .getResultList();
+
+    	tx.commit();
+    	session.close();
+    	return shipments;
+	}
+
+	private String assignToClerk()
 	{
 		Random clerk = new Random();
 		 
