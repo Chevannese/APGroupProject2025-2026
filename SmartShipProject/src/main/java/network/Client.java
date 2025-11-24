@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -204,7 +205,9 @@ public class Client {
         out.writeObject("get-shipments");
         out.flush();
         shipments = (List<Shipment>) in.readObject();
+		
         out.flush();
+
         
 		return shipments;
 	}
@@ -369,3 +372,4 @@ public class Client {
     }
 
 }
+

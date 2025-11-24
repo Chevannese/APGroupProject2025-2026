@@ -1,5 +1,6 @@
 package view;
 
+import model.Clerk;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -26,6 +27,7 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     JButton loadShipmentsButton;
     JPanel shipmentList;
     JScrollPane shipmentList2;
+
     Client client;
     User clerk;
     List<Shipment> shipments;
@@ -69,7 +71,7 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
 		shipmentPanel.add(shipmentTop, BorderLayout.NORTH);
 		shipmentPanel.add(shipmentList2, BorderLayout.CENTER);
 
-        //mainPanel.add(new JScrollPane(new JLabel(this.clerk.toString())), "accounts");
+     //mainPanel.add(new JScrollPane(new JLabel(this.clerk.toString())), "accounts");
         
         accountInfoPanel = new JPanel();
         if (clerk != null)
@@ -105,7 +107,7 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
 
     	if (action.equals("load-shipments")) {
     		this.loadShipments();
-    	}
+		    	}
     	if (action.equals("filter-shipments")) {
     		this.populateShipmentList();
     	}

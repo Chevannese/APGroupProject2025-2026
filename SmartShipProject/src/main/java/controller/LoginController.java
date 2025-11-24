@@ -33,7 +33,7 @@ public class LoginController {
 	        }
 	        else if(loggedInUser instanceof Clerk)
 	        {
-	        	
+	        	new ClerkView(loggedInUser);
 	        }
 	        else if(loggedInUser instanceof Manager)
 	        {

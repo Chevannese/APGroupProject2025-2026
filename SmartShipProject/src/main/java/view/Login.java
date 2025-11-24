@@ -94,9 +94,6 @@ public class Login extends JFrame {
             controller.login(loggedInUser);
             client.closeConnection();
             logger.info("Connection closed for client");
-
-			
-             
         });
 
         // sign up
@@ -221,7 +218,7 @@ public class Login extends JFrame {
 						
 						boolean success = client.createAccount(newUser);
 
-						if (!success) 
+						if (!success)
 						{
 							return;
 						}
