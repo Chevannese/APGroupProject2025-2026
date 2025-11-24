@@ -9,7 +9,11 @@ import model.Vehicle;
 import network.Client;
 import java.util.List;
 public class DriverView extends JFrame {
-   private final Driver driver;
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+private final Driver driver;
    private final Client client;
    public DriverView(User user) {
        if (!(user instanceof Driver)) {
@@ -76,9 +80,15 @@ public class DriverView extends JFrame {
    }
    private void updatePackageStatus() {
        String pkg = JOptionPane.showInputDialog(this, "Enter Package ID:");
-       if (pkg == null || pkg.isBlank()) return;
+       if (pkg == null || pkg.isEmpty())
+    	{
+    	   return;
+    	}
        String status = JOptionPane.showInputDialog(this, "Enter New Status:");
-       if (status == null || status.isBlank()) return;
+       if (status == null || status.isEmpty())
+       {
+    	   return;
+       }
        try {
            String response = client.updateShipmentStatus(pkg, status);
            JOptionPane.showMessageDialog(this, response.equals("success") ?

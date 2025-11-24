@@ -1,189 +1,239 @@
 package view;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
+
 import com.formdev.flatlaf.*;
 
-public class ClerkView extends JFrame implements ActionListener, PopupMenuListener, ComponentListener {
-    private JPanel mainPanel;
-    private JPanel sidebarPanel;
-    private JPanel sidebarContent;
-    private JPopupMenu popupSidebar;
-    private JButton sidebarPopupBtn;
-    private JMenuBar menubar;
-    private JButton homeBtn;
-    private JButton shipmentsBtn;
-    private JButton accountInfoBtn;
-    private JButton billingBtn;
-    private CardLayout card;
-    private JPanel shipmentPanel;
+import model.Shipment;
+import model.User;
+import network.Client;
 
-    // window size that the sidebar collapses under
-    private static final int SIDEBAR_SHOWN_MAX_WIDTH = 700;
-    // is the side bar shown
-    private Boolean isSidebarShown = true;
+public class ClerkView extends TabView implements ActionListener, PopupMenuListener, ComponentListener, KeyListener {
+    private static final long serialVersionUID = -4757134542607256811L;
+    private JPanel shipmentPanel;
+    private JPanel accountInfoPanel;
+
+    JCheckBox shipmentFilter;
+    JTextField shipmentSearch;
+    JButton loadShipmentsButton;
+    JPanel shipmentList;
+    JScrollPane shipmentList2;
+    Client client;
+    User clerk;
+    List<Shipment> shipments;
+    private static final Logger logger = LogManager.getLogger(ClerkView.class);
+ 
+    public ClerkView(User loggedInUser) {
+    	this();
+    	this.clerk = loggedInUser;
+    }
     
     public ClerkView() {
-        super("Clerk");
+        super();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
-        this.setSize(new Dimension(800, 600)); // Start large
+        this.setSize(800, 600);
         this.setLocationRelativeTo(null);
         
         this.initialiseComponents();
         this.addActionListeners();
-        this.updateSidebar();
-        
         this.setVisible(true);
     }
     
     private void initialiseComponents() {
-        menubar = new JMenuBar();
-        sidebarPopupBtn = new JButton(">"); // Use a Unicode hamburger icon
-        sidebarPopupBtn.setFocusPainted(false);
-        sidebarPopupBtn.setVisible(false); // Hide initially
-        menubar.add(sidebarPopupBtn);
-        menubar.add(new JLabel("Clerk Management"));
-        //this.add(menubar, BorderLayout.NORTH);
-        this.setJMenuBar(menubar);
-        
-        card = new CardLayout();
-        mainPanel = new JPanel();
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        mainPanel.setLayout(card);
-        this.add(mainPanel, BorderLayout.CENTER);
-
-        // sidebar
-        sidebarPanel = new JPanel(new BorderLayout());
-        sidebarPanel.setBackground(new Color(230, 230, 230));
-        this.add(sidebarPanel, BorderLayout.WEST);
-        
-        sidebarContent = new JPanel();
-        sidebarPanel.add(sidebarContent, BorderLayout.CENTER); // Add content
-        sidebarContent.setLayout(new BoxLayout(sidebarContent, BoxLayout.Y_AXIS));
-        sidebarContent.setBackground(Color.gray);
-        
-        // Add buttons to sidebar
-        homeBtn = new JButton("Home");
-        shipmentsBtn = new JButton("Shipment Management");
-        accountInfoBtn = new JButton("Account Information");
-        billingBtn = new JButton("Billing");
-        
-        JButton[] buttons = {homeBtn, accountInfoBtn, shipmentsBtn, billingBtn};
-        for (JButton button : buttons) {
-            button.setFocusPainted(false);
-            button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-            //button.setPreferredSize(new Dimension(0, 50));
-            button.setAlignmentX(Component.LEFT_ALIGNMENT);
-            sidebarContent.add(button);
-        }
-        
-        sidebarContent.setPreferredSize(new Dimension(180, 200));
-        popupSidebar = new JPopupMenu();
-        
-        
-        
         // main sections
-        mainPanel.add(new JScrollPane(new JTextArea("I don't know what to put here yet", 10, 30)), "home");
-        
         shipmentPanel = new JPanel(new BorderLayout());
-        JPanel top = new JPanel();
-        shipmentPanel.add(new JTextField(), BorderLayout.NORTH);
-        mainPanel.add(new JScrollPane(shipmentPanel), "shipments");
-    }
+        JPanel shipmentTop = new JPanel();
+        shipmentSearch = new JTextField();
+        loadShipmentsButton = new JButton("(Re)Load Shipment Orders");
+        shipmentFilter = new JCheckBox("Incomplete");
+        shipmentTop.add(new JLabel("Search: "));
+        shipmentTop.add(shipmentSearch);
+        shipmentTop.add(addToPanel(loadShipmentsButton, shipmentFilter));
+        //shipmentTop.setMinimumSize(new Dimension(70, 70));
 
-    private void updateSidebar() {
-        int frameWidth = this.getWidth();
+        shipmentList = new JPanel();
+        shipmentList.setLayout(new BoxLayout(shipmentList, BoxLayout.Y_AXIS));
+        shipmentList2 = new JScrollPane(shipmentList);
 
-        // small window = no sidebar shown
-        if (frameWidth < SIDEBAR_SHOWN_MAX_WIDTH && isSidebarShown) {
-            // Collapse side bar
-            this.remove(sidebarPanel);
-            sidebarPopupBtn.setVisible(true);
-            isSidebarShown = false;
-        }
-        // large window = sidebar shown
-        else if (frameWidth >= SIDEBAR_SHOWN_MAX_WIDTH && !isSidebarShown) {
-            // show sidebar
-            this.add(sidebarPanel, BorderLayout.WEST);
-            
-            // return content to sidebar
-            if (popupSidebar.isAncestorOf(sidebarContent)) {
-                sidebarPanel.add(sidebarContent);
-            }
-            
-            sidebarPopupBtn.setVisible(false);
-            isSidebarShown = true;
-            
-            // hide popup because we are using the sidebar now
-            popupSidebar.setVisible(false);
-        }
 
-        // Tell the frame to update its layout
-        this.revalidate();
-        this.repaint();
+		shipmentList2 = new JScrollPane(shipmentList); // ✅ Use the class field
+		shipmentPanel.add(shipmentTop, BorderLayout.NORTH);
+		shipmentPanel.add(shipmentList2, BorderLayout.CENTER);
+
+        //mainPanel.add(new JScrollPane(new JLabel(this.clerk.toString())), "accounts");
+        
+        accountInfoPanel = new JPanel();
+        if (clerk != null)
+        	accountInfoPanel.add(new JLabel(clerk.toString()));
+        
+        addTab("Shipment Management", shipmentPanel);
+        addTab("Accounts", accountInfoPanel);
     }
     
+    private JPanel addToPanel(Component ...components) {
+    	JPanel panel = new JPanel();
+    	
+    	for (Component component : components) {
+    		panel.add(component);
+    	}
+    	
+		return panel;
+	}
+
+    
     public void addActionListeners() {
-    	this.addComponentListener(this);
-        popupSidebar.addPopupMenuListener(this);
+    	loadShipmentsButton.addActionListener(this);
+        shipmentFilter.addActionListener(this);
+        shipmentSearch.addKeyListener(this);
         
-        // button that shows popup sidebar
-        sidebarPopupBtn.addActionListener(this);
-        homeBtn.addActionListener(this);
-        shipmentsBtn.addActionListener(this);
-        
-        sidebarPopupBtn.setActionCommand("show-sidebar-popup");
-        homeBtn.setActionCommand("goto-home");
-        shipmentsBtn.setActionCommand("goto-shipments");
+        loadShipmentsButton.setActionCommand("load-shipments");
+        shipmentFilter.setActionCommand("filter-shipments");
     }
     
     @Override public void actionPerformed(ActionEvent e) {
     	String action = e.getActionCommand();
-    	if (action.equals("goto-home"))
-    			card.show(mainPanel, "home");
-    	else if (action.equals("goto-shipments"))
-    			card.show(mainPanel, "shipments");
-    	else if (action.equals("show-sidebar-popup")) {
-    		// move the sidebar to the popup
-    		popupSidebar.add(sidebarContent);
-    		// move popup near button
-    		popupSidebar.show(sidebarPopupBtn, 0, sidebarPopupBtn.getHeight());
+    	System.out.println("Action: " + action);
+
+    	if (action.equals("load-shipments")) {
+    		this.loadShipments();
     	}
+    	if (action.equals("filter-shipments")) {
+    		this.populateShipmentList();
+    	}
+	}
+    
+
+private void populateShipmentList() {
+    if (shipments == null) {
+        return;
+    }
+
+    // Clear old panels
+    shipmentList.removeAll();
+
+    String search = shipmentSearch.getText().trim().toLowerCase();
+
+    for (Shipment s : shipments) {
+        // Filter by checkbox
+        if (s.getStatus().equalsIgnoreCase("pending") && !shipmentFilter.isSelected()) {
+            continue;
+        }
+
+        // Filter by search
+        if (!search.isEmpty()) {
+            boolean matches = s.getPackageName().toLowerCase().contains(search)
+                    || s.getReceiverName().toLowerCase().contains(search)
+                    || s.getDestination().toLowerCase().contains(search)
+                    || s.getSupplierName().toLowerCase().contains(search)
+                    || s.getCustID().toLowerCase().contains(search)
+                    || s.getSupplierAddr().toLowerCase().contains(search)
+                    || s.getPackageType().toLowerCase().contains(search);
+
+            if (!matches) {
+                continue;
+            }
+        }
+
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel leftJPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel id = new JLabel(s.getPackageNo().toString());
+        JLabel name = new JLabel(s.getPackageName());
+        JButton button = new JButton("Open");
+
+        leftJPanel.add(id);
+        leftJPanel.add(name);
+
+        panel.add(leftJPanel, BorderLayout.CENTER);
+        panel.add(button, BorderLayout.EAST);
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+        button.addActionListener(e -> processOrder(s));
+
+        shipmentList.add(panel);
+    }
+
+    shipmentList.revalidate();
+    shipmentList.repaint();
+}
+
+    
+    private void loadShipments() {
+    	shipments = null;
+    	try {
+			shipments = new Client().getShipments();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+		populateShipmentList();
+    }
+    
+    private void processOrder(Shipment shipment) {
+		JOptionPane.showConfirmDialog(this, shipment);
+	}
+
+	@Override public void keyTyped(KeyEvent e) { populateShipmentList(); }
+	@Override public void keyPressed(KeyEvent e) {}
+	@Override public void keyReleased(KeyEvent e) {}
+	
+	public static void main(String[] args) {
+		// Run the GUI on the Event Dispatch Thread (EDT)
+		FlatLightLaf.setup();
+		
+		SwingUtilities.invokeLater(() -> {
+			new ClerkView();
+		});
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void popupMenuCanceled(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
     
-    @Override public void componentResized(ComponentEvent e) {
-    	updateSidebar();
-    }
-    @Override public void componentMoved(ComponentEvent e) {}
-    @Override public void componentShown(ComponentEvent e) {}
-    @Override public void componentHidden(ComponentEvent e) {}
-    
-    @Override public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-    	// move the sidebar back to the mainwindow if the window is large enough
-    	if (isSidebarShown) {
-    		sidebarPanel.add(sidebarContent);
-    		sidebarPanel.revalidate();
-    		sidebarPanel.repaint();
-    	}
-    }
-    
-    // don't need these but java complains with them cuz they are abstract methods
-    @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-    @Override public void popupMenuCanceled(PopupMenuEvent e) {}
-
-    public static void main(String[] args) {
-        // Run the GUI on the Event Dispatch Thread (EDT)
-    	FlatLightLaf.setup();
-
-        SwingUtilities.invokeLater(() -> {
-            new ClerkView();
-        });
-    }
-
 }

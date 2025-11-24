@@ -7,18 +7,31 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.query.*;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
+import com.mysql.cj.Query;
+
 
 import model.Invoice;
 import model.Shipment;
 import model.TrackPackage;
 import model.User;
+import model.Assignment;
+import model.Route;
+import model.Trip;
+import model.Vehicle;
+
 
 public class Server {
     private static final Logger logger = LogManager.getLogger(Server.class);
@@ -74,11 +87,20 @@ public class Server {
             String action = (String) in.readObject();
             logger.info("Action received: " + action);
 
-            
-            if ("Create Account".equals(action)) 
+            if (action.equals("get-shipments")) {
+            	try {
+            		List<Shipment> shipments = getShipments();
+            		out.writeObject(shipments);
+            		out.flush();
+            	}
+            	catch (Exception e) {
+            		out.writeObject("error-database-issue");
+				}
+            }
+            else if ("Create Account".equals(action)) 
             {
                 User user = (User) in.readObject();
-
+                out.writeObject("create-shipment");
                 try (Session session = getSessionFactory().openSession()) {
                     session.beginTransaction();
 
@@ -270,7 +292,144 @@ public class Server {
                 }
             }
 
-            	
+
+            // ================= DRIVER ACTIONS =================
+
+            else if ("GetDriverShipments".equals(action)) {
+                String driverTrn = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    // Shipments assigned to this driver
+                    java.util.List<Shipment> shipments =
+                        session.createQuery(
+                            "select s " +
+                            "from Shipment s, Assignment a " +
+                            "where a.driverID = :trn and a.packageNo = s.packageNo",
+                            Shipment.class)
+                            .setParameter("trn", driverTrn)
+                            .getResultList();
+
+                    session.getTransaction().commit();
+
+                    out.writeObject("success");
+                    out.writeObject(shipments);
+                } catch (Exception ex) {
+                    logger.error("Error getting driver shipments", ex);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            else if ("UpdateShipmentStatus".equals(action)) {
+                String pkgIdStr  = (String) in.readObject();
+                String newStatus = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    Integer pkgId = Integer.valueOf(pkgIdStr);
+                    Shipment shipment = session.find(Shipment.class, pkgId);
+
+                    if (shipment == null) {
+                        out.writeObject("not-found");
+                    } else {
+                        shipment.setStatus(newStatus);
+                        session.merge(shipment);
+                        session.getTransaction().commit();
+                        out.writeObject("success");
+                    }
+                } catch (Exception ex) {
+                    logger.error("Error updating shipment status", ex);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ================= DRIVER: GET ROUTE =================
+
+            else if ("GetDriverRoute".equals(action)) {
+                String driverTrn = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    // Step 1: Find a matching Assignment for this driver
+                    Assignment assignment = session.createQuery(
+                            "select a from Assignment a where a.driverID = :trn",
+                            Assignment.class)
+                            .setParameter("trn", driverTrn)
+                            .setMaxResults(1)
+                            .uniqueResult();
+
+                    Route route = null;
+
+                    if (assignment != null && assignment.getTripID() != null) {
+                        // Step 2: Load the Trip linked to that assignment
+                        Trip trip = session.find(Trip.class, assignment.getTripID());
+
+                        if (trip != null && trip.getRouteID() != null) {
+                            // Step 3: Load the route linked to the Trip
+                            route = session.find(Route.class, trip.getRouteID());
+                        }
+                    }
+
+                    session.getTransaction().commit();
+
+                    if (route != null) {
+                        out.writeObject("success");
+                        out.writeObject(route);
+                    } else {
+                        out.writeObject("not-found");
+                    }
+
+                } catch (Exception ex) {
+                    logger.error("Error getting route for driver", ex);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+
+            // ================= DRIVER: GET VEHICLE =================
+
+            else if ("GetDriverVehicle".equals(action)) {
+                String driverTrn = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    // Step 1: Find assignment for driver
+                    Assignment assignment = session.createQuery(
+                            "select a from Assignment a where a.driverID = :trn",
+                            Assignment.class)
+                            .setParameter("trn", driverTrn)
+                            .setMaxResults(1)
+                            .uniqueResult();
+
+                    Vehicle vehicle = null;
+
+                    if (assignment != null && assignment.getVehicleNo() != null) {
+                        // Step 2: Find vehicle via assignment field
+                        vehicle = session.find(Vehicle.class, assignment.getVehicleNo());
+                    }
+
+                    session.getTransaction().commit();
+
+                    if (vehicle != null) {
+                        out.writeObject("success");
+                        out.writeObject(vehicle);
+                    } else {
+                        out.writeObject("not-found");
+                    }
+
+                } catch (Exception ex) {
+                    logger.error("Error getting vehicle for driver", ex);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
 
         } catch (Exception e) {
             logger.error("Client handling error: " + e.getMessage(), e);
@@ -278,7 +437,27 @@ public class Server {
     }
     
 
-    private String assignToClerk()
+    private List<Shipment> getShipments() throws HibernateException {
+    	List<Shipment> shipments = null;
+    	 try (Session session = getSessionFactory().openSession()) {
+             session.beginTransaction();
+             
+            	  shipments = session
+             	        .createQuery("from Shipment", Shipment.class)
+             	        .getResultList();
+
+             	session.getTransaction().commit();
+             	session.close();
+             }catch(Exception e)
+             {
+            	 e.printStackTrace();
+             }
+
+    	
+    	return shipments;
+	}
+
+	private String assignToClerk()
 	{
 		Random clerk = new Random();
 		 
