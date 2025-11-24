@@ -284,42 +284,88 @@ public class Client {
 
 
 
-	public List<Shipment> getDriverShipments(String trn) throws Exception {
-	    out.writeObject("GetDriverShipments");
-	    out.writeObject(trn);
-	    out.flush();
-	    String status = (String) in.readObject();
-	    if ("success".equalsIgnoreCase(status)) {
-	        return (List<Shipment>) in.readObject();
-	    }
-	    return null;
-	}
-	public String updateShipmentStatus(String pkgId, String newStatus) throws Exception {
-	    out.writeObject("UpdateShipmentStatus");
-	    out.writeObject(pkgId);
-	    out.writeObject(newStatus);
-	    out.flush();
-	    return (String) in.readObject();
-	}
-	public Route getDriverRoute(String trn) throws Exception {
-	    out.writeObject("GetDriverRoute");
-	    out.writeObject(trn);
-	    out.flush();
-	    String status = (String) in.readObject();
-	    if ("success".equalsIgnoreCase(status)) {
-	        return (Route) in.readObject();
-	    }
-	    return null;
-	}
-	public Vehicle getDriverVehicle(String trn) throws Exception {
-	    out.writeObject("GetDriverVehicle");
-	    out.writeObject(trn);
-	    out.flush();
-	    String status = (String) in.readObject();
-	    if ("success".equalsIgnoreCase(status)) {
-	        return (Vehicle) in.readObject();
-	    }
-	    return null;
-	}
-}
+    public List<Shipment> getDriverShipments(String trn) {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
+        ) {
+            out.writeObject("GetDriverShipments");
+            out.writeObject(trn);
+            out.flush();
 
+            String status = (String) in.readObject();
+            if ("success".equalsIgnoreCase(status)) {
+                return (List<Shipment>) in.readObject();
+            } else {
+                logger.warn("GetDriverShipments failed: " + status);
+            }
+        } catch (Exception e) {
+            logger.error("Error getting driver shipments", e);
+        }
+        return null;
+    }
+
+    public String updateShipmentStatus(String pkgId, String newStatus) {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
+        ) {
+            out.writeObject("UpdateShipmentStatus");
+            out.writeObject(pkgId);
+            out.writeObject(newStatus);
+            out.flush();
+
+            return (String) in.readObject();
+        } catch (Exception e) {
+            logger.error("Error updating shipment status", e);
+            return "error";
+        }
+    }
+
+    public Route getDriverRoute(String trn) {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
+        ) {
+            out.writeObject("GetDriverRoute");
+            out.writeObject(trn);
+            out.flush();
+
+            String status = (String) in.readObject();
+            if ("success".equalsIgnoreCase(status)) {
+                return (Route) in.readObject();
+            } else {
+                logger.warn("GetDriverRoute failed: " + status);
+            }
+        } catch (Exception e) {
+            logger.error("Error getting driver route", e);
+        }
+        return null;
+    }
+
+    public Vehicle getDriverVehicle(String trn) {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
+        ) {
+            out.writeObject("GetDriverVehicle");
+            out.writeObject(trn);
+            out.flush();
+
+            String status = (String) in.readObject();
+            if ("success".equalsIgnoreCase(status)) {
+                return (Vehicle) in.readObject();
+            } else {
+                logger.warn("GetDriverVehicle failed: " + status);
+            }
+        } catch (Exception e) {
+            logger.error("Error getting driver vehicle", e);
+        }
+        return null;
+    }
+
+}

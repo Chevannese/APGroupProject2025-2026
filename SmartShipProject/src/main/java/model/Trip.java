@@ -10,28 +10,37 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 @Entity
-@Table (name = "trip")
+@Table(name = "trip")
+public class Trip implements Serializable {
 
-public class Trip implements Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name = "tripID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
-	private Integer tripID;
-	private String vehicleNo;
-	private String clerkID;
-	private String routeID;
-	private LocalDate date;
-	private LocalTime departureTime;
-	private LocalTime arrivalTime;
-	
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "tripID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer tripID;
+
+    @Column(name = "vehicleNo")
+    private String vehicleNo;
+
+    @Column(name = "driverID")
+    private String driverID;
+
+    @Column(name = "clerkID")
+    private String clerkID;
+
+    @Column(name = "routeID")
+    private String routeID;
+
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "depTime")
+    private LocalTime departureTime;
+
+    @Column(name = "arrivalTime")
+    private LocalTime arrivalTime;
 	
 	public Trip()
 	{
