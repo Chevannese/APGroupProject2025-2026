@@ -153,9 +153,13 @@ public class ManagerView extends TabView implements KeyListener {
 		panel.add(component, gc);
 	}
 
+	
+	private JPanel panel;
+	private GridBagConstraints gc;
+	
 	private void editUser(User u) {
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints gc = new GridBagConstraints();
+		 panel = new JPanel(new GridBagLayout());
+		 gc = new GridBagConstraints();
 		
 		JTextField trnField = new JTextField();
 		JTextField firstNameField = new JTextField();
@@ -256,10 +260,10 @@ public class ManagerView extends TabView implements KeyListener {
 	    });
 
 
-	    manageUsersPanel.add(scroll, gc);
+	    panel.add(scroll);
 
-	    manageUsersPanel.revalidate();
-	    manageUsersPanel.repaint();
+	    panel.revalidate();
+	    panel.repaint();
 	}
 
 	
