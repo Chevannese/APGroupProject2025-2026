@@ -158,6 +158,8 @@ public class Server {
      		        	
                         out.writeObject(existingUser);
      		        }
+                     
+                     
      		        else
      		        {
      		        	logger.warn("Unknown Error");
@@ -291,7 +293,8 @@ public class Server {
                     logger.error("Error trackPackage invoice: ", y);
                 }
             }
-
+            
+           
 
             // ================= DRIVER ACTIONS =================
 
@@ -430,6 +433,39 @@ public class Server {
                 }
                 out.flush();
             }
+            else if (action.equals("GET_INVOICES")) {
+            	User user = (User)in.readObject();
+            	out.flush();
+                List<Invoice> list = getAllInvoices(user); // <-- Hibernate method
+                out.writeObject(list);
+                out.flush();
+            }else if(action.equals("UPDATE_INVOICES"))
+            {
+
+
+			@SuppressWarnings("unchecked")
+			List<Invoice> updatedList = (List<Invoice>) in.readObject();
+			
+			            // Persist changes safely with Hibernate
+			            try (Session session = sessionFactory.openSession()) {
+			                Transaction tx = session.beginTransaction();
+			                for (Invoice inv : updatedList) {
+			                    // Ensure entity is attached; prefer merge
+			                    session.merge(inv);
+			                }
+			                tx.commit();
+			            } catch (Exception e) {
+			                out.writeObject("Update failed: " + e.getMessage());
+			                out.flush();
+			                throw e;
+			            }
+			
+			            out.writeObject("Invoices updated successfully!");
+			            out.flush();
+
+
+            }
+
 
         } catch (Exception e) {
             logger.error("Client handling error: " + e.getMessage(), e);
@@ -439,6 +475,7 @@ public class Server {
 
     private List<Shipment> getShipments() throws HibernateException {
     	List<Shipment> shipments = null;
+
     	 try (Session session = getSessionFactory().openSession()) {
              session.beginTransaction();
              
@@ -456,6 +493,22 @@ public class Server {
     	
     	return shipments;
 	}
+    
+
+private List<Invoice> getAllInvoices(User loggedInUser) {
+    try (Session session = getSessionFactory().openSession()) {
+        // No need for transaction for simple read
+        return session.createQuery(
+                "select a from Invoice a where a.custNo = :custNo", Invoice.class)
+                .setParameter("custNo", loggedInUser.getTrn())
+                .getResultList();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return java.util.Collections.emptyList();
+    }
+}
+
+
 
 	private String assignToClerk()
 	{

@@ -8,3 +8,17 @@
 [ INFO] 2025-11-25 19:33:15.546 [AWT-EventQueue-0] Login - Connection closed for client
 [ INFO] 2025-11-25 19:34:24.521 [AWT-EventQueue-0] Login - Connection open for client
 [ INFO] 2025-11-25 19:34:26.698 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-25 21:37:46.145 [AWT-EventQueue-0] CustomerView - 123456789has successfully logged out
+[ INFO] 2025-11-26 00:14:21.906 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-26 00:14:25.111 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-26 00:22:42.163 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-26 00:23:10.239 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-26 01:26:40.059 [AWT-EventQueue-0] CustomerView - 123456789has successfully logged out
+[ INFO] 2025-11-26 01:26:48.298 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-26 01:26:50.129 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-26 02:26:04.459 [AWT-EventQueue-0] CustomerView - Shipment item added
+[ INFO] 2025-11-26 02:26:05.953 [AWT-EventQueue-0] CustomerView - Shipment item added
+[ INFO] 2025-11-26 02:26:07.153 [AWT-EventQueue-0] CustomerView - Shipment item added
+[ INFO] 2025-11-26 02:26:07.858 [AWT-EventQueue-0] CustomerView - Customer went to page 3 of Shipment Form
+[ INFO] 2025-11-26 02:26:16.624 [AWT-EventQueue-0] CustomerView - Generating Invoice
+[ INFO] 2025-11-26 02:26:35.920 [AWT-EventQueue-0] CustomerView - Item list has been cleared

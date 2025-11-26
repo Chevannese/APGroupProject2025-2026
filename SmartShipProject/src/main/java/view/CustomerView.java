@@ -3,15 +3,27 @@ package view;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -141,6 +153,13 @@ public class CustomerView extends JFrame
     		client.closeConnection();
             this.dispose();
     		new Login();
+    	});
+    	
+    	bill.addActionListener(e ->
+    	{
+    		cardLayout.show(customerPanel, "InvoicePage");
+    		loadInvoices(loggedInUser);
+    		
     	});
     	
    
@@ -356,7 +375,6 @@ public class CustomerView extends JFrame
 					});
 		
 		GridBagConstraints gc3 = new GridBagConstraints();
- 		gc3 = new GridBagConstraints();
  		gc3.insets = new Insets(10, 10, 10, 10);
         gc3.fill = GridBagConstraints.HORIZONTAL;
 		
@@ -759,8 +777,6 @@ public class CustomerView extends JFrame
  		JLabel trnLabel = new JLabel("TRN");
  		 trnValue = new JLabel("");
  		 
-  		JButton editTRN = new JButton("Edit");
-
  		
  		JLabel nameLabel = new JLabel("Name");
  		
@@ -768,7 +784,19 @@ public class CustomerView extends JFrame
  		lastName = new JLabel("");
  		
  		
+ 		
+ 		
  		JButton editFName = new JButton("Edit");
+ 		
+ 		editFName.addActionListener(e ->{
+ 			
+ 			Client client = new Client();
+ 			
+ 			//client.sendAction("ChangeFName");
+ 			
+ 		});
+ 		
+ 		
  		JButton editLName = new JButton("Edit");
 
 
@@ -779,6 +807,7 @@ public class CustomerView extends JFrame
  		
  		
  		JLabel editContactInfo = new JLabel("Contact Info");
+ 		editContactInfo.setFont(new Font("Arial", Font.BOLD, 15));
  		
  		JLabel contactLabel = new JLabel("Phone");
  		
@@ -797,8 +826,9 @@ public class CustomerView extends JFrame
     		firstName.setText(loggedInUser.getFirstName());
     		lastName.setText(loggedInUser.getLastName());
     		passwordValue.setText(loggedInUser.getPassword());
-    		emailValue.setText(loggedInUser.getEmail());
     		contactValue.setText(loggedInUser.getContactNum());
+    		emailValue.setText(loggedInUser.getEmail());
+
     		
 
     		
@@ -816,29 +846,26 @@ public class CustomerView extends JFrame
         
         addToGridBag(accountPage, trnLabel,gc5, 0,2,1,1);
         addToGridBag(accountPage, trnValue,gc5, 1,2,1,1);
-        addToGridBag(accountPage, editTRN,gc5, 2,2,1,1);
+       // addToGridBag(accountPage, editTRN,gc5, 2,2,1,1);
 
         addToGridBag(accountPage, nameLabel,gc5, 0,3,1,1);
         
         addToGridBag(accountPage, firstName,gc5, 1,3,1,1);
         addToGridBag(accountPage, editFName,gc5, 2,3,1,1);
-        addToGridBag(accountPage, lastName,gc5, 3,3,1,1);
-        addToGridBag(accountPage, editLName,gc5, 4,3,1,1);
+        addToGridBag(accountPage, lastName,gc5, 1,4,1,1);
+        addToGridBag(accountPage, editLName,gc5, 2,4,1,1);
 
-        addToGridBag(accountPage, passwordLabel,gc5, 0,4,1,1);
-        addToGridBag(accountPage, passwordValue,gc5, 1,4,1,1);
-        addToGridBag(accountPage, editPassword,gc5, 2,4,1,1);
-        addToGridBag(accountPage, editContactInfo,gc5, 0,5,1,1);
-       addToGridBag(accountPage, contactLabel,gc5, 0,6,1,1);
-        addToGridBag(accountPage, contactValue,gc5, 1,6,1,1);
-        addToGridBag(accountPage, editPhone,gc5, 2,6,1,1);
+        addToGridBag(accountPage, passwordLabel,gc5, 0,5,1,1);
+        addToGridBag(accountPage, passwordValue,gc5, 1,5,1,1);
+        addToGridBag(accountPage, editPassword,gc5, 2,5,1,1);
+        addToGridBag(accountPage, editContactInfo,gc5, 0,6,5,1);
+       addToGridBag(accountPage, contactLabel,gc5, 0,7,1,1);
+        addToGridBag(accountPage, contactValue,gc5, 1,7,1,1);
+        addToGridBag(accountPage, editPhone,gc5, 2,7,1,1);
 
-        addToGridBag(accountPage, emailLabel,gc5, 0,0,2,1);
-        addToGridBag(accountPage, emailValue,gc5, 0,0,2,1);
-        addToGridBag(accountPage, editEmail,gc5, 0,0,2,1);
-
-        addToGridBag(accountPage, contactValue,gc5, 0,0,2,1);
-	
+        addToGridBag(accountPage, emailLabel,gc5, 0,8,1,1);
+        addToGridBag(accountPage, emailValue,gc5, 1,8,1,1);
+        addToGridBag(accountPage, editEmail,gc5, 2,8,1,1);	
 
 
 		
@@ -874,10 +901,157 @@ public class CustomerView extends JFrame
    	        panel.add(component,gbc);
        }
 	
-	private void populateUserInfo()
+	private void changeFName()
 	{
 		
 	}
+	
+	private void changeLName()
+	{
+		
+	}
+	
+	private void changePassword()
+	{
+		
+	}
+	
+	private void changeEmail()
+	{
+		
+	}
+	
+	private void changePhone()
+	{
+		
+	}
+	
+	
+	
+
+private void loadInvoices(User loggedInUser) {
+    try (Socket socket = new Socket("127.0.0.1", 8888);
+         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+        out.writeObject("GET_INVOICES");
+        out.writeObject(loggedInUser);
+        out.flush();
+
+        @SuppressWarnings("unchecked")
+        List<Invoice> invoiceList = (List<Invoice>) in.readObject();
+
+        showInvoiceTable(invoiceList);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Could not load invoices!");
+        e.printStackTrace();
+    }
+}
+
+
+private TableCellRenderer createRemainingCostRenderer() {
+    return new DefaultTableCellRenderer() {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+        public Component getTableCellRendererComponent(
+                JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int col) {
+
+            Component c = super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, col
+            );
+
+            double remaining = 0.0;
+            if (value instanceof Number) {
+                remaining = ((Number) value).doubleValue();
+            }
+
+            if (remaining == 0.0) {
+                c.setBackground(new Color(144, 238, 144)); // light green
+            } else {
+                c.setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
+            }
+            return c;
+        }
+    };
+}
+
+
+private void showInvoiceTable(List<Invoice> list) {
+    InvoiceTableModel model = new InvoiceTableModel(list);
+    JTable table = new JTable(model);
+
+    // ✅ Apply renderer to Remaining Cost column
+    table.getColumnModel().getColumn(9).setCellRenderer(createRemainingCostRenderer());
+
+    JScrollPane scroll = new JScrollPane(table);
+    scroll.setPreferredSize(new Dimension(900, 400));
+
+    invoicePage.removeAll();
+
+    GridBagConstraints gc6 = new GridBagConstraints();
+    gc6.insets = new Insets(10, 10, 10, 10);
+    gc6.fill = GridBagConstraints.HORIZONTAL;
+
+    JLabel titleInvoice = new JLabel("Manage Bills", SwingConstants.CENTER);
+    titleInvoice.setFont(new Font("Arial", Font.BOLD, 20));
+
+    JButton submit = new JButton("Submit");
+
+    // ✅ Submit button sends only modified invoices
+    submit.addActionListener(e -> {
+        List<Invoice> modifiedInvoices = model.getModifiedInvoices();
+        if (modifiedInvoices.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No changes to submit.");
+            return;
+        }
+
+        try (Socket socket = new Socket("127.0.0.1", 8888);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+            out.writeObject("UPDATE_INVOICES");
+            out.writeObject(modifiedInvoices);
+            out.flush();
+
+            String response = (String) in.readObject();
+            JOptionPane.showMessageDialog(null, response);
+            out.flush();
+
+            
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Could not update invoices!");
+            ex.printStackTrace();
+        }
+        
+        bill.doClick();
+    });
+
+    addToGridBag(invoicePage, titleInvoice, gc6, 0, 0, 2, 1);
+    addToGridBag(invoicePage, submit, gc6, 0, 1, 1, 1);
+
+    gc6.gridx = 0;
+    gc6.gridy = 2;
+    gc6.gridwidth = 2;
+    gc6.gridheight = 2;
+    gc6.weightx = 1.0;
+    gc6.weighty = 1.0;
+    gc6.fill = GridBagConstraints.BOTH;
+
+    invoicePage.add(scroll, gc6);
+
+    invoicePage.revalidate();
+    invoicePage.repaint();
+}
+
+
+
+	
 	
 	private int setZone()
 	{
@@ -888,7 +1062,100 @@ public class CustomerView extends JFrame
 	
 	public static void main(String[] args)
 	{
-		new CustomerView(new User("123456789", "Chevannese", "Ellis", "9f8a1359ecc402f73edc297d120d42c2c85a055d33d925bca5244f2885a03f9e","876-249-3133","Customer"));
+		new CustomerView(new User("123456789", "Chevannese", "Ellis", "9f8a1359ecc402f73edc297d120d42c2c85a055d33d925bca5244f2885a03f9e","876-249-3133","chev@gmail.com"));
 	}
       
 }
+
+
+
+ class InvoiceTableModel extends AbstractTableModel {
+    private static final long serialVersionUID = 1L;
+    private final List<Invoice> list;
+    private final Set<Integer> modifiedRows = new HashSet<>();
+
+    private final String[] columns = {
+        "Invoice No", "Package No", "Customer No", "Staff No",
+        "Payment Method", "Payment Status",
+        "Discount", "Surcharge", "Total", "Remaining Cost"
+    };
+
+    public InvoiceTableModel(List<Invoice> list) {
+        this.list = list;
+    }
+
+    @Override
+    public int getRowCount() { return list.size(); }
+
+    @Override
+    public int getColumnCount() { return columns.length; }
+
+    @Override
+    public String getColumnName(int col) { return columns[col]; }
+
+    @Override
+    public Object getValueAt(int row, int col) {
+        Invoice inv = list.get(row);
+        return switch (col) {
+            case 0 -> inv.getInvoiceNo();
+            case 1 -> inv.getPackageNo();
+            case 2 -> inv.getCustNo();
+            case 3 -> inv.getStaffNo();
+            case 4 -> inv.getPaymentMethod();
+            case 5 -> inv.getPaymentStatus();
+            case 6 -> inv.getDiscount();
+            case 7 -> inv.getSurcharge();
+            case 8 -> inv.getTotal();
+            case 9 -> inv.getRemainingCost();
+            default -> null;
+        };
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        double remaining = list.get(row).getRemainingCost();
+        if (remaining == 0) return false; // lock row if fully paid
+        return col == 9; // ✅ Only Remaining Cost editable
+    }
+
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+    	 Invoice inv = list.get(row);
+
+    	    // 🔥 Only RemainingCostEditable (col 9)
+    	    if (col == 9) {
+
+    	        double remaining = Double.parseDouble(value.toString());
+    	        inv.setRemainingCost(remaining);
+    	        
+    	        
+    	        // 🔥 Auto-update Payment Status
+    	        if (remaining == 0) {
+    	            inv.setPaymentStatus("Paid");
+    	        } else if (remaining > 0 && remaining < inv.getTotal()) {
+    	            inv.setPaymentStatus("Partially Paid");
+    	        } else {
+    	            inv.setPaymentStatus("Unpaid");
+    	        }
+
+    	        // Mark row as modified
+    	        modifiedRows.add(row);
+
+    	        // Notify JTable to update BOTH remainingCost and paymentStatus columns
+    	        fireTableCellUpdated(row, 9);  // remaining cost column
+    	        fireTableCellUpdated(row, 8);  // payment status column (if col 8 is PaymentStatus)
+    	    }
+        
+    }
+
+    public List<Invoice> getModifiedInvoices() {
+        List<Invoice> modified = new ArrayList<>();
+        for (Integer row : modifiedRows) {
+            modified.add(list.get(row));
+        }
+        return modified;
+    }
+}
+
+
+
