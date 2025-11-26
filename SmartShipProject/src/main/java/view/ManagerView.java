@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 
 import com.formdev.flatlaf.*;
@@ -25,6 +26,7 @@ public class ManagerView extends TabView implements KeyListener {
     private JTextField searchUsers = new JTextField();
     private JButton findUserByID = new JButton("Search by ID");
     private JPanel userList = new JPanel();
+    private JButton loadUsersButton = new JButton("(Re)Load users");
     
 	private User manager;
 	private List<User> users;
@@ -53,6 +55,11 @@ public class ManagerView extends TabView implements KeyListener {
 		showUserType.addActionListener(this);
 		searchUsers.addKeyListener(this);
 		findUserByID.addActionListener(this);
+		loadUsersButton.addActionListener(this);
+		
+		loadUsersButton.setActionCommand("load-users");
+		showUserType.setActionCommand("show-user-type");
+		findUserByID.setActionCommand("find-users");
 	}
     
     private JPanel addToPanel(Component ...components) {
@@ -65,8 +72,14 @@ public class ManagerView extends TabView implements KeyListener {
 		return panel;
 	}
  
-    @Override
-	public void actionPerformed(ActionEvent e) {
+    @Override public void actionPerformed(ActionEvent e) {
+    	String action = e.getActionCommand();
+    	
+    	switch (action) {
+    		case "load-users": loadUsers(); break;
+    		case "show-user-type": populateUserList(); break;
+    		case "find-users": findUser(); break;
+    	}
 	}
 
     public static void main(String[] args) {
@@ -90,6 +103,25 @@ public class ManagerView extends TabView implements KeyListener {
 			case "All":		 return User.class;
 			default:		 return User.class;
 		}
+	}
+	
+	private void findUser() {
+		String trn = JOptionPane.showInputDialog(this, "Enter TRN").trim();
+		
+		if (trn.length() != 9) {
+			
+		}
+		
+		try { Integer.parseInt(trn); } catch (NumberFormatException e) {}
+
+		loadUsers();
+		
+		Optional<User> foundUser = users.stream().filter(u -> u.getTrn().equals(trn)).findFirst();
+		if (foundUser.isEmpty()) {
+			
+		}
+		
+		
 	}
 	
 	private void loadUsers() {
@@ -149,7 +181,14 @@ public class ManagerView extends TabView implements KeyListener {
     }
 	
 	private void addToGridBag(JPanel panel, Component component, int x, int y, int w, int h) {
-		GridBagConstraints gc = new GridBagConstraints(x, y, w, h, 0, 0, 0, 0, null, h, h);
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridx = x;
+		gc.gridy = y;
+		gc.gridwidth = w;
+		gc.gridheight = h;
+		gc.fill = GridBagConstraints.BOTH;
+		gc.weightx = 1;
+		gc.weighty = 1;
 		panel.add(component, gc);
 	}
 
@@ -177,7 +216,7 @@ public class ManagerView extends TabView implements KeyListener {
 		addToGridBag(panel, new JLabel("Email"), 0, 6, 2, 1);
 		addToGridBag(panel, emailField,			0, 7, 2, 1);
 		
-		if (JOptionPane.showConfirmDialog(this, u, "Edit user details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+		if (JOptionPane.showConfirmDialog(this, panel, "Edit user details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			// TODO Add checks to user info
 			User editedUser = new User(u);
 			try {
@@ -186,14 +225,14 @@ public class ManagerView extends TabView implements KeyListener {
 				u.setLastName(editedUser.getLastName());
 				u.setContactNum(editedUser.getContactNum());
 				u.setEmail(editedUser.getEmail());
+				
+				populateUserList();
 				JOptionPane.showMessageDialog(this, "User info successfully updated", null, JOptionPane.PLAIN_MESSAGE);
 			}
 			catch (Exception err) {
 				JOptionPane.showMessageDialog(this, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		
-		userList.add(panel);
 	}
 
 	@Override public void keyPressed(KeyEvent e) {}
