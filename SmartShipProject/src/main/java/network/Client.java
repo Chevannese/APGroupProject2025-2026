@@ -371,5 +371,20 @@ public class Client {
         return null;
     }
 
+	public void updateUser(User editedUser) throws Exception  {
+		out.writeObject("update-user");
+		out.writeObject(editedUser);
+		out.flush();
+		
+		if (!"success".equals((String) in.readObject())) {
+			throw new Exception("Failed to update user info");
+		}
+	}
+
+	public List<User> getUsers() throws Exception {
+		out.writeObject("get-users");
+		return (List<User>) in.readObject();
+	}
+
 }
 

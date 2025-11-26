@@ -1,172 +1,66 @@
 package view;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+
 import com.formdev.flatlaf.*;
 
-public class ManagerView extends JFrame implements ActionListener {
-    private JPanel mainPanel;
-    private JPanel sidebarPanel;
-    private JPanel sidebarContent;
-    private JPopupMenu popupSidebar;
-    private JButton sidebarPopupButton;
-    private JMenuBar menubar;
-    private JButton homeBtn;
-    private JButton shipmentsBtn;
-    private JButton accountInfoBtn;
-    private JButton billingBtn;
-    private CardLayout card;
-    private JPanel shipmentPanel;
+import model.*;
+import network.Client;
 
-    // window size that the sidebar collapses under
-    private static final int SIDEBAR_SHOWN_MAX_WIDTH = 700;
-    // is the side bar shown
-    private Boolean isSidebarShown = true;
+public class ManagerView extends TabView implements KeyListener {
+    private static final long serialVersionUID = -4604700777404064232L;
+    private JPanel manageUsersPanel = new JPanel(new BorderLayout());
+    private JPanel managePackagesPanel = new JPanel(new BorderLayout());
+    private JComboBox<String> showUserType = new JComboBox<String>(new String[] { "All", "Customers", "Drivers", "Clerks"});
+    private JTextField searchUsers = new JTextField();
+    private JButton findUserByID = new JButton("Search by ID");
+    private JPanel userList = new JPanel();
+    
+	private User manager;
+	private List<User> users;
+    
+    public ManagerView(User loggedInUser) {
+    	this.manager = loggedInUser;
+    }
     
     public ManagerView() {
-        super("Manager");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new BorderLayout());
-        this.setSize(new Dimension(800, 600)); // Start large
-        this.setLocationRelativeTo(null);
-        
+        super();
         this.initialiseComponents();
-        this.addActionListeners();
-        this.updateSidebar();
-        
         this.setVisible(true);
     }
     
     private void initialiseComponents() {
-        menubar = new JMenuBar();
-        sidebarPopupButton = new JButton(">"); // Use a Unicode hamburger icon
-        sidebarPopupButton.setFocusPainted(false);
-        sidebarPopupButton.setVisible(false); // Hide initially
-        menubar.add(sidebarPopupButton);
-        menubar.add(new JLabel("Clerk Management"));
-        //this.add(menubar, BorderLayout.NORTH);
-        this.setJMenuBar(menubar);
-        
-        card = new CardLayout();
-        mainPanel = new JPanel();
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        mainPanel.setLayout(card);
-        this.add(mainPanel, BorderLayout.CENTER);
-        
-        mainPanel.add(new JScrollPane(new JTextArea("I don't know what to put here yet", 10, 30)), "home");
-        mainPanel.add(shipmentPanel, "shipments");
-
-        shipmentPanel = new JPanel(new BorderLayout());
-        shipmentPanel.add(new JTextField(), BorderLayout.NORTH);
-        mainPanel.add(new JScrollPane(shipmentPanel));
-
-        // sidebar
-        sidebarPanel = new JPanel(new BorderLayout());
-        sidebarPanel.setBackground(new Color(230, 230, 230));
-        this.add(sidebarPanel, BorderLayout.WEST);
-        
-        sidebarContent = new JPanel();
-        sidebarPanel.add(sidebarContent, BorderLayout.CENTER); // Add content
-        sidebarContent.setLayout(new BoxLayout(sidebarContent, BoxLayout.Y_AXIS));
-        sidebarContent.setBackground(Color.gray);
-        
-        // Add buttons to sidebar
-        homeBtn = new JButton("Home");
-        shipmentsBtn = new JButton("Shipment Management");
-        accountInfoBtn = new JButton("Account Information");
-        billingBtn = new JButton("Billing");
-        
-        JButton[] buttons = {homeBtn, accountInfoBtn, shipmentsBtn, billingBtn};
-        for (JButton button : buttons) {
-            button.setFocusPainted(false);
-            button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-            //button.setPreferredSize(new Dimension(0, 50));
-            button.setAlignmentX(Component.LEFT_ALIGNMENT);
-            sidebarContent.add(button);
-        }
-        
-        sidebarContent.setPreferredSize(new Dimension(180, 200));
-
-        // E. Popup Menu
-        // This will hold the sidebar content when collapsed.
-        popupSidebar = new JPopupMenu();
-    }
-
-    private void updateSidebar() {
-        int frameWidth = this.getWidth();
-
-        // small window = no sidebar shown
-        if (frameWidth < SIDEBAR_SHOWN_MAX_WIDTH && isSidebarShown) {
-            // Collapse side bar
-            this.remove(sidebarPanel);
-            sidebarPopupButton.setVisible(true);
-            isSidebarShown = false;
-        }
-        // large window = sidebar shown
-        else if (frameWidth >= SIDEBAR_SHOWN_MAX_WIDTH && !isSidebarShown) {
-            // show sidebar
-            this.add(sidebarPanel, BorderLayout.WEST);
-            
-            // return content to sidebar
-            if (popupSidebar.isAncestorOf(sidebarContent)) {
-                sidebarPanel.add(sidebarContent);
-            }
-            
-            sidebarPopupButton.setVisible(false);
-            isSidebarShown = true;
-            
-            // hide popup because we are using the sidebar now
-            popupSidebar.setVisible(false);
-        }
-
-        // Tell the frame to update its layout
-        this.revalidate();
-        this.repaint();
+    	addTab("User Management", manageUsersPanel);
+    	addTab("Manage Packages", managePackagesPanel);
+    	addTab("Manage Vehicles", managePackagesPanel);
+    	
+    	userList.setLayout(new BoxLayout(userList, BoxLayout.Y_AXIS));
+    	manageUsersPanel.add(addToPanel(new JLabel("Search"), searchUsers, showUserType, findUserByID), BorderLayout.NORTH);
+    	manageUsersPanel.add(new JScrollPane(userList), BorderLayout.CENTER);
     }
     
-    public void addActionListeners() {
-    	// listener for when the window resizes
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                updateSidebar();
-            }
-        });
-
-        sidebarPopupButton.addActionListener(e -> {
-            // move the sidebar to the popup
-            popupSidebar.add(sidebarContent);
-            // move popup near button
-            popupSidebar.show(sidebarPopupButton, 0, sidebarPopupButton.getHeight());
-        });
-
-        popupSidebar.addPopupMenuListener(new PopupMenuListener() {
-        	@Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                // move the sidebar back to the mainwindow if the window is large enough
-                if (isSidebarShown) {
-                    sidebarPanel.add(sidebarContent);
-                    sidebarPanel.revalidate();
-                    sidebarPanel.repaint();
-                }
-            }
-            
-            // don't need these but java complains with them cuz they are abstract methods
-            @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-            @Override public void popupMenuCanceled(PopupMenuEvent e) {}
-        });
-        
-        homeBtn.addActionListener(e -> card.show(mainPanel, "home"));
-        shipmentsBtn.addActionListener(e -> card.show(mainPanel, "shipments"));
-    }
+    private void addActionListeners() {
+		showUserType.addActionListener(this);
+		searchUsers.addKeyListener(this);
+		findUserByID.addActionListener(this);
+	}
     
+    private JPanel addToPanel(Component ...components) {
+    	JPanel panel = new JPanel();
+    	
+    	for (Component component : components) {
+    		panel.add(component);
+    	}
+    	
+		return panel;
+	}
+ 
     @Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
     public static void main(String[] args) {
@@ -174,7 +68,125 @@ public class ManagerView extends JFrame implements ActionListener {
     	FlatLightLaf.setup();
 
         SwingUtilities.invokeLater(() -> {
-            new ClerkView();
+            new ManagerView();
         });
     }
+
+	@Override public void keyTyped(KeyEvent e) {
+		this.populateUserList();
+	}
+
+	private Class<?> getSelectedClass() {
+		switch ((String) showUserType.getSelectedItem()) {
+			case "Customer": return Customer.class;
+			case "Clerk":	 return Clerk.class;
+			case "Driver":	 return Driver.class;
+			case "All":		 return User.class;
+			default:		 return User.class;
+		}
+	}
+	
+	private void loadUsers() {
+		this.users = null;
+		
+		try {
+			users = new Client().getUsers();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void populateUserList() {
+		if (this.users == null) {
+			return;
+		}
+		
+		String search = searchUsers.getText().toLowerCase();
+		
+		List<User> filter = users.stream().filter(u -> this.getSelectedClass().isInstance(u)).toList();
+
+		for (User u : users) {
+			if (!getSelectedClass().isInstance(u)) {
+				continue;
+			}
+	        // Filter by search
+	        if (!search.isBlank()) {
+	            boolean matches = String.format("%s %s", u.getFirstName(), u.getLastName()).toLowerCase().contains(search) 
+	            		|| u.getFirstName().toLowerCase().contains(search)
+	                    || u.getLastName().toLowerCase().contains(search)
+	                    || u.getEmail().toLowerCase().contains(search)
+	                    || u.getContactNum().toLowerCase().contains(search);
+	
+	            if (!matches) {
+	                continue;
+	            }
+	        }
+	
+	        JPanel panel = new JPanel(new BorderLayout());
+	        JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	        JLabel trn = new JLabel(u.getTrn());
+	        JLabel name = new JLabel(String.format("%s %s", u.getFirstName(), u.getLastName()));
+	        JButton button = new JButton("Open");
+	
+	        infoPanel.add(trn);
+	        infoPanel.add(name);
+	
+	        panel.add(infoPanel, BorderLayout.CENTER);
+	        panel.add(button, BorderLayout.EAST);
+	        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
+	        button.addActionListener(e -> editUser(u));
+	
+	        userList.add(panel);
+		}
+    }
+	
+	private void addToGridBag(JPanel panel, Component component, int x, int y, int w, int h) {
+		GridBagConstraints gc = new GridBagConstraints(x, y, w, h, 0, 0, 0, 0, null, h, h);
+		panel.add(component, gc);
+	}
+
+	private void editUser(User u) {
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints gc = new GridBagConstraints();
+		
+		JTextField trnField = new JTextField();
+		JTextField firstNameField = new JTextField();
+		JTextField lastNameField = new JTextField();
+		JTextField contactField = new JTextField();
+		JTextField emailField = new JTextField();
+		
+		trnField.setEnabled(false);
+		
+		addToGridBag(panel, new JLabel("Name"), 0, 2, 2, 1);
+		addToGridBag(panel, firstNameField, 	0, 3, 1, 1);
+		addToGridBag(panel, lastNameField,		1, 3, 1, 1);
+		addToGridBag(panel, new JLabel("Phone"), 0, 4, 2, 1);
+		addToGridBag(panel, contactField, 		0, 5, 2, 1);
+		addToGridBag(panel, new JLabel("Email"), 0, 6, 2, 1);
+		addToGridBag(panel, emailField,			0, 7, 2, 1);
+		
+		if (JOptionPane.showConfirmDialog(this, u, "Edit user details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+			// TODO Add checks to user info
+			User editedUser = new User(u);
+			try {
+				new Client().updateUser(editedUser);
+				u.setFirstName(editedUser.getFirstName());
+				u.setLastName(editedUser.getLastName());
+				u.setContactNum(editedUser.getContactNum());
+				u.setEmail(editedUser.getEmail());
+				JOptionPane.showMessageDialog(this, "User info successfully updated", null, JOptionPane.PLAIN_MESSAGE);
+			}
+			catch (Exception err) {
+				JOptionPane.showMessageDialog(this, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+		userList.add(panel);
+	}
+
+	@Override public void keyPressed(KeyEvent e) {}
+
+	@Override public void keyReleased(KeyEvent e) {}
 }

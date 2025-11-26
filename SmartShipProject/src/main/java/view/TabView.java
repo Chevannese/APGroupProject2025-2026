@@ -5,7 +5,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class TabView extends JFrame implements PopupMenuListener, ComponentListener {
+public class TabView extends JFrame implements PopupMenuListener, ComponentListener, ActionListener {
     private static final long serialVersionUID = -4757134542607256811L;
     protected JPanel outerPanel;
     protected JPanel mainPanel;
@@ -39,8 +39,6 @@ public class TabView extends JFrame implements PopupMenuListener, ComponentListe
 			// move popup near button
 			popupSidebar.show(sidebarPopupBtn, 0, sidebarPopupBtn.getHeight());
         });
-
-        this.setVisible(true);
     }
     
     public void addTab(String tabName, JPanel pane) {
@@ -49,8 +47,9 @@ public class TabView extends JFrame implements PopupMenuListener, ComponentListe
     	tabButton.setFocusPainted(false);
         tabButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         tabButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-    	tabButton.setActionCommand(tabName);
 		tabButton.addActionListener(e -> card.show(mainPanel, tabName));
+		tabButton.addActionListener(this);
+		tabButton.setActionCommand(tabName);
 		sidebarContent.add(tabButton);
 		mainPanel.add(pane, tabName);
     }
@@ -148,4 +147,6 @@ public class TabView extends JFrame implements PopupMenuListener, ComponentListe
     // don't need these but java complains with them cuz they are abstract methods
     @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
     @Override public void popupMenuCanceled(PopupMenuEvent e) {}
+
+	@Override public void actionPerformed(ActionEvent e) {}
 }
