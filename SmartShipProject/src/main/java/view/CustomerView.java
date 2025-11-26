@@ -15,14 +15,12 @@ import javax.swing.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 
 import model.Invoice;
 import model.Shipment;
 import model.TrackPackage;
 import model.User;
 import network.Client;
-import network.Server;
 
 public class CustomerView extends JFrame 
 {
@@ -50,6 +48,8 @@ public class CustomerView extends JFrame
 	private JScrollPane scrollPane;
 	private Client client = new Client();
 	private ButtonGroup btnGrpPayment;
+	private JLabel memberDate, trnValue, nameValue,emailValue, contactValue, lastName,firstName;
+	private JPasswordField passwordValue;
 
 
 
@@ -133,6 +133,8 @@ public class CustomerView extends JFrame
  		 	
 				cardLayout.show(customerPanel, "Menu");
       });
+    	
+    	
     	
     	logout.addActionListener(e ->{
             logger.info("" + loggedInUser.getTrn() + "has successfully logged out");
@@ -245,6 +247,17 @@ public class CustomerView extends JFrame
  		
  		table = new JTable();
  		scrollPane = new JScrollPane();
+ 		 		
+ 		
+ 		
+ 		
+
+ 		
+ 		
+ 		
+ 		
+ 		
+ 		
  		
  		GridBagConstraints gc2 = new GridBagConstraints();
  		gc2 = new GridBagConstraints();
@@ -735,6 +748,102 @@ public class CustomerView extends JFrame
 				 cardLayout.show(customerPanel, "Menu");
 				} 
 		});
+		
+		
+		JLabel titleP = new JLabel("Personal Info", SwingConstants.CENTER);
+ 		titleP.setFont(new Font("Arial", Font.BOLD, 20));
+ 		 		
+ 		JLabel editB = new JLabel("Basic Info");
+ 		editB.setFont(new Font("Arial", Font.BOLD, 15));
+ 		
+ 		JLabel trnLabel = new JLabel("TRN");
+ 		 trnValue = new JLabel("");
+ 		 
+  		JButton editTRN = new JButton("Edit");
+
+ 		
+ 		JLabel nameLabel = new JLabel("Name");
+ 		
+ 		firstName = new JLabel("");
+ 		lastName = new JLabel("");
+ 		
+ 		
+ 		JButton editFName = new JButton("Edit");
+ 		JButton editLName = new JButton("Edit");
+
+
+ 		 		
+ 		JLabel passwordLabel = new JLabel("Password");
+ 		 passwordValue = new JPasswordField("");
+ 		JButton editPassword = new JButton("Edit");
+ 		
+ 		
+ 		JLabel editContactInfo = new JLabel("Contact Info");
+ 		
+ 		JLabel contactLabel = new JLabel("Phone");
+ 		
+ 		contactValue = new JLabel("");
+ 		
+ 		JButton editPhone = new JButton("Edit");
+ 		JButton editEmail = new JButton("Edit");
+ 		
+ 		JLabel emailLabel = new JLabel("Email");
+ 		
+ 		 emailValue = new JLabel("");
+		
+ 		info.addActionListener(e->{
+    		cardLayout.show(customerPanel, "AccountPage");
+    		trnValue.setText(loggedInUser.getTrn());
+    		firstName.setText(loggedInUser.getFirstName());
+    		lastName.setText(loggedInUser.getLastName());
+    		passwordValue.setText(loggedInUser.getPassword());
+    		emailValue.setText(loggedInUser.getEmail());
+    		contactValue.setText(loggedInUser.getContactNum());
+    		
+
+    		
+    	});
+		
+		GridBagConstraints gc5 = new GridBagConstraints();
+ 		gc5 = new GridBagConstraints();
+ 		gc5.insets = new Insets(10, 10, 10, 10);
+        gc5.fill = GridBagConstraints.HORIZONTAL;
+        
+        
+        addToGridBag(accountPage, titleP,gc5, 0,0,5,1);
+        
+        addToGridBag(accountPage, editB,gc5, 0,1,3,1);
+        
+        addToGridBag(accountPage, trnLabel,gc5, 0,2,1,1);
+        addToGridBag(accountPage, trnValue,gc5, 1,2,1,1);
+        addToGridBag(accountPage, editTRN,gc5, 2,2,1,1);
+
+        addToGridBag(accountPage, nameLabel,gc5, 0,3,1,1);
+        
+        addToGridBag(accountPage, firstName,gc5, 1,3,1,1);
+        addToGridBag(accountPage, editFName,gc5, 2,3,1,1);
+        addToGridBag(accountPage, lastName,gc5, 3,3,1,1);
+        addToGridBag(accountPage, editLName,gc5, 4,3,1,1);
+
+        addToGridBag(accountPage, passwordLabel,gc5, 0,4,1,1);
+        addToGridBag(accountPage, passwordValue,gc5, 1,4,1,1);
+        addToGridBag(accountPage, editPassword,gc5, 2,4,1,1);
+        addToGridBag(accountPage, editContactInfo,gc5, 0,5,1,1);
+       addToGridBag(accountPage, contactLabel,gc5, 0,6,1,1);
+        addToGridBag(accountPage, contactValue,gc5, 1,6,1,1);
+        addToGridBag(accountPage, editPhone,gc5, 2,6,1,1);
+
+        addToGridBag(accountPage, emailLabel,gc5, 0,0,2,1);
+        addToGridBag(accountPage, emailValue,gc5, 0,0,2,1);
+        addToGridBag(accountPage, editEmail,gc5, 0,0,2,1);
+
+        addToGridBag(accountPage, contactValue,gc5, 0,0,2,1);
+	
+
+
+		
+		
+		
          this.setVisible(true); 	 
     }
 	
@@ -765,10 +874,9 @@ public class CustomerView extends JFrame
    	        panel.add(component,gbc);
        }
 	
-	private void populateInvoice()
+	private void populateUserInfo()
 	{
-		GridBagConstraints gc4 = new GridBagConstraints();
-		JScrollPane scroll = new JScrollPane();
+		
 	}
 	
 	private int setZone()

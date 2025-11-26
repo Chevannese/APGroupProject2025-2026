@@ -122,7 +122,8 @@ private final Driver driver;
                    "Vehicle Details:\n" +
                    "ID: " + v.getVehicleNo() + "\n" +
                    "Model: " + v.getVehicleName() + "\n" +
-                   "Capacity: " + v.getWeightCap(),
+                   "Weight Limit: " + v.getWeightCap() + "\n" +
+                   "Quantity Limit: " + v.getQuantityCap() + "\n",
                    "Vehicle Information", JOptionPane.INFORMATION_MESSAGE);
        } catch (Exception e) {
            JOptionPane.showMessageDialog(this, "Error fetching vehicle:\n" + e.getMessage());

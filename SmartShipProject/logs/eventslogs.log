@@ -4,3 +4,7 @@
 [ERROR] 2025-11-23 19:28:35.915 [AWT-EventQueue-0] ClerkView - Failed to load shipments
 [ERROR] 2025-11-23 19:30:14.362 [AWT-EventQueue-0] ClerkView - Failed to load shipments
 [ERROR] 2025-11-23 19:32:25.311 [AWT-EventQueue-0] ClerkView - Failed to load shipments
+[ INFO] 2025-11-25 19:33:12.484 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-25 19:33:15.546 [AWT-EventQueue-0] Login - Connection closed for client
+[ INFO] 2025-11-25 19:34:24.521 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-25 19:34:26.698 [AWT-EventQueue-0] Login - Connection closed for client
