@@ -22,3 +22,5 @@
 [ INFO] 2025-11-26 02:26:07.858 [AWT-EventQueue-0] CustomerView - Customer went to page 3 of Shipment Form
 [ INFO] 2025-11-26 02:26:16.624 [AWT-EventQueue-0] CustomerView - Generating Invoice
 [ INFO] 2025-11-26 02:26:35.920 [AWT-EventQueue-0] CustomerView - Item list has been cleared
+[ INFO] 2025-11-26 14:20:34.658 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-26 14:20:37.149 [AWT-EventQueue-0] Login - Connection closed for client
