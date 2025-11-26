@@ -464,7 +464,31 @@ public class Server {
 			            out.flush();
 
 
-            }
+            }else if(action.equals("UPDATE_USERS"))
+            {
+
+            	
+            	    @SuppressWarnings("unchecked")
+            	    List<User> updatedUsers = (List<User>) in.readObject();
+
+            	    try (Session session = sessionFactory.openSession()) {
+		                Transaction transaction = session.beginTransaction();
+            	        for (User u : updatedUsers) {
+            	            session.merge(u); // merge copies state into the managed entity
+            	        }
+            	        transaction.commit();
+            	    } catch (Exception ex) {
+            	        out.writeObject("Update failed: " + ex.getMessage());
+            	        out.flush();
+            	        logger.error(ex.getMessage());
+            	    }
+
+            	    out.writeObject("Users updated successfully!");
+            	    out.flush();
+            	    
+            	}
+
+            
 
 
         } catch (Exception e) {

@@ -32,6 +32,7 @@ import model.Invoice;
 import model.Shipment;
 import model.TrackPackage;
 import model.User;
+import model.UserTableModel;
 import network.Client;
 
 public class CustomerView extends JFrame 
@@ -901,31 +902,6 @@ public class CustomerView extends JFrame
    	        panel.add(component,gbc);
        }
 	
-	private void changeFName()
-	{
-		
-	}
-	
-	private void changeLName()
-	{
-		
-	}
-	
-	private void changePassword()
-	{
-		
-	}
-	
-	private void changeEmail()
-	{
-		
-	}
-	
-	private void changePhone()
-	{
-		
-	}
-	
 	
 	
 
@@ -986,7 +962,7 @@ private void showInvoiceTable(List<Invoice> list) {
     InvoiceTableModel model = new InvoiceTableModel(list);
     JTable table = new JTable(model);
 
-    // ✅ Apply renderer to Remaining Cost column
+    // Apply renderer to Remaining Cost column
     table.getColumnModel().getColumn(9).setCellRenderer(createRemainingCostRenderer());
 
     JScrollPane scroll = new JScrollPane(table);
@@ -1003,7 +979,7 @@ private void showInvoiceTable(List<Invoice> list) {
 
     JButton submit = new JButton("Submit");
 
-    // ✅ Submit button sends only modified invoices
+    // Submit button sends only modified invoices
     submit.addActionListener(e -> {
         List<Invoice> modifiedInvoices = model.getModifiedInvoices();
         if (modifiedInvoices.isEmpty()) {
@@ -1048,9 +1024,6 @@ private void showInvoiceTable(List<Invoice> list) {
     invoicePage.revalidate();
     invoicePage.repaint();
 }
-
-
-
 	
 	
 	private int setZone()
@@ -1115,7 +1088,7 @@ private void showInvoiceTable(List<Invoice> list) {
     public boolean isCellEditable(int row, int col) {
         double remaining = list.get(row).getRemainingCost();
         if (remaining == 0) return false; // lock row if fully paid
-        return col == 9; // ✅ Only Remaining Cost editable
+        return col == 9; //  Only Remaining Cost editable
     }
 
     @Override

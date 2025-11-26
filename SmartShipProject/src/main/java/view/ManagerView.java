@@ -1,7 +1,13 @@
 package view;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
@@ -189,4 +195,97 @@ public class ManagerView extends TabView implements KeyListener {
 	@Override public void keyPressed(KeyEvent e) {}
 
 	@Override public void keyReleased(KeyEvent e) {}
+	
+	private void showUserTable(List<User> userList) {
+	    UserTableModel model = new UserTableModel(userList);
+	    JTable table = new JTable(model);
+
+	    // Apply the green highlight renderer to all columns
+	    TableCellRenderer renderer = createChangeHighlightRenderer(model);
+	    for (int i = 0; i < table.getColumnCount(); i++) {
+	        table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+	    }
+
+	    JScrollPane scroll = new JScrollPane(table);
+	    scroll.setPreferredSize(new Dimension(900, 400));
+
+	    // Assuming you are reusing your existing panel (invoicePage) for display
+	    manageUsersPanel.removeAll();
+
+	    GridBagConstraints gc = new GridBagConstraints();
+	    gc.insets = new Insets(10, 10, 10, 10);
+	    gc.fill = GridBagConstraints.HORIZONTAL;
+
+	    JLabel title = new JLabel("Manage Users", SwingConstants.CENTER);
+	    title.setFont(new Font("Arial", Font.BOLD, 20));
+
+	    JButton submit = new JButton("Submit");
+
+	    submit.addActionListener(e -> {
+	        // Commit any ongoing cell edit
+	        if (table.isEditing()) {
+	            table.getCellEditor().stopCellEditing();
+	        }
+
+	        List<User> modifiedUsers = model.getModifiedUsers();
+	        if (modifiedUsers.isEmpty()) {
+	            JOptionPane.showMessageDialog(null, "No changes to submit.");
+	            return;
+	        }
+
+	        // Send only changed users to server
+	        try (Socket socket = new Socket("127.0.0.1", 8888);
+	             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+	            out.writeObject("UPDATE_USERS");
+	            out.writeObject(modifiedUsers);
+	            out.flush();
+
+	            Object resp = in.readObject();
+	            String response = (resp instanceof String) ? (String) resp : "Users updated successfully!";
+	            JOptionPane.showMessageDialog(null, response);
+
+	            // On success: clear modified marks and refresh snapshot
+	            model.clearModifiedMarks();
+
+	        } catch (Exception ex) {
+	            JOptionPane.showMessageDialog(null, "Could not update users!");
+	            ex.printStackTrace();
+	        }
+	    });
+
+
+	    manageUsersPanel.add(scroll, gc);
+
+	    manageUsersPanel.revalidate();
+	    manageUsersPanel.repaint();
+	}
+
+	
+	
+	private TableCellRenderer createChangeHighlightRenderer(UserTableModel model) {
+	    return new DefaultTableCellRenderer() {
+	        /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+	        public Component getTableCellRendererComponent(
+	                JTable table, Object value, boolean isSelected,
+	                boolean hasFocus, int row, int col) {
+
+	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+	            if (model.isCellModified(row, col)) {
+	                c.setBackground(new java.awt.Color(144, 238, 144)); // light green
+	            } else {
+	                c.setBackground(isSelected ? table.getSelectionBackground() : java.awt.Color.WHITE);
+	            }
+	            return c;
+	        }
+	    };
+	}
+	
 }
