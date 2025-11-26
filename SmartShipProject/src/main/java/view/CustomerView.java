@@ -31,7 +31,7 @@ public class CustomerView extends JFrame
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(CustomerView.class);
 	private GridBagConstraints gc;
-	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3, invoicePage;
+	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3, invoicePage, accountPage;
 	private CardLayout cardLayout;
 	private JMenu account, nav;
 	private JMenuItem track,order,bill,home,logout,info;
@@ -74,12 +74,14 @@ public class CustomerView extends JFrame
 		 orderPage2 = new JPanel(new GridBagLayout());
 		 orderPage3 = new JPanel(new GridBagLayout());
 		 invoicePage = new JPanel(new GridBagLayout());
+		 accountPage = new JPanel(new GridBagLayout());
 		
 		customerPanel.add(menu, "Menu");
 		customerPanel.add(orderPage1,"ShipmentForm1");
 		customerPanel.add(orderPage2,"ShipmentForm2");
 		customerPanel.add(orderPage3, "ShipmentForm3");
 		customerPanel.add(invoicePage, "InvoicePage");
+		customerPanel.add(accountPage, "AccountPage");
 		    	   
 		add(customerPanel);
     	cardLayout.show(customerPanel, "Menu");
