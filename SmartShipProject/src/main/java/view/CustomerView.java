@@ -1137,6 +1137,12 @@ private void showInvoiceTable(List<Invoice> list) {
     	        } else {
     	            inv.setPaymentStatus("Unpaid");
     	        }
+    	        //This is in case the User attempts to enter value higher than total
+    	        if (remaining > inv.getTotal())
+    	        {
+    	        	inv.setRemainingCost(inv.getTotal());
+    	        }
+    	        	
 
     	        // Mark row as modified
     	        modifiedRows.add(row);
