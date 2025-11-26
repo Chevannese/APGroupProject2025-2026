@@ -1,36 +1,42 @@
 package view;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 
 import com.formdev.flatlaf.*;
 
 import model.*;
 import network.Client;
 
-public class ManagerView extends TabView implements KeyListener {
+public class ManagerView extends TabView implements ActionListener {
     private static final long serialVersionUID = -4604700777404064232L;
     private JPanel manageUsersPanel = new JPanel(new BorderLayout());
     private JPanel managePackagesPanel = new JPanel(new BorderLayout());
     private JComboBox<String> showUserType = new JComboBox<String>(new String[] { "All", "Customers", "Drivers", "Clerks"});
-    private JTextField searchUsers = new JTextField();
+    private JTextField searchUsers = new JTextField(20);
     private JButton findUserByID = new JButton("Search by ID");
-    private JPanel userList = new JPanel();
+    private JButton refreshBtn = new JButton("Refresh");
     
-	private User manager;
-	private List<User> users;
+    private User manager;
+    private List<User> users;
+    private UserTableModel tableModel;
+    private JTable userTable;
     
     public ManagerView(User loggedInUser) {
-    	this.manager = loggedInUser;
+        super();
+        this.manager = loggedInUser;
+        this.initialiseComponents();
+        this.setVisible(true);
     }
     
     public ManagerView() {
@@ -40,256 +46,196 @@ public class ManagerView extends TabView implements KeyListener {
     }
     
     private void initialiseComponents() {
-    	addTab("User Management", manageUsersPanel);
-    	addTab("Manage Packages", managePackagesPanel);
-    	addTab("Manage Vehicles", managePackagesPanel);
-    	
-    	userList.setLayout(new BoxLayout(userList, BoxLayout.Y_AXIS));
-    	manageUsersPanel.add(addToPanel(new JLabel("Search"), searchUsers, showUserType, findUserByID), BorderLayout.NORTH);
-    	manageUsersPanel.add(new JScrollPane(userList), BorderLayout.CENTER);
+        addTab("User Management", manageUsersPanel);
+        addTab("Manage Packages", managePackagesPanel);
+        addTab("Manage Vehicles", managePackagesPanel);
+
+        
+        // Create search panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel("Search:"));
+        searchPanel.add(searchUsers);
+        searchPanel.add(new JLabel("Filter:"));
+        searchPanel.add(showUserType);
+        searchPanel.add(findUserByID);
+        searchPanel.add(refreshBtn);
+        
+        // Initialize table
+        tableModel = new UserTableModel(new ArrayList<>());
+        userTable = new JTable(tableModel);
+        
+        // Apply the green highlight renderer to all columns
+        TableCellRenderer renderer = createChangeHighlightRenderer(tableModel);
+        for (int i = 0; i < userTable.getColumnCount(); i++) {
+            userTable.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
+        
+        // Make table editable
+        userTable.setDefaultEditor(Object.class, new DefaultCellEditor(new JTextField()) {
+            @Override
+            public boolean isCellEditable(EventObject e) {
+                // Make all cells except TRN editable
+                if (e instanceof KeyEvent) {
+                    return true;
+                }
+                if (e instanceof MouseEvent) {
+                    MouseEvent me = (MouseEvent) e;
+                    int column = userTable.columnAtPoint(me.getPoint());
+                    return column != 0; // TRN column is not editable
+                }
+                return true;
+            }
+        });
+        
+        JScrollPane scrollPane = new JScrollPane(userTable);
+        scrollPane.setPreferredSize(new Dimension(900, 400));
+        
+        // Submit button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton submitBtn = new JButton("Submit Changes");
+        buttonPanel.add(submitBtn);
+        
+        // Add components to main panel
+        manageUsersPanel.add(searchPanel, BorderLayout.NORTH);
+        manageUsersPanel.add(scrollPane, BorderLayout.CENTER);
+        manageUsersPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        addActionListeners();
+        //loadUsers();
     }
     
     private void addActionListeners() {
-		showUserType.addActionListener(this);
-		searchUsers.addKeyListener(this);
-		findUserByID.addActionListener(this);
-	}
-    
-    private JPanel addToPanel(Component ...components) {
-    	JPanel panel = new JPanel();
-    	
-    	for (Component component : components) {
-    		panel.add(component);
-    	}
-    	
-		return panel;
-	}
- 
-    @Override
-	public void actionPerformed(ActionEvent e) {
-	}
-
-    public static void main(String[] args) {
-        // Run the GUI on the Event Dispatch Thread (EDT)
-    	FlatLightLaf.setup();
-
-        SwingUtilities.invokeLater(() -> {
-            new ManagerView();
+        showUserType.addActionListener(e -> filterUsers());
+        findUserByID.addActionListener(e -> searchUserByID());
+        refreshBtn.addActionListener(e -> loadUsers());
+        
+        // Add document listener for real-time search
+        searchUsers.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterUsers(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterUsers(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterUsers(); }
         });
     }
-
-	@Override public void keyTyped(KeyEvent e) {
-		this.populateUserList();
-	}
-
-	private Class<?> getSelectedClass() {
-		switch ((String) showUserType.getSelectedItem()) {
-			case "Customer": return Customer.class;
-			case "Clerk":	 return Clerk.class;
-			case "Driver":	 return Driver.class;
-			case "All":		 return User.class;
-			default:		 return User.class;
-		}
-	}
-	
-	private void loadUsers() {
-		this.users = null;
-		
-		try {
-			users = new Client().getUsers();
-		}
-		catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void populateUserList() {
-		if (this.users == null) {
-			return;
-		}
-		
-		String search = searchUsers.getText().toLowerCase();
-		
-		List<User> filter = users.stream().filter(u -> this.getSelectedClass().isInstance(u)).toList();
-
-		for (User u : users) {
-			if (!getSelectedClass().isInstance(u)) {
-				continue;
-			}
-	        // Filter by search
-	        if (!search.isBlank()) {
-	            boolean matches = String.format("%s %s", u.getFirstName(), u.getLastName()).toLowerCase().contains(search) 
-	            		|| u.getFirstName().toLowerCase().contains(search)
-	                    || u.getLastName().toLowerCase().contains(search)
-	                    || u.getEmail().toLowerCase().contains(search)
-	                    || u.getContactNum().toLowerCase().contains(search);
-	
-	            if (!matches) {
-	                continue;
-	            }
-	        }
-	
-	        JPanel panel = new JPanel(new BorderLayout());
-	        JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	        JLabel trn = new JLabel(u.getTrn());
-	        JLabel name = new JLabel(String.format("%s %s", u.getFirstName(), u.getLastName()));
-	        JButton button = new JButton("Open");
-	
-	        infoPanel.add(trn);
-	        infoPanel.add(name);
-	
-	        panel.add(infoPanel, BorderLayout.CENTER);
-	        panel.add(button, BorderLayout.EAST);
-	        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70));
-	        button.addActionListener(e -> editUser(u));
-	
-	        userList.add(panel);
-		}
+    
+    private void loadUsers() {
+        try {
+            this.users = new Client().getUsers();
+            filterUsers(); // Apply current filters
+            JOptionPane.showMessageDialog(this, "Users loaded successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Could not load users from server!");
+        }
     }
-	
-	private void addToGridBag(JPanel panel, Component component, int x, int y, int w, int h) {
-		GridBagConstraints gc = new GridBagConstraints(x, y, w, h, 0, 0, 0, 0, null, h, h);
-		panel.add(component, gc);
-	}
+    
+    private void filterUsers() {
+        if (this.users == null) return;
+        
+        String searchText = searchUsers.getText().toLowerCase();
+        String selectedType = (String) showUserType.getSelectedItem();
+        
+        List<User> filteredUsers = users.stream()
+            .filter(user -> matchesType(user, selectedType))
+            .filter(user -> matchesSearch(user, searchText))
+            .toList();
+        
+        tableModel.setUsers(new ArrayList<>(filteredUsers));
+    }
+    
+    private boolean matchesType(User user, String type) {
+        return switch (type) {
+            case "Customers" -> user instanceof Customer;
+            case "Drivers" -> user instanceof Driver;
+            case "Clerks" -> user instanceof Clerk;
+            default -> true; // "All"
+        };
+    }
+    
+    private boolean matchesSearch(User user, String searchText) {
+        if (searchText.isBlank()) return true;
+        
+        return user.getFirstName().toLowerCase().contains(searchText) ||
+               user.getLastName().toLowerCase().contains(searchText) ||
+               user.getEmail().toLowerCase().contains(searchText) ||
+               user.getContactNum().toLowerCase().contains(searchText) ||
+               user.getTrn().toLowerCase().contains(searchText);
+    }
+    
+    private void searchUserByID() {
+        String searchId = JOptionPane.showInputDialog(this, "Enter User TRN:");
+        if (searchId != null && !searchId.trim().isEmpty()) {
+            searchUsers.setText(searchId.trim());
+        }
+    }
+    
+    private TableCellRenderer createChangeHighlightRenderer(UserTableModel model) {
+        return new DefaultTableCellRenderer() {
+            private static final long serialVersionUID = 1L;
 
-	
-	private JPanel panel;
-	private GridBagConstraints gc;
-	
-	private void editUser(User u) {
-		 panel = new JPanel(new GridBagLayout());
-		 gc = new GridBagConstraints();
-		
-		JTextField trnField = new JTextField();
-		JTextField firstNameField = new JTextField();
-		JTextField lastNameField = new JTextField();
-		JTextField contactField = new JTextField();
-		JTextField emailField = new JTextField();
-		
-		trnField.setEnabled(false);
-		
-		addToGridBag(panel, new JLabel("Name"), 0, 2, 2, 1);
-		addToGridBag(panel, firstNameField, 	0, 3, 1, 1);
-		addToGridBag(panel, lastNameField,		1, 3, 1, 1);
-		addToGridBag(panel, new JLabel("Phone"), 0, 4, 2, 1);
-		addToGridBag(panel, contactField, 		0, 5, 2, 1);
-		addToGridBag(panel, new JLabel("Email"), 0, 6, 2, 1);
-		addToGridBag(panel, emailField,			0, 7, 2, 1);
-		
-		if (JOptionPane.showConfirmDialog(this, u, "Edit user details", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-			// TODO Add checks to user info
-			User editedUser = new User(u);
-			try {
-				new Client().updateUser(editedUser);
-				u.setFirstName(editedUser.getFirstName());
-				u.setLastName(editedUser.getLastName());
-				u.setContactNum(editedUser.getContactNum());
-				u.setEmail(editedUser.getEmail());
-				JOptionPane.showMessageDialog(this, "User info successfully updated", null, JOptionPane.PLAIN_MESSAGE);
-			}
-			catch (Exception err) {
-				JOptionPane.showMessageDialog(this, err.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		
-		userList.add(panel);
-	}
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int col) {
 
-	@Override public void keyPressed(KeyEvent e) {}
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
-	@Override public void keyReleased(KeyEvent e) {}
-	
-	private void showUserTable(List<User> userList) {
-	    UserTableModel model = new UserTableModel(userList);
-	    JTable table = new JTable(model);
+                if (model.isCellModified(row, col)) {
+                    c.setBackground(new Color(144, 238, 144)); // light green
+                } else {
+                    c.setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
+                }
+                return c;
+            }
+        };
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof JButton) {
+            JButton source = (JButton) e.getSource();
+            if (source.getText().equals("Submit Changes")) {
+                submitChanges();
+            }
+        }
+    }
+    
+    private void submitChanges() {
+        // Commit any ongoing cell edit
+        if (userTable.isEditing()) {
+            userTable.getCellEditor().stopCellEditing();
+        }
 
-	    // Apply the green highlight renderer to all columns
-	    TableCellRenderer renderer = createChangeHighlightRenderer(model);
-	    for (int i = 0; i < table.getColumnCount(); i++) {
-	        table.getColumnModel().getColumn(i).setCellRenderer(renderer);
-	    }
+        List<User> modifiedUsers = tableModel.getModifiedUsers();
+        if (modifiedUsers.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No changes to submit.");
+            return;
+        }
 
-	    JScrollPane scroll = new JScrollPane(table);
-	    scroll.setPreferredSize(new Dimension(900, 400));
+        // Send only changed users to server
+        try (Socket socket = new Socket("127.0.0.1", 8888);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-	    // Assuming you are reusing your existing panel (invoicePage) for display
-	    manageUsersPanel.removeAll();
+            out.writeObject("UPDATE_USERS");
+            out.writeObject(modifiedUsers);
+            out.flush();
 
-	    GridBagConstraints gc = new GridBagConstraints();
-	    gc.insets = new Insets(10, 10, 10, 10);
-	    gc.fill = GridBagConstraints.HORIZONTAL;
+            Object resp = in.readObject();
+            String response = (resp instanceof String) ? (String) resp : "Users updated successfully!";
+            JOptionPane.showMessageDialog(this, response);
 
-	    JLabel title = new JLabel("Manage Users", SwingConstants.CENTER);
-	    title.setFont(new Font("Arial", Font.BOLD, 20));
+            // On success: clear modified marks and refresh data
+            tableModel.clearModifiedMarks();
+            loadUsers(); // Reload to get fresh data
 
-	    JButton submit = new JButton("Submit");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Could not update users: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 
-	    submit.addActionListener(e -> {
-	        // Commit any ongoing cell edit
-	        if (table.isEditing()) {
-	            table.getCellEditor().stopCellEditing();
-	        }
-
-	        List<User> modifiedUsers = model.getModifiedUsers();
-	        if (modifiedUsers.isEmpty()) {
-	            JOptionPane.showMessageDialog(null, "No changes to submit.");
-	            return;
-	        }
-
-	        // Send only changed users to server
-	        try (Socket socket = new Socket("127.0.0.1", 8888);
-	             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-	             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-	            out.writeObject("UPDATE_USERS");
-	            out.writeObject(modifiedUsers);
-	            out.flush();
-
-	            Object resp = in.readObject();
-	            String response = (resp instanceof String) ? (String) resp : "Users updated successfully!";
-	            JOptionPane.showMessageDialog(null, response);
-
-	            // On success: clear modified marks and refresh snapshot
-	            model.clearModifiedMarks();
-
-	        } catch (Exception ex) {
-	            JOptionPane.showMessageDialog(null, "Could not update users!");
-	            ex.printStackTrace();
-	        }
-	    });
-
-
-	    panel.add(scroll);
-
-	    panel.revalidate();
-	    panel.repaint();
-	}
-
-	
-	
-	private TableCellRenderer createChangeHighlightRenderer(UserTableModel model) {
-	    return new DefaultTableCellRenderer() {
-	        /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-	        public Component getTableCellRendererComponent(
-	                JTable table, Object value, boolean isSelected,
-	                boolean hasFocus, int row, int col) {
-
-	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-
-	            if (model.isCellModified(row, col)) {
-	                c.setBackground(new java.awt.Color(144, 238, 144)); // light green
-	            } else {
-	                c.setBackground(isSelected ? table.getSelectionBackground() : java.awt.Color.WHITE);
-	            }
-	            return c;
-	        }
-	    };
-	}
-	
+    public static void main(String[] args) {
+        FlatLightLaf.setup();
+        SwingUtilities.invokeLater(() -> new ManagerView());
+    }
 }

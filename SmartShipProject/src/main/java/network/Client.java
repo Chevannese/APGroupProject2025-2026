@@ -385,10 +385,24 @@ public class Client {
 		}
 	}
 
+	// In your Client class
 	public List<User> getUsers() throws Exception {
-		out.writeObject("get-users");
-		return (List<User>) in.readObject();
+	    try (Socket socket = new Socket("127.0.0.1", 8888);
+	         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+	        
+	        out.writeObject("GET_USERS");
+	        out.flush();
+	        
+	        @SuppressWarnings("unchecked")
+	        List<User> users = (List<User>) in.readObject();
+	        return users;
+	        
+	    } catch (Exception e) {
+	        throw new Exception("Failed to retrieve users from server: " + e.getMessage());
+	    }
 	}
+
 
 }
 

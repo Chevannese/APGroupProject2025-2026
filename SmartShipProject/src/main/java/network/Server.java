@@ -464,29 +464,34 @@ public class Server {
 			            out.flush();
 
 
-            }else if(action.equals("UPDATE_USERS"))
-            {
+            }if (action.equals("GET_USERS")) {
+                try (Session session = sessionFactory.openSession()) {
+                    List<User> users = session.createQuery("FROM User", User.class).list();
+                    out.writeObject(users);
+                    out.flush();
+                } catch (Exception ex) {
+                    out.writeObject(new ArrayList<User>());
+                    out.flush();
+                    logger.error("Failed to retrieve users: ", ex);
+                }
+            }
+            else if (action.equals("UPDATE_USERS")) {
+                @SuppressWarnings("unchecked")
+                List<User> updatedUsers = (List<User>) in.readObject();
 
-            	
-            	    @SuppressWarnings("unchecked")
-            	    List<User> updatedUsers = (List<User>) in.readObject();
-
-            	    try (Session session = sessionFactory.openSession()) {
-		                Transaction transaction = session.beginTransaction();
-            	        for (User u : updatedUsers) {
-            	            session.merge(u); // merge copies state into the managed entity
-            	        }
-            	        transaction.commit();
-            	    } catch (Exception ex) {
-            	        out.writeObject("Update failed: " + ex.getMessage());
-            	        out.flush();
-            	        logger.error(ex.getMessage());
-            	    }
-
-            	    out.writeObject("Users updated successfully!");
-            	    out.flush();
-            	    
-            	}
+                try (Session session = sessionFactory.openSession()) {
+                    Transaction transaction = session.beginTransaction();
+                    for (User u : updatedUsers) {
+                        session.merge(u);
+                    }
+                    transaction.commit();
+                    out.writeObject("Users updated successfully!");
+                } catch (Exception ex) {
+                    out.writeObject("Update failed: " + ex.getMessage());
+                    logger.error(ex.getMessage());
+                }
+                out.flush();
+            }
 
             
 

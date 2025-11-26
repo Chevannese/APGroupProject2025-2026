@@ -1,141 +1,127 @@
 package model;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.swing.table.DefaultTableModel;
+import model.User;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UserTableModel extends AbstractTableModel {
-    private static final long serialVersionUID = 1L;
-
-    private final List<User> users;                 // current data
-    private final List<User> originalSnapshot;      // original copy to compare
-
-    // row index -> set of modified column indices
-    private final Map<Integer, Set<Integer>> modifiedByRow = new HashMap<>();
-
-    private final String[] columns = {
-        "TRN", "First Name", "Last Name", "Password", "Contact Number", "Email"
+public class UserTableModel extends DefaultTableModel {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private List<User> users;
+    private List<User> originalUsers; // To track changes
+    private boolean[][] modifiedCells;
+    
+    private final String[] columnNames = {
+        "TRN", "First Name", "Last Name", "Email", "Phone", "User Type"
     };
 
     public UserTableModel(List<User> users) {
-        this.users = Objects.requireNonNull(users, "users cannot be null");
-        this.originalSnapshot = users.stream().map(UserTableModel::copyUser).collect(Collectors.toList());
+        this.users = new ArrayList<>(users);
+        this.originalUsers = new ArrayList<>();
+        for (User user : users) {
+            this.originalUsers.add(new User(user)); // Deep copy for comparison
+        }
+        this.modifiedCells = new boolean[users.size()][columnNames.length];
     }
 
-    @Override public int getRowCount() { return users.size(); }
-    @Override public int getColumnCount() { return columns.length; }
-    @Override public String getColumnName(int col) { return columns[col]; }
-    @Override public Class<?> getColumnClass(int col) { return String.class; } // all are strings
+    public void setUsers(List<User> users) {
+        this.users = new ArrayList<>(users);
+        this.originalUsers = new ArrayList<>();
+        for (User user : users) {
+            this.originalUsers.add(new User(user));
+        }
+        this.modifiedCells = new boolean[users.size()][columnNames.length];
+        fireTableDataChanged();
+    }
 
     @Override
-    public Object getValueAt(int row, int col) {
-        User u = users.get(row);
-        return switch (col) {
-            case 0 -> u.getTrn();
-            case 1 -> u.getFirstName();
-            case 2 -> u.getLastName();
-            case 3 -> u.getPassword();
-            case 4 -> u.getContactNum();
-            case 5 -> u.getEmail();
+    public int getRowCount() {
+        return users != null ? users.size() : 0;
+    }
+
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        return columnNames[column];
+    }
+
+    @Override
+    public Object getValueAt(int row, int column) {
+        if (row >= users.size()) return null;
+        
+        User user = users.get(row);
+        return switch (column) {
+            case 0 -> user.getTrn();
+            case 1 -> user.getFirstName();
+            case 2 -> user.getLastName();
+            case 3 -> user.getEmail();
+            case 4 -> user.getContactNum();
+            case 5 -> getUserType(user);
             default -> null;
         };
     }
 
     @Override
-    public boolean isCellEditable(int row, int col) {
-        // TRN (col 0) is never editable
-        return col != 0;
+    public void setValueAt(Object value, int row, int column) {
+        if (row >= users.size()) return;
+        
+        User user = users.get(row);
+        String stringValue = value != null ? value.toString() : "";
+        
+        switch (column) {
+            case 1 -> user.setFirstName(stringValue);
+            case 2 -> user.setLastName(stringValue);
+            case 3 -> user.setEmail(stringValue);
+            case 4 -> user.setContactNum(stringValue);
+            default -> { return; }
+        }
+        
+        modifiedCells[row][column] = true;
+        fireTableCellUpdated(row, column);
     }
 
     @Override
-    public void setValueAt(Object value, int row, int col) {
-        String newVal = value == null ? "" : value.toString();
-        User u = users.get(row);
+    public boolean isCellEditable(int row, int column) {
+        // Only allow editing of name, email, and phone columns
+        return column >= 1 && column <= 4;
+    }
 
-        switch (col) {
-            case 1 -> u.setFirstName(newVal);
-            case 2 -> u.setLastName(newVal);
-            case 3 -> u.setPassword(newVal);
-            case 4 -> u.setContactNum(newVal);
-            case 5 -> u.setEmail(newVal);
-            default -> { /* no-op for TRN */ }
+    public boolean isCellModified(int row, int column) {
+        if (row < modifiedCells.length && column < modifiedCells[row].length) {
+            return modifiedCells[row][column];
         }
-
-        // Update modified flags based on comparison with original snapshot
-        updateModifiedFlag(row, col);
-
-        // Tell the table to repaint this cell immediately → renderer will set green
-        fireTableCellUpdated(row, col);
+        return false;
     }
 
-    /** Cell modified? Used by renderer */
-    public boolean isCellModified(int row, int col) {
-        return modifiedByRow.getOrDefault(row, Collections.emptySet()).contains(col);
-    }
-
-    /** Rows that have any modified cells */
     public List<User> getModifiedUsers() {
         List<User> modified = new ArrayList<>();
-        for (int row = 0; row < users.size(); row++) {
-            Set<Integer> cols = modifiedByRow.get(row);
-            if (cols != null && !cols.isEmpty()) {
-                modified.add(users.get(row));
+        for (int i = 0; i < users.size(); i++) {
+            for (int j = 0; j < columnNames.length; j++) {
+                if (modifiedCells[i][j]) {
+                    modified.add(users.get(i));
+                    break; // Add user once if any cell is modified
+                }
             }
         }
         return modified;
     }
 
-    /** Clear all modified marks after successful save */
     public void clearModifiedMarks() {
-        modifiedByRow.clear();
-        // refresh all cells
+        this.modifiedCells = new boolean[users.size()][columnNames.length];
         fireTableDataChanged();
-        // also refresh snapshot to new "original"
-        for (int i = 0; i < users.size(); i++) {
-            originalSnapshot.set(i, copyUser(users.get(i)));
-        }
     }
 
-    
-    
-    
-    // --- helpers ---
-
-    private void updateModifiedFlag(int row, int col) {
-        boolean changed = !Objects.equals(getValueFrom(originalSnapshot.get(row), col),
-                                          getValueFrom(users.get(row), col));
-        Set<Integer> cols = modifiedByRow.computeIfAbsent(row, r -> new HashSet<>());
-        if (changed) {
-            cols.add(col);
-        } else {
-            cols.remove(col);
-            if (cols.isEmpty()) {
-                modifiedByRow.remove(row);
-            }
-        }
-    }
-
-    private static User copyUser(User src) {
-        User u = new User();
-        u.setTrn(src.getTrn());
-        u.setFirstName(src.getFirstName());
-        u.setLastName(src.getLastName());
-        u.setPassword(src.getPassword());
-        u.setContactNum(src.getContactNum());
-        u.setEmail(src.getEmail());
-        return u;
-    }
-
-    private static String getValueFrom(User u, int col) {
-        return switch (col) {
-            case 0 -> u.getTrn();
-            case 1 -> u.getFirstName();
-            case 2 -> u.getLastName();
-            case 3 -> u.getPassword();
-            case 4 -> u.getContactNum();
-            case 5 -> u.getEmail();
-            default -> null;
-        };
+    private String getUserType(User user) {
+        if (user instanceof model.Customer) return "Customer";
+        if (user instanceof model.Driver) return "Driver";
+        if (user instanceof model.Clerk) return "Clerk";
+        return "User";
     }
 }
-
