@@ -19,14 +19,13 @@ import network.Client;
 
 public class ClerkView extends TabView implements ActionListener, PopupMenuListener, ComponentListener, KeyListener {
     private static final long serialVersionUID = -4757134542607256811L;
-    private JPanel shipmentPanel;
-    private JPanel accountInfoPanel;
+    private JPanel shipmentPanel = new JPanel(new BorderLayout());;
+    private JPanel accountInfoPanel = new JPanel();
 
-    JCheckBox shipmentFilter;
-    JTextField shipmentSearch;
-    JButton loadShipmentsButton;
-    JPanel shipmentList;
-    JScrollPane shipmentList2;
+    JCheckBox shipmentFilter = new JCheckBox("Incomplete");
+    JTextField shipmentSearch = new JTextField();;
+    JButton loadShipmentsButton = new JButton("(Re)Load Shipment Orders");;
+    JPanel shipmentList = new JPanel();
 
     Client client;
     User clerk;
@@ -40,10 +39,6 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     
     public ClerkView() {
         super();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new BorderLayout());
-        this.setSize(800, 600);
-        this.setLocationRelativeTo(null);
         
         this.initialiseComponents();
         this.addActionListeners();
@@ -51,29 +46,13 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     }
     
     private void initialiseComponents() {
-        // main sections
-        shipmentPanel = new JPanel(new BorderLayout());
-        JPanel shipmentTop = new JPanel();
-        shipmentSearch = new JTextField();
-        loadShipmentsButton = new JButton("(Re)Load Shipment Orders");
-        shipmentFilter = new JCheckBox("Incomplete");
-        shipmentTop.add(new JLabel("Search: "));
-        shipmentTop.add(shipmentSearch);
-        shipmentTop.add(addToPanel(loadShipmentsButton, shipmentFilter));
-        //shipmentTop.setMinimumSize(new Dimension(70, 70));
-
-        shipmentList = new JPanel();
         shipmentList.setLayout(new BoxLayout(shipmentList, BoxLayout.Y_AXIS));
-        shipmentList2 = new JScrollPane(shipmentList);
 
-
-		shipmentList2 = new JScrollPane(shipmentList); // ✅ Use the class field
-		shipmentPanel.add(shipmentTop, BorderLayout.NORTH);
-		shipmentPanel.add(shipmentList2, BorderLayout.CENTER);
+		shipmentPanel.add(addToPanel(new JLabel("Search: "), shipmentSearch, addToPanel(loadShipmentsButton, shipmentFilter)), BorderLayout.NORTH);
+		shipmentPanel.add(new JScrollPane(shipmentList), BorderLayout.CENTER);
 
      //mainPanel.add(new JScrollPane(new JLabel(this.clerk.toString())), "accounts");
         
-        accountInfoPanel = new JPanel();
         if (clerk != null)
         	accountInfoPanel.add(new JLabel(clerk.toString()));
         
@@ -131,7 +110,7 @@ private void populateShipmentList() {
         }
 
         // Filter by search
-        if (!search.isEmpty()) {
+        if (!search.isBlank()) {
             boolean matches = s.getPackageName().toLowerCase().contains(search)
                     || s.getReceiverName().toLowerCase().contains(search)
                     || s.getDestination().toLowerCase().contains(search)

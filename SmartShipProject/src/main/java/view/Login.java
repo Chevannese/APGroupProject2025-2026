@@ -277,10 +277,10 @@ public class Login extends JFrame {
        private boolean checkPasswordStrength()
        {
        	if (passText.length() < 8) {
-       		JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long.");
+       		JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long.", null, JOptionPane.WARNING_MESSAGE);
    			return false;
    		} else if (passText.length() > 30) {
-   			JOptionPane.showMessageDialog(this,"Password must be at most 30 characters long.");
+   			JOptionPane.showMessageDialog(this,"Password must be at most 30 characters long.", null, JOptionPane.WARNING_MESSAGE);
    			return false;
    		}
 
