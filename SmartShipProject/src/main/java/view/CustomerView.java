@@ -1072,13 +1072,41 @@ private void showInvoiceTable(List<Invoice> list) {
     
     print.addActionListener(e->{
     	try {
+    		JFileChooser filedialog = new JFileChooser();
     		
-    		JTableToPDF.export(table, "pdf/invoices.pdf");
-    		JOptionPane.showMessageDialog(invoicePage, "Invoice has been exported to PDF!\nPlease check the pdf folder to view document",null, JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception e1) {
-			logger.error(e1.getMessage());
+    		int saveOption = filedialog.showSaveDialog(this);
+    		
+    		switch (saveOption) {
+				case JFileChooser.APPROVE_OPTION:
+					File file = filedialog.getSelectedFile(); // file path the user chose
+					String path = file.getAbsolutePath();
+					if (!path.endsWith(".pdf")) {
+						path += ".pdf";
+					}
+					
+					if (file.exists()) {
+						int option = JOptionPane.showConfirmDialog(this, "File already exists. Saving will overwrite its contents?", "Replace File?", JOptionPane.OK_CANCEL_OPTION);
+						if (option == JOptionPane.CANCEL_OPTION) {
+							return;
+						}
+					}
+					
+					JTableToPDF.export(table, path);
+					break;
+				case JFileChooser.ERROR_OPTION:
+					throw new Exception();
+				case JFileChooser.CANCEL_OPTION:
+					// do nothing cuz the user cancelled
+					break;
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + saveOption);
+			}
 		}
 
+    	catch (Exception err) {
+			JOptionPane.showMessageDialog(this, "Failed to save to file", "Error", JOptionPane.ERROR_MESSAGE);
+			logger.error(err.getMessage());
+		}
     });
 
     addToGridBag(invoicePage, titleInvoice, gc6, 0, 0, 2, 1);
