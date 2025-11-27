@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 
@@ -34,6 +35,8 @@ public class TrackPackage implements Serializable
 	private String custNo;
 	private LocalDate date;
 	private LocalTime time;
+	@Transient
+	private String shipmentStatus;
 	
 	public TrackPackage()
 	{
@@ -98,6 +101,14 @@ public class TrackPackage implements Serializable
 
 	public void setTime(LocalTime time) {
 		this.time = time;
+	}
+	
+	public String getShipmentStatus() {
+	    return shipmentStatus;
+	}
+
+	public void setShipmentStatus(String shipmentStatus) {
+	    this.shipmentStatus = shipmentStatus;
 	}
 
 	

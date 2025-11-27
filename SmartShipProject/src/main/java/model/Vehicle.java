@@ -18,24 +18,22 @@ public class Vehicle implements Serializable {
 
     @Column(name = "vehicleName")
     private String vehicleName;
-
-    @Column(name = "quantityCap")
     private int quantityCap;
-
-    @Column(name = "weightCap")
     private double weightCap;
-
-    @Column(name = "currentWeight")
-    private double currentWeight;
-
     @Column(name = "currentQuantity")
     private int currentQuantity;
+  
+   @Column(name = "currentWeight")
+    private double currentWeight;
+  
     public Vehicle() {}
     public Vehicle(String vehicleNo, String vehicleName, int quantityCap, double weightCap) {
         this.vehicleNo = vehicleNo;
         this.vehicleName = vehicleName;
         this.quantityCap = quantityCap;
         this.weightCap = weightCap;
+        this.currentQuantity = currentQuantity;
+        this.currentWeight = currentWeight;
     }
 
     public Vehicle(Vehicle vehicle) {
@@ -43,6 +41,8 @@ public class Vehicle implements Serializable {
         this.vehicleName = vehicle.vehicleName;
         this.quantityCap = vehicle.quantityCap;
         this.weightCap = vehicle.weightCap;
+        this.currentQuantity = vehicle.currentQuantity;
+        this.currentWeight = vehicle.currentWeight;
     }
 
     public String getVehicleNo() { return vehicleNo; }

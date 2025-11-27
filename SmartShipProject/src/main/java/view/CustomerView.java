@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -23,26 +24,25 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.type.descriptor.java.JdbcTimeJavaType.TimeMutabilityPlan;
 
+import jakarta.persistence.criteria.CriteriaBuilder.Case;
 import model.Invoice;
+import model.JTableToPDF;
 import model.Shipment;
 import model.TrackPackage;
 import model.User;
-import model.UserTableModel;
 import network.Client;
 
 public class CustomerView extends JFrame 
 {
-	
-	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(CustomerView.class);
 	private GridBagConstraints gc;
-	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3, invoicePage, accountPage;
+	private JPanel customerPanel, menu, orderPage1,orderPage2,orderPage3, invoicePage, accountPage, trackPage;
 	private CardLayout cardLayout;
 	private JMenu account, nav;
 	private JMenuItem track,order,bill,home,logout,info;
@@ -88,6 +88,7 @@ public class CustomerView extends JFrame
 		 orderPage3 = new JPanel(new GridBagLayout());
 		 invoicePage = new JPanel(new GridBagLayout());
 		 accountPage = new JPanel(new GridBagLayout());
+		 trackPage = new JPanel(new GridBagLayout());
 		
 		customerPanel.add(menu, "Menu");
 		customerPanel.add(orderPage1,"ShipmentForm1");
@@ -95,6 +96,8 @@ public class CustomerView extends JFrame
 		customerPanel.add(orderPage3, "ShipmentForm3");
 		customerPanel.add(invoicePage, "InvoicePage");
 		customerPanel.add(accountPage, "AccountPage");
+		customerPanel.add(trackPage, "TrackPage");
+
 		    	   
 		add(customerPanel);
     	cardLayout.show(customerPanel, "Menu");
@@ -163,6 +166,11 @@ public class CustomerView extends JFrame
     		
     	});
     	
+    	track.addActionListener(e ->{
+    		cardLayout.show(customerPanel, "TrackPage");
+    		//loadTrackPackages(loggedInUser);
+    	});
+    	
    
     	JLabel lblSenderSection = new JLabel("Sender Information Section", SwingConstants.CENTER);
  		lblSenderSection.setFont(new Font("Arial", Font.BOLD, 20));
@@ -178,17 +186,6 @@ public class CustomerView extends JFrame
  		JTextField receiverAddrTxt = new JTextField(50);
  		JLabel lblReceiverName = new JLabel("Receiver Name:");
 		JTextField receiverNameTxt = new JTextField(30);
-		
-		/*
- 		JLabel lblshippingLocation = new JLabel("Shipping Zone:");
- 		JRadioButton rdbLocal = new JRadioButton("Local");
- 		rdbLocal.setActionCommand("Local");
- 		JRadioButton rdbInternational = new JRadioButton("International");
- 		rdbInternational.setActionCommand("International");
- 		ButtonGroup btnGrpLocation = new ButtonGroup();
- 		btnGrpLocation.add(rdbLocal);
- 		btnGrpLocation.add(rdbInternational);
- 		*/
  		
  		JLabel lblZone = new JLabel("Zone #: ");
  		JButton zoneBtn = new JButton("Generate Zone");
@@ -836,7 +833,6 @@ public class CustomerView extends JFrame
     	});
 		
 		GridBagConstraints gc5 = new GridBagConstraints();
- 		gc5 = new GridBagConstraints();
  		gc5.insets = new Insets(10, 10, 10, 10);
         gc5.fill = GridBagConstraints.HORIZONTAL;
         
@@ -869,7 +865,26 @@ public class CustomerView extends JFrame
         addToGridBag(accountPage, editEmail,gc5, 2,8,1,1);	
 
 
+        GridBagConstraints gc7 = new GridBagConstraints();
+ 		gc7.insets = new Insets(10, 10, 10, 10);
+        gc7.fill = GridBagConstraints.HORIZONTAL;
+        
+        JLabel trackingPackages = new JLabel("Track Packages");
+        trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
+        
+        JTextField searchField = new JTextField(10);
+        
+        JButton search = new JButton("Search");
+        
+        
 		
+        addToGridBag(trackPage, trackingPackages,gc7, 0,0,1,1);
+        addToGridBag(trackPage, searchField,gc7, 0,1,1,1);
+        addToGridBag(trackPage, search,gc7, 1,1,1,1);
+        
+        
+
+        
 		
 		
          this.setVisible(true); 	 
@@ -978,6 +993,7 @@ private void showInvoiceTable(List<Invoice> list) {
     titleInvoice.setFont(new Font("Arial", Font.BOLD, 20));
 
     JButton submit = new JButton("Submit");
+    JButton print = new JButton("Print/Export");
 
     // Submit button sends only modified invoices
     submit.addActionListener(e -> {
@@ -1007,9 +1023,43 @@ private void showInvoiceTable(List<Invoice> list) {
         
         bill.doClick();
     });
+    
+    print.addActionListener(e-> {
+    	try {
+    		JFileChooser filedialog = new JFileChooser();
+    		
+    		int x = filedialog.showSaveDialog(this);
+    		
+    		switch (x) {
+				case JFileChooser.APPROVE_OPTION:
+					File file = filedialog.getSelectedFile(); // file path the user chose
+					String path = file.getAbsolutePath();
+					if (!path.endsWith(".pdf")) {
+						path += ".pdf";
+					}
+					
+					JTableToPDF.export(table, path);
+					break;
+				case JFileChooser.ERROR_OPTION:
+					throw new Exception();
+				case JFileChooser.CANCEL_OPTION:
+					// do nothing cuz the user cancelled
+					break;
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + x);
+			}
+		}
+    	catch (Exception e1) {
+			JOptionPane.showMessageDialog(this, "Failed to export file", "Error", JOptionPane.ERROR_MESSAGE);
+			logger.error(e1.getMessage());
+		}
+
+    });
 
     addToGridBag(invoicePage, titleInvoice, gc6, 0, 0, 2, 1);
     addToGridBag(invoicePage, submit, gc6, 0, 1, 1, 1);
+    addToGridBag(invoicePage, print, gc6, 1, 1, 1, 1);
+
 
     gc6.gridx = 0;
     gc6.gridy = 2;
@@ -1135,6 +1185,3 @@ private void showInvoiceTable(List<Invoice> list) {
         return modified;
     }
 }
-
-
-

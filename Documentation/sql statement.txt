@@ -43,6 +43,8 @@ CREATE TABLE `vehicle`
 	`vehicleName` varchar(250) NOT NULL,
 	`quantityCap` integer NOT NULL,
 	`weightCap` double NOT NULL,
+	`currentQuantity` int NOT NULL,
+	`currentWeight` double NOT NULL,
 	CONSTRAINT pk_vehicle PRIMARY KEY (`vehicleNo`),
 	CONSTRAINT fk_driverID FOREIGN KEY(`driverID`) REFERENCES `users`(`trn`)
 
