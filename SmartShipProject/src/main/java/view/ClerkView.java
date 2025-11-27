@@ -1,6 +1,6 @@
 package view;
 
-import model.*;
+import model.Clerk;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -13,6 +13,8 @@ import java.util.List;
 
 import com.formdev.flatlaf.*;
 
+import model.Shipment;
+import model.User;
 import network.Client;
 
 public class ClerkView extends TabView implements ActionListener, PopupMenuListener, ComponentListener, KeyListener {
@@ -25,18 +27,10 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     JButton loadShipmentsButton = new JButton("(Re)Load Shipment Orders");;
     JPanel shipmentList = new JPanel();
 
+    Client client;
     User clerk;
     List<Shipment> shipments;
     private static final Logger logger = LogManager.getLogger(ClerkView.class);
-    
-	public static void main(String[] args) {
-		// Run the GUI on the Event Dispatch Thread (EDT)
-		FlatLightLaf.setup();
-		
-		SwingUtilities.invokeLater(() -> {
-			new ClerkView();
-		});
-	}
  
     public ClerkView(User loggedInUser) {
     	this();
@@ -57,11 +51,10 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
 		shipmentPanel.add(addToPanel(new JLabel("Search: "), shipmentSearch, addToPanel(loadShipmentsButton, shipmentFilter)), BorderLayout.NORTH);
 		shipmentPanel.add(new JScrollPane(shipmentList), BorderLayout.CENTER);
 
-		// mainPanel.add(new JScrollPane(new JLabel(this.clerk.toString())), "accounts");
+     //mainPanel.add(new JScrollPane(new JLabel(this.clerk.toString())), "accounts");
         
-        if (clerk != null) {
+        if (clerk != null)
         	accountInfoPanel.add(new JLabel(clerk.toString()));
-        }
         
         addTab("Shipment Management", shipmentPanel);
         addTab("Accounts", accountInfoPanel);
@@ -87,22 +80,15 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
         shipmentFilter.setActionCommand("filter-shipments");
     }
     
-    public void generateInvoice() {
-    	
-    }
-    
     @Override public void actionPerformed(ActionEvent e) {
     	String action = e.getActionCommand();
     	System.out.println("Action: " + action);
 
     	if (action.equals("load-shipments")) {
     		this.loadShipments();
-		}
+		    	}
     	if (action.equals("filter-shipments")) {
     		this.populateShipmentList();
-    	}
-    	if (action.equals("")) {
-    		
     	}
 	}
     
@@ -159,6 +145,7 @@ private void populateShipmentList() {
     shipmentList.repaint();
 }
 
+    
     private void loadShipments() {
     	shipments = null;
     	try {
@@ -172,38 +159,62 @@ private void populateShipmentList() {
     }
     
     private void processOrder(Shipment shipment) {
-    	JDialog dialog = new JDialog(this, "Package", true);
-    	JPanel panel = new JPanel(new BorderLayout());
-    	JTable packageInfoTable = new JTable(
-    		new Object[][] { new Object[] { shipment.getPackageNo(), shipment.getPackageName(), shipment.getPackageType() }},
-    		new Object[] { "Package No.", "Package Name", "Package Type" }
-    	);
-    	
-    	JButton close = new JButton("Close");
-    	JButton addPayment = new JButton("Add payment");
-    	JButton assignVehicle = new JButton("Assign Vehicle");
-    	
-    	addPayment.addActionListener(e -> addPayment(shipment));
-    	assignVehicle.addActionListener(e -> assignVehicle(shipment));
-    	
-    	addPayment.setEnabled(shipment.getStatus().equals("Pending"));
-    	assignVehicle.setEnabled(shipment.getPackageNo()); // TODO get assignment to match
-    	panel.add(addToPanel(close, addPayment, assignVehicle));
-    	
-    	dialog.setVisible(true);
-	}
-    
-    private Object addPayment(Shipment shipment) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void assignVehicle(Shipment shipment) {
-    	List<Vehicle> vehicles;
-    	JDialog dialog = new JDialog();
+		JOptionPane.showConfirmDialog(this, shipment);
 	}
 
 	@Override public void keyTyped(KeyEvent e) { populateShipmentList(); }
 	@Override public void keyPressed(KeyEvent e) {}
 	@Override public void keyReleased(KeyEvent e) {}
+	
+	public static void main(String[] args) {
+		// Run the GUI on the Event Dispatch Thread (EDT)
+		FlatLightLaf.setup();
+		
+		SwingUtilities.invokeLater(() -> {
+			new ClerkView();
+		});
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void popupMenuCanceled(PopupMenuEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+    
 }
