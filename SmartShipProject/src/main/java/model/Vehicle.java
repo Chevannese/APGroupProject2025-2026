@@ -15,23 +15,31 @@ public class Vehicle implements Serializable {
     @Id
     @Column(name = "vehicleNo")
     private String vehicleNo;
-
-    @Column(name = "vehicleName")
     private String vehicleName;
-
-    @Column(name = "quantityCap")
     private int quantityCap;
-
-    @Column(name = "weightCap")
     private double weightCap;
+    private int currentQuantity;
+    private double currentWeight;
+    
 
-    public Vehicle() {}
+    public Vehicle() 
+    { 
+    	vehicleNo = "";
+    	vehicleName = "";
+    	quantityCap = 0;
+    	weightCap = 0;
+    	currentQuantity = 0;
+    	currentWeight = 0;
+    	
+    }
 
-    public Vehicle(String vehicleNo, String vehicleName, int quantityCap, double weightCap) {
+    public Vehicle(String vehicleNo, String vehicleName, int quantityCap, double weightCap, int currentQuantity, double currentWeight) {
         this.vehicleNo = vehicleNo;
         this.vehicleName = vehicleName;
         this.quantityCap = quantityCap;
         this.weightCap = weightCap;
+        this.currentQuantity = currentQuantity;
+        this.currentWeight = currentWeight;
     }
 
     public Vehicle(Vehicle vehicle) {
@@ -39,6 +47,8 @@ public class Vehicle implements Serializable {
         this.vehicleName = vehicle.vehicleName;
         this.quantityCap = vehicle.quantityCap;
         this.weightCap = vehicle.weightCap;
+        this.currentQuantity = vehicle.currentQuantity;
+        this.currentWeight = vehicle.currentWeight;
     }
 
     public String getVehicleNo() { return vehicleNo; }
@@ -52,4 +62,22 @@ public class Vehicle implements Serializable {
 
     public double getWeightCap() { return weightCap; }
     public void setWeightCap(double weightCap) { this.weightCap = weightCap; }
+
+	public int getCurrentQuantity() {
+		return currentQuantity;
+	}
+
+	public void setCurrentQuantity(int currentQuantity) {
+		this.currentQuantity = currentQuantity;
+	}
+
+	public double getCurrentWeight() {
+		return currentWeight;
+	}
+
+	public void setCurrentWeight(double currentWeight) {
+		this.currentWeight = currentWeight;
+	}
+    
+    
 }
