@@ -37,7 +37,7 @@ public class LoginController {
 	        }
 	        else if(loggedInUser instanceof Manager)
 	        {
-	        	
+	        	new ManagerView(loggedInUser);
 	        }
 		}catch(Exception e)
 		{

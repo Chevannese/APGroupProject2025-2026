@@ -8,27 +8,23 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 @Entity
-@Table (name = "route")
-public class Route implements Serializable
-{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name = "routeID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
-	
-	private Integer routeID;
-	private String vehicleNo;
-	private String origin;
-	private String destination;
-	
-	
+@Table(name = "route")
+public class Route implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "routeID")
+    private int routeID;
+
+    @Column(name = "vehicleNo")
+    private String vehicleNo;
+
+    @Column(name = "origin")
+    private String origin;
+
+    @Column(name = "destination")
+    private String destination;
 	public Route()
 	{
 		routeID = 0;

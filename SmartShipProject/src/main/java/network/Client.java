@@ -17,277 +17,274 @@ import model.Route;
 import model.User;
 import model.Shipment;
 import model.TrackPackage;
+import model.Trip;
 import model.Vehicle;
 
 public class Client {
-	private static final Logger logger = LogManager.getLogger(Client.class);
-	
-	private ObjectInputStream in;
-	private ObjectOutputStream out;
-	private Socket connectionSocket;
-	
-	public Client() {
-		this.createConnection();
-		this.configureStreams();
-	}
-	
-	private void createConnection() {
-		try {
-			connectionSocket = new Socket("127.0.0.1", 8888);
-		}
-		catch(IOException io) {
-			logger.error(io.getMessage());
-		}
-	}
-	
-	private void configureStreams() {
-    	try {
-    		//Create input stream to receive data from the server
-    		
-    		in = new ObjectInputStream(connectionSocket.getInputStream());
-    		
-    		//Create output stream to send data to the server
-    		out = new ObjectOutputStream(connectionSocket.getOutputStream());
-    		
-    	}
-    	catch(IOException io) {
-    		JOptionPane.showMessageDialog(null, "Could not connect to server - from input/output");
-    	}
-    	catch(Exception e) {
-    		JOptionPane.showMessageDialog(null, "Could not connect to server");
-    	}
+    private static final Logger logger = LogManager.getLogger(Client.class);
+    
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private Socket connectionSocket;
+    
+    public Client() {
+        this.createConnection();
+        this.configureStreams();
     }
-	
-	public void closeConnection() {
-		try {
-			out.close();
-			in.close();
-			connectionSocket.close();
-		}
-		catch(IOException io) {
-			logger.error(io.getMessage());
-		}
-	}
-	
-	public void sendAction(String action) throws IOException {
-		out.writeObject(action);
-	}
-	
-	public boolean createAccount(User newUser) {
-	    try (
-	        Socket socket = new Socket("127.0.0.1", 8888);
-	        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-	        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-	    ) {
-	        // Tell the server what action this is
-	        out.writeObject("Create Account");
-	        out.writeObject(newUser);
-	        out.flush();
+    
+    private void createConnection() {
+        try {
+            connectionSocket = new Socket("127.0.0.1", 8888);
+        }
+        catch(IOException io) {
+            logger.error(io.getMessage());
+        }
+    }
+    
+    private void configureStreams() {
+        try {
+            //Create input stream to receive data from the server
+            in = new ObjectInputStream(connectionSocket.getInputStream());
+            
+            //Create output stream to send data to the server
+            out = new ObjectOutputStream(connectionSocket.getOutputStream());
+            
+        }
+        catch(IOException io) {
+            JOptionPane.showMessageDialog(null, "Could not connect to server - from input/output");
+        }
+        catch(Exception e) {
+            JOptionPane.showMessageDialog(null, "Could not connect to server");
+        }
+    }
+    
+    public void closeConnection() {
+        try {
+            out.close();
+            in.close();
+            connectionSocket.close();
+        }
+        catch(IOException io) {
+            logger.error(io.getMessage());
+        }
+    }
+    
+    public void sendAction(String action) throws IOException {
+        out.writeObject(action);
+    }
+    
+    public boolean createAccount(User newUser) {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ) {
+            // Tell the server what action this is
+            out.writeObject("Create Account");
+            out.writeObject(newUser);
+            out.flush();
 
-	        // Read the server's response (a String)
-	        String response = ((String) in.readObject()).trim();
+            // Read the server's response (a String)
+            String response = ((String) in.readObject()).trim();
 
-	        if (response.equals("error-duplicate-trn")) {
-	            logger.warn(response);
-	            JOptionPane.showMessageDialog(null, response, "Duplicate TRN", JOptionPane.WARNING_MESSAGE);
-	            return false;
-	        }
-	        else if (response.equals("error-database-issue"))
-	        {
-	        	logger.error(response);
-	            JOptionPane.showMessageDialog(null, response, "Database error", JOptionPane.ERROR_MESSAGE);
-	            return false;
-	        }		
-	        else if ("done".equals(response)) 
-	        {
-	            logger.info("Account created successfully");
-	            JOptionPane.showMessageDialog(null, "Account created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-	            return true;
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Unexpected response from server: " + response);
-	            return false;
-	        }
+            if (response.equals("error-duplicate-trn")) {
+                logger.warn(response);
+                JOptionPane.showMessageDialog(null, response, "Duplicate TRN", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+            else if (response.equals("error-database-issue"))
+            {
+                logger.error(response);
+                JOptionPane.showMessageDialog(null, response, "Database error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }        
+            else if ("done".equals(response)) 
+            {
+                logger.info("Account created successfully");
+                JOptionPane.showMessageDialog(null, "Account created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Unexpected response from server: " + response);
+                return false;
+            }
 
-	    } catch (Exception e) {
-	        logger.error("Error communicating with server: " + e.getMessage(), e);
-	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	    }
-		return false;
-	}
-	
-	public User signIn(User loggedInUser)
-	{
-		try (
-		        Socket socket = new Socket("127.0.0.1", 8888);
-		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-		    ) 
-		{
-			// Tell the server what action this is
-	        out.writeObject("SignIn");
-	        out.writeObject(loggedInUser);
-	        out.flush();
-	        
-	        
-	        String response = ((String) in.readObject()).trim();
-	        User test = ((User) in.readObject());
-	        if(response.equalsIgnoreCase("User-does-not-exist"))
-	        {
-	        	JOptionPane.showMessageDialog(null,response,"User does not exist", JOptionPane.WARNING_MESSAGE);
-	        	logger.info("User does not exist: " + test.getTrn());
-	        	return test;
-	        }else if(response.equalsIgnoreCase("success"))
-	        {
-	        	JOptionPane.showMessageDialog(null,response,"User has successfully logged on with TRN: " + test.getTrn(), JOptionPane.WARNING_MESSAGE);
-	        	logger.info("User has successfully logged on with TRN: " + test.getTrn());
+        } catch (Exception e) {
+            logger.error("Error communicating with server: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+    }
+    
+    public User signIn(User loggedInUser)
+    {
+        try (
+                Socket socket = new Socket("127.0.0.1", 8888);
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            ) 
+        {
+            // Tell the server what action this is
+            out.writeObject("SignIn");
+            out.writeObject(loggedInUser);
+            out.flush();
+            
+            
+            String response = ((String) in.readObject()).trim();
+            User test = ((User) in.readObject());
+            if(response.equalsIgnoreCase("User-does-not-exist"))
+            {
+                JOptionPane.showMessageDialog(null,response,"User does not exist", JOptionPane.WARNING_MESSAGE);
+                logger.info("User does not exist: " + test.getTrn());
+                return test;
+            }else if(response.equalsIgnoreCase("success"))
+            {
+                JOptionPane.showMessageDialog(null,response,"User has successfully logged on with TRN: " + test.getTrn(), JOptionPane.WARNING_MESSAGE);
+                logger.info("User has successfully logged on with TRN: " + test.getTrn());
 
-	        	return test;
-	        }else if(response.equalsIgnoreCase("The password that was entered by the user is incorrect"))
-	        {
-	        	JOptionPane.showMessageDialog(null,response,"The password that was entered by the user is incorrect", JOptionPane.WARNING_MESSAGE);
-	        	logger.info("The password that was entered by the user is incorrect: " + test.getTrn());
-	        	return test;
-	        }else if(response.equalsIgnoreCase("Unknown Error"))
-	        {
-	        	JOptionPane.showMessageDialog(null,response,"Unknown Error", JOptionPane.WARNING_MESSAGE);
-	        	logger.info("Unknown Error: " + test.getTrn());
-	        	return test;
-	        }
-	        out.flush();
-	        
-		}
-		catch(NullPointerException e)
-		{
-			logger.error("User TRN null due to not existing in database");
-		}
-		catch (Exception e) {
-	        logger.error("Error communicating with server: " + e.getMessage(), e);
-	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	    }
-		return null;
-		
-	}
-	
-	public Shipment requestOrder(Shipment shipment)
-	{
-	    try (
-	        Socket socket = new Socket("127.0.0.1", 8888);
-	        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-	        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-	    ) {
-	        out.writeObject("create-shipment");
-	        out.writeObject(shipment);
-	        out.flush();
+                return test;
+            }else if(response.equalsIgnoreCase("The password that was entered by the user is incorrect"))
+            {
+                JOptionPane.showMessageDialog(null,response,"The password that was entered by the user is incorrect", JOptionPane.WARNING_MESSAGE);
+                logger.info("The password that was entered by the user is incorrect: " + test.getTrn());
+                return test;
+            }else if(response.equalsIgnoreCase("Unknown Error"))
+            {
+                JOptionPane.showMessageDialog(null,response,"Unknown Error", JOptionPane.WARNING_MESSAGE);
+                logger.info("Unknown Error: " + test.getTrn());
+                return test;
+            }
+            out.flush();
+            
+        }
+        catch(NullPointerException e)
+        {
+            logger.error("User TRN null due to not existing in database");
+        }
+        catch (Exception e) {
+            logger.error("Error communicating with server: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+        
+    }
+    
+    public Shipment requestOrder(Shipment shipment)
+    {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ) {
+            out.writeObject("create-shipment");
+            out.writeObject(shipment);
+            out.flush();
 
-	        // Server returns saved shipment WITH ID
-	        Shipment savedShipment = (Shipment) in.readObject();
+            // Server returns saved shipment WITH ID
+            Shipment savedShipment = (Shipment) in.readObject();
 
-	        if (savedShipment != null && savedShipment.getPackageNo() != null) {
-	            logger.info("Shipment saved with ID " + savedShipment.getPackageNo());
-	            return savedShipment;
-	        }
+            if (savedShipment != null && savedShipment.getPackageNo() != null) {
+                logger.info("Shipment saved with ID " + savedShipment.getPackageNo());
+                return savedShipment;
+            }
 
-	        logger.error("Failed to save shipment");
-	        return null;
+            logger.error("Failed to save shipment");
+            return null;
 
-	    } catch (Exception e) {
-	        logger.error("Error creating shipment: " + e.getMessage(), e);
-	        return null;
-	    }
-	}
-	
-	public List<Shipment> getShipments() throws Exception {
-		List<Shipment> shipments = null;
-		Socket socket = new Socket("127.0.0.1", 8888);
+        } catch (Exception e) {
+            logger.error("Error creating shipment: " + e.getMessage(), e);
+            return null;
+        }
+    }
+    
+    public List<Shipment> getShipments() throws Exception {
+        List<Shipment> shipments = null;
+        Socket socket = new Socket("127.0.0.1", 8888);
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         
         out.writeObject("get-shipments");
         out.flush();
         shipments = (List<Shipment>) in.readObject();
-		
-        out.flush();
-
         
-		return shipments;
-	}
+        out.flush();
+        
+        return shipments;
+    }
 
 
-	public boolean generateInvoices(Shipment shipment, Invoice newInvoice, User customer, User staff, String paymentMethod)
-	{
-		
-		try (
-		        Socket socket = new Socket("127.0.0.1", 8888);
-		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-		    ) {
-		        // Tell the server what action this is
-		        out.writeObject("generate-invoice");
-		        out.writeObject(shipment);
-		        out.writeObject(customer);
-		        out.writeObject(staff);
-		        out.writeObject(paymentMethod);
-		        out.writeObject(newInvoice);
-		        out.flush();
-		        
-		        
-		        String response = ((String) in.readObject()).trim();
-		        
-		        if(response.equals("done"))
-		        {
-		        	logger.info("Invoice created successfully");
-		            return true;
-		        }else
-		        {
-		        	logger.info("generate - Error Saving to Database");
-		        	return false;
-		        }
-	  } catch (Exception e) {
-	        logger.error("Error communicating with server: " + e.getMessage(), e);
-	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	    }   
-		        
-	return false;
-	}
-	
-	
-
-	
-	
-	public boolean generateTrack(Shipment shipment, TrackPackage tp, User customer)
-	{
-		
-		try (
-		        Socket socket = new Socket("127.0.0.1", 8888);
-		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-		    ) {
-		        // Tell the server what action this is
-		        out.writeObject("generate-track");
-		        out.writeObject(shipment);
-		        out.writeObject(tp);
-		        out.writeObject(customer);
-		        out.flush();
-		        
-		        
-		        String response = ((String) in.readObject()).trim();
-		        
-		        if(response.equals("done"))
-		        {
-		        	logger.info("TrackPackage created successfully");
-		            return true;
-		        }else
-		        {
-		        	logger.info("generate - Error Saving to Database");
-		        	return false;
-		        }
-	  } catch (Exception e) {
-	        logger.error("Error communicating with server: " + e.getMessage(), e);
-	        JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	    }   
-		        
-	return false;
-	}
+    public boolean generateInvoices(Shipment shipment, Invoice newInvoice, User customer, User staff, String paymentMethod)
+    {
+        
+        try (
+                Socket socket = new Socket("127.0.0.1", 8888);
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            ) {
+                // Tell the server what action this is
+                out.writeObject("generate-invoice");
+                out.writeObject(shipment);
+                out.writeObject(customer);
+                out.writeObject(staff);
+                out.writeObject(paymentMethod);
+                out.writeObject(newInvoice);
+                out.flush();
+                
+                
+                String response = ((String) in.readObject()).trim();
+                
+                if(response.equals("done"))
+                {
+                    logger.info("Invoice created successfully");
+                    return true;
+                }else
+                {
+                    logger.info("generate - Error Saving to Database");
+                    return false;
+                }
+      } catch (Exception e) {
+            logger.error("Error communicating with server: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }   
+                
+    return false;
+    }
+    
+    
+    
+    public boolean generateTrack(Shipment shipment, TrackPackage tp, User customer)
+    {
+        
+        try (
+                Socket socket = new Socket("127.0.0.1", 8888);
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            ) {
+                // Tell the server what action this is
+                out.writeObject("generate-track");
+                out.writeObject(shipment);
+                out.writeObject(tp);
+                out.writeObject(customer);
+                out.flush();
+                
+                
+                String response = ((String) in.readObject()).trim();
+                
+                if(response.equals("done"))
+                {
+                    logger.info("TrackPackage created successfully");
+                    return true;
+                }else
+                {
+                    logger.info("generate - Error Saving to Database");
+                    return false;
+                }
+      } catch (Exception e) {
+            logger.error("Error communicating with server: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }   
+                
+    return false;
+    }
 
 
 
@@ -375,34 +372,129 @@ public class Client {
         return null;
     }
 
-	public void updateUser(User editedUser) throws Exception  {
-		out.writeObject("update-user");
-		out.writeObject(editedUser);
-		out.flush();
-		
-		if (!"success".equals((String) in.readObject())) {
-			throw new Exception("Failed to update user info");
-		}
-	}
+    public void updateUser(User editedUser) throws Exception  {
+        out.writeObject("update-user");
+        out.writeObject(editedUser);
+        out.flush();
+        
+        if (!"success".equals((String) in.readObject())) {
+            throw new Exception("Failed to update user info");
+        }
+    }
 
-	// In your Client class
-	public List<User> getUsers() throws Exception {
-	    try (Socket socket = new Socket("127.0.0.1", 8888);
-	         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-	         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-	        
-	        out.writeObject("GET_USERS");
-	        out.flush();
-	        
-	        @SuppressWarnings("unchecked")
-	        List<User> users = (List<User>) in.readObject();
-	        return users;
-	        
-	    } catch (Exception e) {
-	        throw new Exception("Failed to retrieve users from server: " + e.getMessage());
-	    }
-	}
+    public List<Shipment> getUnassignedShipments() {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ) {
+            out.writeObject("GET_UNASSIGNED_SHIPMENTS");
+            out.flush();
 
+            String status = (String) in.readObject();
+            if ("success".equals(status)) {
+                return (List<Shipment>) in.readObject();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 
+    public List<Route> getAllRoutes() {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ) {
+            out.writeObject("GET_ROUTES");
+            out.flush();
+
+            String status = (String) in.readObject();
+            if ("success".equals(status)) {
+                return (List<Route>) in.readObject();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Vehicle> getAllVehicles() {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ) {
+            out.writeObject("GET_VEHICLES");
+            out.flush();
+
+            String status = (String) in.readObject();
+            if ("success".equals(status)) {
+                return (List<Vehicle>) in.readObject();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public String assignShipmentToVehicleRoute(Integer packageNo, Integer routeID, String vehicleNo, String managerTrn) {
+        try (
+                Socket socket = new Socket("127.0.0.1", 8888);
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+        ) {
+            out.writeObject("ASSIGN_SHIPMENT");
+            out.writeObject(packageNo);
+            out.writeObject(routeID);
+            out.writeObject(vehicleNo);
+            out.writeObject(managerTrn);   // <---- NEW
+            out.flush();
+
+            return (String) in.readObject();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error communicating with server";
+        }
+    }
+    public List<Trip> getAllTrips() {
+        try (
+            Socket socket = new Socket("127.0.0.1", 8888);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ) {
+            out.writeObject("GET_TRIPS");
+            out.flush();
+
+            String status = (String) in.readObject();
+
+            if ("success".equals(status)) {
+                return (List<Trip>) in.readObject();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    // In your Client class
+    public List<User> getUsers() throws Exception {
+        try (Socket socket = new Socket("127.0.0.1", 8888);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+            
+            out.writeObject("GET_USERS");
+            out.flush();
+            
+            @SuppressWarnings("unchecked")
+            List<User> users = (List<User>) in.readObject();
+            return users;
+            
+        } catch (Exception e) {
+            throw new Exception("Failed to retrieve users from server: " + e.getMessage());
+        }
+    }
 }
-
