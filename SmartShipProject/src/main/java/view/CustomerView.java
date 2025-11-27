@@ -1025,7 +1025,7 @@ private void showInvoiceTable(List<Invoice> list) {
     
     print.addActionListener(e->{
     	try {
-    		JTableToPDF.export(table, "invoices.pdf");
+    		JTableToPDF.export(table, "pdf/invoices.pdf");
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			logger.error(e1.getMessage());
