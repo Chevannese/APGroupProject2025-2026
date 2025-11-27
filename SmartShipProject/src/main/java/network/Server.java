@@ -78,7 +78,10 @@ public class Server {
             }
 
         } catch (IOException e) {
-            logger.error("Server error: " + e.getMessage(), e);
+            logger.error("Server error: " + e.getMessage());
+        }catch(Exception e)
+        {
+            logger.error("Server error: " + e.getMessage());
         }
     }
 

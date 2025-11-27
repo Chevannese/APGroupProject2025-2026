@@ -765,11 +765,7 @@ public class CustomerView extends JFrame
 		});
 		
 		
-		JLabel titleP = new JLabel("Personal Info", SwingConstants.CENTER);
- 		titleP.setFont(new Font("Arial", Font.BOLD, 20));
- 		 		
- 		JLabel editB = new JLabel("Basic Info");
- 		editB.setFont(new Font("Arial", Font.BOLD, 15));
+		
  		
  		JLabel trnLabel = new JLabel("TRN");
  		 trnValue = new JLabel("");
@@ -794,37 +790,15 @@ public class CustomerView extends JFrame
  		});
  		
  		
- 		JButton editLName = new JButton("Edit");
-
-
- 		 		
- 		JLabel passwordLabel = new JLabel("Password");
- 		 passwordValue = new JPasswordField("");
- 		JButton editPassword = new JButton("Edit");
- 		
  		
  		JLabel editContactInfo = new JLabel("Contact Info");
  		editContactInfo.setFont(new Font("Arial", Font.BOLD, 15));
  		
- 		JLabel contactLabel = new JLabel("Phone");
- 		
- 		contactValue = new JLabel("");
- 		
- 		JButton editPhone = new JButton("Edit");
- 		JButton editEmail = new JButton("Edit");
- 		
- 		JLabel emailLabel = new JLabel("Email");
- 		
- 		 emailValue = new JLabel("");
-		
+ 		JLabel security = new JLabel("Security");
+ 		security.setFont(new Font("Arial", Font.BOLD, 15));
+ 	 			
  		info.addActionListener(e->{
     		cardLayout.show(customerPanel, "AccountPage");
-    		trnValue.setText(loggedInUser.getTrn());
-    		firstName.setText(loggedInUser.getFirstName());
-    		lastName.setText(loggedInUser.getLastName());
-    		passwordValue.setText(loggedInUser.getPassword());
-    		contactValue.setText(loggedInUser.getContactNum());
-    		emailValue.setText(loggedInUser.getEmail());
 
     		
 
@@ -836,33 +810,51 @@ public class CustomerView extends JFrame
         gc5.fill = GridBagConstraints.HORIZONTAL;
         
         
-        addToGridBag(accountPage, titleP,gc5, 0,0,5,1);
+        JLabel titleP = new JLabel("Personal Info", SwingConstants.CENTER);
+ 		titleP.setFont(new Font("Arial", Font.BOLD, 20)); 		
+ 		JLabel editB = new JLabel("Basic Info");
+ 		editB.setFont(new Font("Arial", Font.BOLD, 15));
+        JTextField firstNameField = new JTextField("" + loggedInUser.getFirstName());
+        JTextField lastNameField = new JTextField(""+loggedInUser.getLastName());
+        JTextField trnField = new JTextField("" +loggedInUser.getTrn());
+        trnField.setEnabled(false);
+        JTextField contactNumField = new JTextField(""+ loggedInUser.getContactNum());
+        JTextField emailField = new JTextField(""+loggedInUser.getEmail());
+        JPasswordField passwordFieldR = new JPasswordField("" + loggedInUser.getPassword());
+        JButton changeBtn = new JButton("Change");
         
-        addToGridBag(accountPage, editB,gc5, 0,1,3,1);
+        addToGridBag(accountPage, titleP, gc5, 0, 0, 2, 1);
+        addToGridBag(accountPage, editB, gc5, 0, 1, 2, 1);
+
         
-        addToGridBag(accountPage, trnLabel,gc5, 0,2,1,1);
-        addToGridBag(accountPage, trnValue,gc5, 1,2,1,1);
-       // addToGridBag(accountPage, editTRN,gc5, 2,2,1,1);
-
-        addToGridBag(accountPage, nameLabel,gc5, 0,3,1,1);
+        addToGridBag(accountPage, new JLabel("TRN:"),gc5, 0, 2, 1, 1);
+        addToGridBag(accountPage, trnField,gc5, 1, 2, 1, 1);
         
-        addToGridBag(accountPage, firstName,gc5, 1,3,1,1);
-        addToGridBag(accountPage, editFName,gc5, 2,3,1,1);
-        addToGridBag(accountPage, lastName,gc5, 1,4,1,1);
-        addToGridBag(accountPage, editLName,gc5, 2,4,1,1);
+        addToGridBag(accountPage, new JLabel("First Name:"), gc5, 0, 3, 1, 1);
+        addToGridBag(accountPage, firstNameField, gc5, 1, 3, 1, 1);
 
-        addToGridBag(accountPage, passwordLabel,gc5, 0,5,1,1);
-        addToGridBag(accountPage, passwordValue,gc5, 1,5,1,1);
-        addToGridBag(accountPage, editPassword,gc5, 2,5,1,1);
-        addToGridBag(accountPage, editContactInfo,gc5, 0,6,5,1);
-       addToGridBag(accountPage, contactLabel,gc5, 0,7,1,1);
-        addToGridBag(accountPage, contactValue,gc5, 1,7,1,1);
-        addToGridBag(accountPage, editPhone,gc5, 2,7,1,1);
+        addToGridBag(accountPage, new JLabel("Last Name:"),gc5, 0, 4, 1, 1);
+        addToGridBag(accountPage, lastNameField,gc5, 1, 4, 1, 1);
+        
+       
+        addToGridBag(accountPage, editContactInfo,gc5, 0, 5, 1, 1);
 
-        addToGridBag(accountPage, emailLabel,gc5, 0,8,1,1);
-        addToGridBag(accountPage, emailValue,gc5, 1,8,1,1);
-        addToGridBag(accountPage, editEmail,gc5, 2,8,1,1);	
+        addToGridBag(accountPage, new JLabel("Contact Number: "),gc5, 0, 6, 1, 1);
+        addToGridBag(accountPage, contactNumField,gc5, 1, 6, 1, 1);
 
+        addToGridBag(accountPage, new JLabel("Email: "),gc5, 0, 7, 1, 1);
+        addToGridBag(accountPage, emailField,gc5, 1, 7, 1, 1);
+        
+        addToGridBag(accountPage, security,gc5, 0, 8, 1, 1);
+
+        addToGridBag(accountPage, new JLabel("Password:"),gc5, 0, 9, 1, 1);
+        addToGridBag(accountPage, passwordFieldR,gc5, 1, 9, 1, 1);
+        
+        addToGridBag(accountPage, changeBtn,gc5, 0, 10, 1, 1);
+        
+        
+        
+     
 
         GridBagConstraints gc7 = new GridBagConstraints();
  		gc7.insets = new Insets(10, 10, 10, 10);
@@ -883,7 +875,6 @@ public class CustomerView extends JFrame
         
         
 
-        
 		
 		
          this.setVisible(true); 	 
@@ -1025,7 +1016,9 @@ private void showInvoiceTable(List<Invoice> list) {
     
     print.addActionListener(e->{
     	try {
+    		
     		JTableToPDF.export(table, "pdf/invoices.pdf");
+    		JOptionPane.showMessageDialog(invoicePage, "Invoice has been exported to PDF!\nPlease check the pdf folder to view document",null, JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			logger.error(e1.getMessage());
@@ -1050,6 +1043,9 @@ private void showInvoiceTable(List<Invoice> list) {
 
     invoicePage.revalidate();
     invoicePage.repaint();
+    
+    
+    
 }
 	
 	
