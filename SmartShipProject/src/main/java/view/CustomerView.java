@@ -8,13 +8,13 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.io.IOException;
+import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -27,7 +27,9 @@ import javax.swing.table.TableCellRenderer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.type.descriptor.java.JdbcTimeJavaType.TimeMutabilityPlan;
 
+import jakarta.persistence.criteria.CriteriaBuilder.Case;
 import model.Invoice;
 import model.JTableToPDF;
 import model.Shipment;
@@ -37,8 +39,6 @@ import network.Client;
 
 public class CustomerView extends JFrame 
 {
-	
-	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(CustomerView.class);
 	private GridBagConstraints gc;
@@ -54,14 +54,15 @@ public class CustomerView extends JFrame
 
 	private int distance;
     private boolean zoneChance = true;
-    private String senderName, senderAddr, receiverName, receiverAddr;
+    private String senderName, senderAddr, receiverName, receiverAddr, shippingLocation;
     private Shipment newShipment;ButtonGroup btnGrpPackages;
 	private ArrayList<Shipment> shipments;
 	private JTable table;
 	private JScrollPane scrollPane;
 	private Client client = new Client();
 	private ButtonGroup btnGrpPayment;
-	private GridBagConstraints gc7, gc6;
+	private JLabel memberDate, trnValue, nameValue,emailValue, contactValue, lastName,firstName;
+	private JPasswordField passwordValue;
 
 
 
@@ -166,87 +167,8 @@ public class CustomerView extends JFrame
     	});
     	
     	track.addActionListener(e ->{
-    		try
-    		{
-    			cardLayout.show(customerPanel, "TrackPage");
-        		String[] columns = {
-        		        "Tracking No", "Package No", "Customer No", "Date", "Time", "Shipment Status"
-        		    };
-        		    
-        		    Client client = new Client();
-        		    List<TrackPackage> trackPackages = client.getTrackPackages(loggedInUser);
-
-        		    Object[][] data = new Object[trackPackages.size()][columns.length];
-        		    DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        		    DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
-
-        		    for (int i = 0; i < trackPackages.size(); i++) {
-        		        TrackPackage tp = trackPackages.get(i);
-        		        data[i][0] = tp.getTrackingNo();
-        		        data[i][1] = tp.getPackageNo();
-        		        data[i][2] = tp.getCustNo();
-        		        data[i][3] = tp.getDate() != null ? tp.getDate().format(dateFmt) : "";
-        		        data[i][4] = tp.getTime() != null ? tp.getTime().format(timeFmt) : "";
-        		        data[i][5] = tp.getShipmentStatus() != null ? tp.getShipmentStatus() : "";
-        		    }
-
-        			trackPage.removeAll();
-
-        		    JTable table = new JTable(data, columns);
-        		    table.setAutoCreateRowSorter(true); // enable sorting
-        		    table.setFillsViewportHeight(true);
-        		    
-        		    JScrollPane scroll = new JScrollPane(table);
-        		    scroll.setPreferredSize(new Dimension(900, 400));
-
-        		     gc7 = new GridBagConstraints();
-        			gc7.insets = new Insets(10, 10, 10, 10);
-        		    gc7.fill = GridBagConstraints.HORIZONTAL;
-        		    
-        		    JLabel trackingPackages = new JLabel("Track Packages", SwingConstants.CENTER);
-        		    trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
-        		        		    
-        		    JButton print = new JButton("Print/Export");
-        		    
-        		    
-        			
-        		    addToGridBag(trackPage, trackingPackages,gc7, 0,0,2,1);
-        		    addToGridBag(trackPage, print,gc7, 0,1,1,1);
-        		    
-        		    print.addActionListener(y ->{
-        		    	
-        		    });
-
-        		    
-        		    gc7.gridx = 0;
-        		    gc7.gridy = 2;
-        		    gc7.gridwidth = 2;
-        		    gc7.gridheight = 2;
-        		    gc7.weightx = 1.0;
-        		    gc7.weighty = 1.0;
-        		    gc7.fill = GridBagConstraints.BOTH;
-
-        		    trackPage.add(scroll, gc7);
-        		    
-        		    
-
-
-        		    
-        			trackPage.revalidate();
-        			trackPage.repaint();
-    		}catch(NullPointerException np)
-    		{
-    			logger.error(np.getMessage());
-    		    addToGridBag(trackPage, new JLabel("Sorry! Looks like you're not connected to the server"),gc, 0,0,1,1);
-
-    			
-    		}catch(Exception p)
-    		{
-    			logger.error(p.getMessage());
-    		    addToGridBag(trackPage, new JLabel("Sorry! Looks like you're not connected to the server"),gc, 0,0,1,1);
-
-    		}
-    		
+    		cardLayout.show(customerPanel, "TrackPage");
+    		//loadTrackPackages(loggedInUser);
     	});
     	
    
@@ -700,11 +622,6 @@ public class CustomerView extends JFrame
 	            logger.info("Customer went to page 3 of Shipment Form");
 	            
 		});
-		
-
-
-
-
 
 
 		prevOrderPage1Btn.addActionListener(e ->
@@ -848,20 +765,67 @@ public class CustomerView extends JFrame
 				} 
 		});
 		
-	
+		
+		JLabel titleP = new JLabel("Personal Info", SwingConstants.CENTER);
+ 		titleP.setFont(new Font("Arial", Font.BOLD, 20));
+ 		 		
+ 		JLabel editB = new JLabel("Basic Info");
+ 		editB.setFont(new Font("Arial", Font.BOLD, 15));
+ 		
+ 		JLabel trnLabel = new JLabel("TRN");
+ 		 trnValue = new JLabel("");
+ 		 
+ 		
+ 		JLabel nameLabel = new JLabel("Name");
+ 		
+ 		firstName = new JLabel("");
+ 		lastName = new JLabel("");
  		
  		
  		
  		
+ 		JButton editFName = new JButton("Edit");
  		
- 		JLabel editContactInfo = new JLabel("Contact Info", SwingConstants.CENTER);
+ 		editFName.addActionListener(e ->{
+ 			
+ 			Client client = new Client();
+ 			
+ 			//client.sendAction("ChangeFName");
+ 			
+ 		});
+ 		
+ 		
+ 		JButton editLName = new JButton("Edit");
+
+
+ 		 		
+ 		JLabel passwordLabel = new JLabel("Password");
+ 		 passwordValue = new JPasswordField("");
+ 		JButton editPassword = new JButton("Edit");
+ 		
+ 		
+ 		JLabel editContactInfo = new JLabel("Contact Info");
  		editContactInfo.setFont(new Font("Arial", Font.BOLD, 15));
  		
- 		JLabel security = new JLabel("Security", SwingConstants.CENTER);
- 		security.setFont(new Font("Arial", Font.BOLD, 15));
- 	 			
+ 		JLabel contactLabel = new JLabel("Phone");
+ 		
+ 		contactValue = new JLabel("");
+ 		
+ 		JButton editPhone = new JButton("Edit");
+ 		JButton editEmail = new JButton("Edit");
+ 		
+ 		JLabel emailLabel = new JLabel("Email");
+ 		
+ 		 emailValue = new JLabel("");
+		
  		info.addActionListener(e->{
     		cardLayout.show(customerPanel, "AccountPage");
+    		trnValue.setText(loggedInUser.getTrn());
+    		firstName.setText(loggedInUser.getFirstName());
+    		lastName.setText(loggedInUser.getLastName());
+    		passwordValue.setText(loggedInUser.getPassword());
+    		contactValue.setText(loggedInUser.getContactNum());
+    		emailValue.setText(loggedInUser.getEmail());
 
     		
 
@@ -873,63 +837,54 @@ public class CustomerView extends JFrame
         gc5.fill = GridBagConstraints.HORIZONTAL;
         
         
-        JLabel titleP = new JLabel("Personal Info", SwingConstants.CENTER);
- 		titleP.setFont(new Font("Arial", Font.BOLD, 20)); 		
- 		JLabel editB = new JLabel("Basic Info");
- 		editB.setFont(new Font("Arial", Font.BOLD, 15));
-        JTextField firstNameField = new JTextField("" + loggedInUser.getFirstName());
-        firstNameField.setEnabled(false);
-        JTextField lastNameField = new JTextField(""+loggedInUser.getLastName());
-        lastNameField.setEnabled(false);
-        JTextField trnField = new JTextField("" +loggedInUser.getTrn());
-        trnField.setEnabled(false);
-        JTextField contactNumField = new JTextField(""+ loggedInUser.getContactNum());
-        contactNumField.setEnabled(false);
-        JTextField emailField = new JTextField(""+loggedInUser.getEmail());
-        emailField.setEnabled(false);
-        JPasswordField passwordFieldR = new JPasswordField("" + loggedInUser.getPassword());
-        passwordFieldR.setEnabled(false);
+        addToGridBag(accountPage, titleP,gc5, 0,0,5,1);
         
-        addToGridBag(accountPage, titleP, gc5, 0, 0, 2, 1);
-        addToGridBag(accountPage, editB, gc5, 0, 1, 2, 1);
+        addToGridBag(accountPage, editB,gc5, 0,1,3,1);
+        
+        addToGridBag(accountPage, trnLabel,gc5, 0,2,1,1);
+        addToGridBag(accountPage, trnValue,gc5, 1,2,1,1);
+       // addToGridBag(accountPage, editTRN,gc5, 2,2,1,1);
 
+        addToGridBag(accountPage, nameLabel,gc5, 0,3,1,1);
         
-        addToGridBag(accountPage, new JLabel("TRN:"),gc5, 0, 2, 1, 1);
-        addToGridBag(accountPage, trnField,gc5, 1, 2, 1, 1);
-        
-        addToGridBag(accountPage, new JLabel("First Name:"), gc5, 0, 3, 1, 1);
-        addToGridBag(accountPage, firstNameField, gc5, 1, 3, 1, 1);
+        addToGridBag(accountPage, firstName,gc5, 1,3,1,1);
+        addToGridBag(accountPage, editFName,gc5, 2,3,1,1);
+        addToGridBag(accountPage, lastName,gc5, 1,4,1,1);
+        addToGridBag(accountPage, editLName,gc5, 2,4,1,1);
 
-        addToGridBag(accountPage, new JLabel("Last Name:"),gc5, 0, 4, 1, 1);
-        addToGridBag(accountPage, lastNameField,gc5, 1, 4, 1, 1);
-        
-       
-        addToGridBag(accountPage, editContactInfo,gc5, 0, 5, 2, 1);
+        addToGridBag(accountPage, passwordLabel,gc5, 0,5,1,1);
+        addToGridBag(accountPage, passwordValue,gc5, 1,5,1,1);
+        addToGridBag(accountPage, editPassword,gc5, 2,5,1,1);
+        addToGridBag(accountPage, editContactInfo,gc5, 0,6,5,1);
+       addToGridBag(accountPage, contactLabel,gc5, 0,7,1,1);
+        addToGridBag(accountPage, contactValue,gc5, 1,7,1,1);
+        addToGridBag(accountPage, editPhone,gc5, 2,7,1,1);
 
-        addToGridBag(accountPage, new JLabel("Contact Number: "),gc5, 0, 6, 1, 1);
-        addToGridBag(accountPage, contactNumField,gc5, 1, 6, 1, 1);
+        addToGridBag(accountPage, emailLabel,gc5, 0,8,1,1);
+        addToGridBag(accountPage, emailValue,gc5, 1,8,1,1);
+        addToGridBag(accountPage, editEmail,gc5, 2,8,1,1);	
 
-        addToGridBag(accountPage, new JLabel("Email: "),gc5, 0, 7, 1, 1);
-        addToGridBag(accountPage, emailField,gc5, 1, 7, 1, 1);
-        
-        addToGridBag(accountPage, security,gc5, 0, 8, 2, 1);
 
-        addToGridBag(accountPage, new JLabel("Password:"),gc5, 0, 9, 1, 1);
-        addToGridBag(accountPage, passwordFieldR,gc5, 1, 9, 1, 1);
+        GridBagConstraints gc7 = new GridBagConstraints();
+ 		gc7.insets = new Insets(10, 10, 10, 10);
+        gc7.fill = GridBagConstraints.HORIZONTAL;
+        
+        JLabel trackingPackages = new JLabel("Track Packages");
+        trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
+        
+        JTextField searchField = new JTextField(10);
+        
+        JButton search = new JButton("Search");
         
         
-        JLabel changeMsg = new JLabel("Information can only be changed at Login");
-        changeMsg.setForeground(Color.red);
-        addToGridBag(accountPage, changeMsg,gc5, 1, 10, 1, 1);
-
-        
-        
-     
-
-       
+		
+        addToGridBag(trackPage, trackingPackages,gc7, 0,0,1,1);
+        addToGridBag(trackPage, searchField,gc7, 0,1,1,1);
+        addToGridBag(trackPage, search,gc7, 1,1,1,1);
         
         
 
+        
 		
 		
          this.setVisible(true); 	 
@@ -981,7 +936,7 @@ private void loadInvoices(User loggedInUser) {
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Could not load invoices!");
-        logger.error(e.getMessage());
+        e.printStackTrace();
     }
 }
 
@@ -1018,7 +973,6 @@ private TableCellRenderer createRemainingCostRenderer() {
 }
 
 
-
 private void showInvoiceTable(List<Invoice> list) {
     InvoiceTableModel model = new InvoiceTableModel(list);
     JTable table = new JTable(model);
@@ -1031,7 +985,7 @@ private void showInvoiceTable(List<Invoice> list) {
 
     invoicePage.removeAll();
 
-     gc6 = new GridBagConstraints();
+    GridBagConstraints gc6 = new GridBagConstraints();
     gc6.insets = new Insets(10, 10, 10, 10);
     gc6.fill = GridBagConstraints.HORIZONTAL;
 
@@ -1064,18 +1018,39 @@ private void showInvoiceTable(List<Invoice> list) {
             
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Could not update invoices!");
-            logger.error(ex.getMessage());
+            ex.printStackTrace();
         }
         
         bill.doClick();
     });
     
-    print.addActionListener(e->{
+    print.addActionListener(e-> {
     	try {
+    		JFileChooser filedialog = new JFileChooser();
     		
-    		JTableToPDF.export(table, "pdf/invoices.pdf");
-    		JOptionPane.showMessageDialog(invoicePage, "Invoice has been exported to PDF!\nPlease check the pdf folder to view document",null, JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception e1) {
+    		int x = filedialog.showSaveDialog(this);
+    		
+    		switch (x) {
+				case JFileChooser.APPROVE_OPTION:
+					File file = filedialog.getSelectedFile(); // file path the user chose
+					String path = file.getAbsolutePath();
+					if (!path.endsWith(".pdf")) {
+						path += ".pdf";
+					}
+					
+					JTableToPDF.export(table, path);
+					break;
+				case JFileChooser.ERROR_OPTION:
+					throw new Exception();
+				case JFileChooser.CANCEL_OPTION:
+					// do nothing cuz the user cancelled
+					break;
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + x);
+			}
+		}
+    	catch (Exception e1) {
+			JOptionPane.showMessageDialog(this, "Failed to export file", "Error", JOptionPane.ERROR_MESSAGE);
 			logger.error(e1.getMessage());
 		}
 
@@ -1098,13 +1073,7 @@ private void showInvoiceTable(List<Invoice> list) {
 
     invoicePage.revalidate();
     invoicePage.repaint();
-    
-    
-    
 }
-
-
-
 	
 	
 	private int setZone()
@@ -1215,17 +1184,4 @@ private void showInvoiceTable(List<Invoice> list) {
         }
         return modified;
     }
-    
-  
-
-
 }
- 
-
-
-
- 
- 
-
-
-

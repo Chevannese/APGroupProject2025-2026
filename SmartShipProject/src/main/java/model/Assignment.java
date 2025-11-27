@@ -1,6 +1,8 @@
 package model;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -11,28 +13,40 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity
-@Table (name = "assignment")
-public class Assignment implements Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name = "assignID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	private Integer assignID;
-	private Integer tripID;
-	private Integer packageNo;
-	private String custID;
-	private String staffID;
-	private String vehicleNo;
-	private String driverID;
-	private LocalDate date;
-	private LocalTime time;
-	
+@Entity
+@Table(name = "assignment")
+public class Assignment implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "assignID")
+    private int assignID;
+
+    @Column(name = "tripID")
+    private Integer tripID;
+
+    @Column(name = "packageNo")
+    private Integer packageNo;
+
+    @Column(name = "custID")
+    private String custID;
+
+    @Column(name = "vehicleNo")
+    private String vehicleNo;
+
+    @Column(name = "driverID")
+    private String driverID;
+
+    @Column(name = "staffID")
+    private String staffID;
+
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "time")
+    private LocalTime time;
+
 	public Assignment()
 	{
 		
@@ -134,16 +148,16 @@ public class Assignment implements Serializable
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setDate(LocalDate date2) {
+		this.date = date2;
 	}
 
 	public LocalTime getTime() {
 		return time;
 	}
 
-	public void setTime(LocalTime time) {
-		this.time = time;
+	public void setTime(LocalTime time2) {
+		this.time = time2;
 	}
 
 	

@@ -5,38 +5,62 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
-
 @Entity
-@Table (name = "shipment")
+@Table(name = "shipment")
+public class Shipment implements Serializable {
 
-public class Shipment implements Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name = "packageNo")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	
-	private Integer packageNo;
-	private String custID;
-	private String supplierName;
-	private String supplierAddr;
-	private String receiverName;
-	private String receiverAddr;
-	private String packageName;
-	private String packageType;
-	private String status;
-	private int distance;
-	private String destination;
-	private double weight;
-	private double length;
-	private double width;
-	private double height;
-	private double cost;
-	private LocalDate date;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "packageNo")
+    private int packageNo;
+
+    @Column(name = "custID")
+    private String custID;
+
+    @Column(name = "supplierName")
+    private String supplierName;
+
+    @Column(name = "supplierAddr")
+    private String supplierAddr;
+
+    @Column(name = "receiverName")
+    private String receiverName;
+
+    @Column(name = "receiverAddr")
+    private String receiverAddr;
+
+    @Column(name = "packageName")
+    private String packageName;
+
+    @Column(name = "packageType")
+    private String packageType;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "distance")
+    private int distance;
+
+    @Column(name = "destination")
+    private String destination;
+
+    @Column(name = "weight")
+    private double weight;
+
+    @Column(name = "length")
+    private double length;
+
+    @Column(name = "width")
+    private double width;
+
+    @Column(name = "height")
+    private double height;
+
+    @Column(name = "cost")
+    private double cost;
+
+    @Column(name = "date")
+    private LocalDate date;
 	public Shipment()
 	{
 		packageNo = 0;
