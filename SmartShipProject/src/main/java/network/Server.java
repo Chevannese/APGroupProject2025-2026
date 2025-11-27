@@ -5,10 +5,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +39,7 @@ import model.Vehicle;
 public class Server {
     private static final Logger logger = LogManager.getLogger(Server.class);
     private static SessionFactory sessionFactory = null;
+    private static Connection conn=null;
 
     private ServerSocket serverSocket;
     private Socket connectionSocket;
@@ -52,6 +56,9 @@ public class Server {
             throw new ExceptionInInitializerError(ex);
         }
     }
+    
+	
+	
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
@@ -491,6 +498,12 @@ public class Server {
                     logger.error(ex.getMessage());
                 }
                 out.flush();
+            }else if(action.equals("GET_TRACK_PACKAGES"))
+            {
+                String custNo = (String) in.readObject();
+                //List<TrackPackage> list = getTrackPackagesByCustNo(custNo);
+               // out.writeObject(list);
+                out.flush();
             }
 
             
@@ -536,6 +549,24 @@ private List<Invoice> getAllInvoices(User loggedInUser) {
         return java.util.Collections.emptyList();
     }
 }
+    
+public List<Object[]> getTrackPackageData(String trn) {
+
+    try (Session session = sessionFactory.openSession()) {
+
+        String hql =
+            "SELECT tp.trackingNo, tp.packageNo, tp.custNo, tp.date, tp.time, s.status " +
+            "FROM TrackPackage tp, Shipment s " +
+            "WHERE tp.packageNo = s.packageNo AND tp.custNo = :trn";
+
+        return session.createQuery(hql, Object[].class)
+                      .setParameter("trn", trn)
+                      .getResultList();
+    }
+}
+
+
+
 
 
 
@@ -552,3 +583,6 @@ private List<Invoice> getAllInvoices(User loggedInUser) {
         new Server().waitForRequests();
     }
 }
+
+ 
+ 

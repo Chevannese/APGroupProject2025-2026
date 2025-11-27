@@ -196,19 +196,23 @@ public class Client {
 	    }
 	}
 	
-	public List<Shipment> getShipments() throws Exception {
+	public List<Shipment> getShipments(){
 		List<Shipment> shipments = null;
-		Socket socket = new Socket("127.0.0.1", 8888);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		try (
+		        Socket socket = new Socket("127.0.0.1", 8888);
+		        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+		    ) {
         
         out.writeObject("get-shipments");
         out.flush();
         shipments = (List<Shipment>) in.readObject();
 		
         out.flush();
-
-        
+		}catch(Exception e)
+		{
+			logger.error(e.getMessage());
+		}
 		return shipments;
 	}
 
@@ -375,18 +379,33 @@ public class Client {
         return null;
     }
 
-	public void updateUser(User editedUser) throws Exception  {
-		out.writeObject("update-user");
-		out.writeObject(editedUser);
-		out.flush();
+	public void updateUser(User editedUser) {
+		try
+		{
+			out.writeObject("update-user");
+			out.writeObject(editedUser);
+			out.flush();
+		}catch(Exception e)
+		{
+			logger.error(e.getMessage());
+		}
 		
-		if (!"success".equals((String) in.readObject())) {
-			throw new Exception("Failed to update user info");
+		try {
+			if (!"success".equals((String) in.readObject())) {
+				logger.error("Failed to update user info");
+			}
+		} catch (ClassNotFoundException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 		}
 	}
 
 	// In your Client class
-	public List<User> getUsers() throws Exception {
+	public List<User> getUsers() {
+		List<User> users = null;
 	    try (Socket socket = new Socket("127.0.0.1", 8888);
 	         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 	         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
@@ -394,13 +413,36 @@ public class Client {
 	        out.writeObject("GET_USERS");
 	        out.flush();
 	        
-	        @SuppressWarnings("unchecked")
-	        List<User> users = (List<User>) in.readObject();
-	        return users;
+	        users = (List<User>) in.readObject();
 	        
 	    } catch (Exception e) {
-	        throw new Exception("Failed to retrieve users from server: " + e.getMessage());
+	        logger.error("Failed to retrieve users from server: " + e.getMessage());
 	    }
+		return users;
+	}
+	
+	public List<TrackPackage> getTrackPackages()  {
+		
+		List<TrackPackage> tp = null;
+		 try (Socket socket = new Socket("127.0.0.1", 8888);
+		         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+		         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+	    out.writeObject("GET_TRACK_PACKAGES");
+	    out.flush();
+
+	     tp = (List<TrackPackage>) in.readObject();
+
+	    out.close();
+	    out.close();
+	    socket.close();
+
+		 }catch(Exception e)
+		 {
+			 logger.error(e.getMessage());
+		 }
+		return tp;
+	
 	}
 
 

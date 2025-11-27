@@ -24,3 +24,4 @@
 [ INFO] 2025-11-26 02:26:35.920 [AWT-EventQueue-0] CustomerView - Item list has been cleared
 [ INFO] 2025-11-26 14:20:34.658 [AWT-EventQueue-0] Login - Connection open for client
 [ INFO] 2025-11-26 14:20:37.149 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-27 02:47:00.265 [AWT-EventQueue-0] CustomerView - output.pdf (The process cannot access the file because it is being used by another process)
