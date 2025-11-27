@@ -8,13 +8,13 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -54,15 +54,14 @@ public class CustomerView extends JFrame
 
 	private int distance;
     private boolean zoneChance = true;
-    private String senderName, senderAddr, receiverName, receiverAddr, shippingLocation;
+    private String senderName, senderAddr, receiverName, receiverAddr;
     private Shipment newShipment;ButtonGroup btnGrpPackages;
 	private ArrayList<Shipment> shipments;
 	private JTable table;
 	private JScrollPane scrollPane;
 	private Client client = new Client();
 	private ButtonGroup btnGrpPayment;
-	private JLabel memberDate, trnValue, nameValue,emailValue, contactValue, lastName,firstName;
-	private JPasswordField passwordValue;
+	private GridBagConstraints gc7, gc6;
 
 
 
@@ -167,72 +166,87 @@ public class CustomerView extends JFrame
     	});
     	
     	track.addActionListener(e ->{
-    		cardLayout.show(customerPanel, "TrackPage");
-    		String[] columns = {
-    		        "Tracking No", "Package No", "Customer No", "Date", "Time", "Shipment Status"
-    		    };
-    		    
-    		    Client client = new Client();
-    		    List<TrackPackage> trackPackages = client.getTrackPackages(loggedInUser);
+    		try
+    		{
+    			cardLayout.show(customerPanel, "TrackPage");
+        		String[] columns = {
+        		        "Tracking No", "Package No", "Customer No", "Date", "Time", "Shipment Status"
+        		    };
+        		    
+        		    Client client = new Client();
+        		    List<TrackPackage> trackPackages = client.getTrackPackages(loggedInUser);
 
-    		    Object[][] data = new Object[trackPackages.size()][columns.length];
-    		    DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    		    DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
+        		    Object[][] data = new Object[trackPackages.size()][columns.length];
+        		    DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        		    DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
 
-    		    for (int i = 0; i < trackPackages.size(); i++) {
-    		        TrackPackage tp = trackPackages.get(i);
-    		        data[i][0] = tp.getTrackingNo();
-    		        data[i][1] = tp.getPackageNo();
-    		        data[i][2] = tp.getCustNo();
-    		        data[i][3] = tp.getDate() != null ? tp.getDate().format(dateFmt) : "";
-    		        data[i][4] = tp.getTime() != null ? tp.getTime().format(timeFmt) : "";
-    		        data[i][5] = tp.getShipmentStatus() != null ? tp.getShipmentStatus() : "";
-    		    }
+        		    for (int i = 0; i < trackPackages.size(); i++) {
+        		        TrackPackage tp = trackPackages.get(i);
+        		        data[i][0] = tp.getTrackingNo();
+        		        data[i][1] = tp.getPackageNo();
+        		        data[i][2] = tp.getCustNo();
+        		        data[i][3] = tp.getDate() != null ? tp.getDate().format(dateFmt) : "";
+        		        data[i][4] = tp.getTime() != null ? tp.getTime().format(timeFmt) : "";
+        		        data[i][5] = tp.getShipmentStatus() != null ? tp.getShipmentStatus() : "";
+        		    }
 
-    			trackPage.removeAll();
+        			trackPage.removeAll();
 
-    		    JTable table = new JTable(data, columns);
-    		    table.setAutoCreateRowSorter(true); // enable sorting
-    		    table.setFillsViewportHeight(true);
-    		    
-    		    JScrollPane scroll = new JScrollPane(table);
-    		    scroll.setPreferredSize(new Dimension(900, 400));
+        		    JTable table = new JTable(data, columns);
+        		    table.setAutoCreateRowSorter(true); // enable sorting
+        		    table.setFillsViewportHeight(true);
+        		    
+        		    JScrollPane scroll = new JScrollPane(table);
+        		    scroll.setPreferredSize(new Dimension(900, 400));
 
-    		    GridBagConstraints gc7 = new GridBagConstraints();
-    				gc7.insets = new Insets(10, 10, 10, 10);
-    		    gc7.fill = GridBagConstraints.HORIZONTAL;
-    		    
-    		    JLabel trackingPackages = new JLabel("Track Packages", SwingConstants.CENTER);
-    		    trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
-    		        		    
-    		    JButton print = new JButton("Print/Export");
-    		    
-    		    
+        		     gc7 = new GridBagConstraints();
+        			gc7.insets = new Insets(10, 10, 10, 10);
+        		    gc7.fill = GridBagConstraints.HORIZONTAL;
+        		    
+        		    JLabel trackingPackages = new JLabel("Track Packages", SwingConstants.CENTER);
+        		    trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
+        		        		    
+        		    JButton print = new JButton("Print/Export");
+        		    
+        		    
+        			
+        		    addToGridBag(trackPage, trackingPackages,gc7, 0,0,2,1);
+        		    addToGridBag(trackPage, print,gc7, 0,1,1,1);
+        		    
+        		    print.addActionListener(y ->{
+        		    	
+        		    });
+
+        		    
+        		    gc7.gridx = 0;
+        		    gc7.gridy = 2;
+        		    gc7.gridwidth = 2;
+        		    gc7.gridheight = 2;
+        		    gc7.weightx = 1.0;
+        		    gc7.weighty = 1.0;
+        		    gc7.fill = GridBagConstraints.BOTH;
+
+        		    trackPage.add(scroll, gc7);
+        		    
+        		    
+
+
+        		    
+        			trackPage.revalidate();
+        			trackPage.repaint();
+    		}catch(NullPointerException np)
+    		{
+    			logger.error(np.getMessage());
+    		    addToGridBag(trackPage, new JLabel("Sorry! Looks like you're not connected to the server"),gc, 0,0,1,1);
+
     			
-    		    addToGridBag(trackPage, trackingPackages,gc7, 0,0,2,1);
-    		    addToGridBag(trackPage, print,gc7, 0,1,1,1);
-    		    
-    		    print.addActionListener(y ->{
-    		    	
-    		    });
+    		}catch(Exception p)
+    		{
+    			logger.error(p.getMessage());
+    		    addToGridBag(trackPage, new JLabel("Sorry! Looks like you're not connected to the server"),gc, 0,0,1,1);
 
-    		    
-    		    gc7.gridx = 0;
-    		    gc7.gridy = 2;
-    		    gc7.gridwidth = 2;
-    		    gc7.gridheight = 2;
-    		    gc7.weightx = 1.0;
-    		    gc7.weighty = 1.0;
-    		    gc7.fill = GridBagConstraints.BOTH;
-
-    		    trackPage.add(scroll, gc7);
-    		    
-    		    
-
-
-    		    
-    			trackPage.revalidate();
-    			trackPage.repaint();
+    		}
+    		
     	});
     	
    
@@ -834,37 +848,16 @@ public class CustomerView extends JFrame
 				} 
 		});
 		
-		
-		
- 		
- 		JLabel trnLabel = new JLabel("TRN");
- 		 trnValue = new JLabel("");
- 		 
- 		
- 		JLabel nameLabel = new JLabel("Name");
- 		
- 		firstName = new JLabel("");
- 		lastName = new JLabel("");
+	
  		
  		
  		
  		
- 		JButton editFName = new JButton("Edit");
  		
- 		editFName.addActionListener(e ->{
- 			
- 			Client client = new Client();
- 			
- 			//client.sendAction("ChangeFName");
- 			
- 		});
- 		
- 		
- 		
- 		JLabel editContactInfo = new JLabel("Contact Info");
+ 		JLabel editContactInfo = new JLabel("Contact Info", SwingConstants.CENTER);
  		editContactInfo.setFont(new Font("Arial", Font.BOLD, 15));
  		
- 		JLabel security = new JLabel("Security");
+ 		JLabel security = new JLabel("Security", SwingConstants.CENTER);
  		security.setFont(new Font("Arial", Font.BOLD, 15));
  	 			
  		info.addActionListener(e->{
@@ -885,13 +878,17 @@ public class CustomerView extends JFrame
  		JLabel editB = new JLabel("Basic Info");
  		editB.setFont(new Font("Arial", Font.BOLD, 15));
         JTextField firstNameField = new JTextField("" + loggedInUser.getFirstName());
+        firstNameField.setEnabled(false);
         JTextField lastNameField = new JTextField(""+loggedInUser.getLastName());
+        lastNameField.setEnabled(false);
         JTextField trnField = new JTextField("" +loggedInUser.getTrn());
         trnField.setEnabled(false);
         JTextField contactNumField = new JTextField(""+ loggedInUser.getContactNum());
+        contactNumField.setEnabled(false);
         JTextField emailField = new JTextField(""+loggedInUser.getEmail());
+        emailField.setEnabled(false);
         JPasswordField passwordFieldR = new JPasswordField("" + loggedInUser.getPassword());
-        JButton changeBtn = new JButton("Change");
+        passwordFieldR.setEnabled(false);
         
         addToGridBag(accountPage, titleP, gc5, 0, 0, 2, 1);
         addToGridBag(accountPage, editB, gc5, 0, 1, 2, 1);
@@ -907,7 +904,7 @@ public class CustomerView extends JFrame
         addToGridBag(accountPage, lastNameField,gc5, 1, 4, 1, 1);
         
        
-        addToGridBag(accountPage, editContactInfo,gc5, 0, 5, 1, 1);
+        addToGridBag(accountPage, editContactInfo,gc5, 0, 5, 2, 1);
 
         addToGridBag(accountPage, new JLabel("Contact Number: "),gc5, 0, 6, 1, 1);
         addToGridBag(accountPage, contactNumField,gc5, 1, 6, 1, 1);
@@ -915,13 +912,16 @@ public class CustomerView extends JFrame
         addToGridBag(accountPage, new JLabel("Email: "),gc5, 0, 7, 1, 1);
         addToGridBag(accountPage, emailField,gc5, 1, 7, 1, 1);
         
-        addToGridBag(accountPage, security,gc5, 0, 8, 1, 1);
+        addToGridBag(accountPage, security,gc5, 0, 8, 2, 1);
 
         addToGridBag(accountPage, new JLabel("Password:"),gc5, 0, 9, 1, 1);
         addToGridBag(accountPage, passwordFieldR,gc5, 1, 9, 1, 1);
         
-        addToGridBag(accountPage, changeBtn,gc5, 0, 10, 1, 1);
         
+        JLabel changeMsg = new JLabel("Information can only be changed at Login");
+        changeMsg.setForeground(Color.red);
+        addToGridBag(accountPage, changeMsg,gc5, 1, 10, 1, 1);
+
         
         
      
@@ -981,7 +981,7 @@ private void loadInvoices(User loggedInUser) {
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, "Could not load invoices!");
-        e.printStackTrace();
+        logger.error(e.getMessage());
     }
 }
 
@@ -1018,10 +1018,6 @@ private TableCellRenderer createRemainingCostRenderer() {
 }
 
 
-private  void showTable(List<TrackPackage> trackPackages) {
-    
-}
-
 
 private void showInvoiceTable(List<Invoice> list) {
     InvoiceTableModel model = new InvoiceTableModel(list);
@@ -1035,7 +1031,7 @@ private void showInvoiceTable(List<Invoice> list) {
 
     invoicePage.removeAll();
 
-    GridBagConstraints gc6 = new GridBagConstraints();
+     gc6 = new GridBagConstraints();
     gc6.insets = new Insets(10, 10, 10, 10);
     gc6.fill = GridBagConstraints.HORIZONTAL;
 
@@ -1068,7 +1064,7 @@ private void showInvoiceTable(List<Invoice> list) {
             
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Could not update invoices!");
-            ex.printStackTrace();
+            logger.error(ex.getMessage());
         }
         
         bill.doClick();
@@ -1080,7 +1076,6 @@ private void showInvoiceTable(List<Invoice> list) {
     		JTableToPDF.export(table, "pdf/invoices.pdf");
     		JOptionPane.showMessageDialog(invoicePage, "Invoice has been exported to PDF!\nPlease check the pdf folder to view document",null, JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			logger.error(e1.getMessage());
 		}
 

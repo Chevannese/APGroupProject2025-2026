@@ -173,3 +173,31 @@ java.net.SocketException: Connection reset
 	at network.Server.handleClient(Server.java:97) ~[classes/:?]
 	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
 	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-27 16:00:59.232 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:05:54.274 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:08:20.273 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:08:41.276 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:09:24.396 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:10:01.192 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:12:56.087 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:13:01.918 [AWT-EventQueue-0] CustomerView - Connection refused: connect
+[ERROR] 2025-11-27 16:13:08.913 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:13:10.717 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:16:21.173 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:16:25.385 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:16:26.906 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:16:26.907 [AWT-EventQueue-0] CustomerView - Cannot invoke "java.util.List.size()" because "trackPackages" is null
+[ERROR] 2025-11-27 16:16:36.433 [AWT-EventQueue-0] CustomerView - Connection refused: connect
+[ERROR] 2025-11-27 16:18:47.472 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:18:52.633 [AWT-EventQueue-0] CustomerView - Connection refused: connect
+[ERROR] 2025-11-27 16:18:54.205 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:18:55.465 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:18:55.467 [AWT-EventQueue-0] CustomerView - Cannot invoke "java.util.List.size()" because "trackPackages" is null
+[ERROR] 2025-11-27 16:20:14.134 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:20:25.605 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:20:27.044 [AWT-EventQueue-0] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:20:27.046 [AWT-EventQueue-0] CustomerView - Cannot invoke "java.util.List.size()" because "trackPackages" is null
+[ERROR] 2025-11-27 16:20:37.912 [AWT-EventQueue-0] CustomerView - Connection refused: connect
+[ERROR] 2025-11-27 16:20:43.388 [AWT-EventQueue-0] CustomerView - Connection refused: connect
+[ERROR] 2025-11-27 16:26:00.639 [main] Client - Connection refused: connect
+[ERROR] 2025-11-27 16:27:17.471 [main] Client - Connection refused: connect
