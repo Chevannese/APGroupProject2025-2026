@@ -138,7 +138,7 @@ public class Client {
 	        	return test;
 	        }else if(response.equalsIgnoreCase("success"))
 	        {
-	        	JOptionPane.showMessageDialog(null,response,"User has successfully logged on with TRN: " + test.getTrn(), JOptionPane.WARNING_MESSAGE);
+	        	JOptionPane.showMessageDialog(null,"User has successfully logged on with TRN: " + test.getTrn(), response, JOptionPane.WARNING_MESSAGE);
 	        	logger.info("User has successfully logged on with TRN: " + test.getTrn());
 
 	        	return test;
@@ -421,7 +421,7 @@ public class Client {
 		return users;
 	}
 	
-	public List<TrackPackage> getTrackPackages()  {
+	public List<TrackPackage> getTrackPackages(User loggedInUser)  {
 		
 		List<TrackPackage> tp = null;
 		 try (Socket socket = new Socket("127.0.0.1", 8888);
@@ -429,13 +429,12 @@ public class Client {
 		         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
 	    out.writeObject("GET_TRACK_PACKAGES");
+	    out.writeObject(loggedInUser);
 	    out.flush();
 
 	     tp = (List<TrackPackage>) in.readObject();
 
-	    out.close();
-	    out.close();
-	    socket.close();
+	     out.flush();
 
 		 }catch(Exception e)
 		 {

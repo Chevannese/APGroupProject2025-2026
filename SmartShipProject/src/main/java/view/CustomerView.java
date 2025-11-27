@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashSet;
@@ -167,7 +168,71 @@ public class CustomerView extends JFrame
     	
     	track.addActionListener(e ->{
     		cardLayout.show(customerPanel, "TrackPage");
-    		//loadTrackPackages(loggedInUser);
+    		String[] columns = {
+    		        "Tracking No", "Package No", "Customer No", "Date", "Time", "Shipment Status"
+    		    };
+    		    
+    		    Client client = new Client();
+    		    List<TrackPackage> trackPackages = client.getTrackPackages(loggedInUser);
+
+    		    Object[][] data = new Object[trackPackages.size()][columns.length];
+    		    DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    		    DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern("HH:mm");
+
+    		    for (int i = 0; i < trackPackages.size(); i++) {
+    		        TrackPackage tp = trackPackages.get(i);
+    		        data[i][0] = tp.getTrackingNo();
+    		        data[i][1] = tp.getPackageNo();
+    		        data[i][2] = tp.getCustNo();
+    		        data[i][3] = tp.getDate() != null ? tp.getDate().format(dateFmt) : "";
+    		        data[i][4] = tp.getTime() != null ? tp.getTime().format(timeFmt) : "";
+    		        data[i][5] = tp.getShipmentStatus() != null ? tp.getShipmentStatus() : "";
+    		    }
+
+    			trackPage.removeAll();
+
+    		    JTable table = new JTable(data, columns);
+    		    table.setAutoCreateRowSorter(true); // enable sorting
+    		    table.setFillsViewportHeight(true);
+    		    
+    		    JScrollPane scroll = new JScrollPane(table);
+    		    scroll.setPreferredSize(new Dimension(900, 400));
+
+    		    GridBagConstraints gc7 = new GridBagConstraints();
+    				gc7.insets = new Insets(10, 10, 10, 10);
+    		    gc7.fill = GridBagConstraints.HORIZONTAL;
+    		    
+    		    JLabel trackingPackages = new JLabel("Track Packages", SwingConstants.CENTER);
+    		    trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
+    		        		    
+    		    JButton print = new JButton("Print/Export");
+    		    
+    		    
+    			
+    		    addToGridBag(trackPage, trackingPackages,gc7, 0,0,2,1);
+    		    addToGridBag(trackPage, print,gc7, 0,1,1,1);
+    		    
+    		    print.addActionListener(y ->{
+    		    	
+    		    });
+
+    		    
+    		    gc7.gridx = 0;
+    		    gc7.gridy = 2;
+    		    gc7.gridwidth = 2;
+    		    gc7.gridheight = 2;
+    		    gc7.weightx = 1.0;
+    		    gc7.weighty = 1.0;
+    		    gc7.fill = GridBagConstraints.BOTH;
+
+    		    trackPage.add(scroll, gc7);
+    		    
+    		    
+
+
+    		    
+    			trackPage.revalidate();
+    			trackPage.repaint();
     	});
     	
    
@@ -621,6 +686,11 @@ public class CustomerView extends JFrame
 	            logger.info("Customer went to page 3 of Shipment Form");
 	            
 		});
+		
+
+
+
+
 
 
 		prevOrderPage1Btn.addActionListener(e ->
@@ -856,22 +926,7 @@ public class CustomerView extends JFrame
         
      
 
-        GridBagConstraints gc7 = new GridBagConstraints();
- 		gc7.insets = new Insets(10, 10, 10, 10);
-        gc7.fill = GridBagConstraints.HORIZONTAL;
-        
-        JLabel trackingPackages = new JLabel("Track Packages");
-        trackingPackages.setFont(new Font("Arial", Font.BOLD, 20));
-        
-        JTextField searchField = new JTextField(10);
-        
-        JButton search = new JButton("Search");
-        
-        
-		
-        addToGridBag(trackPage, trackingPackages,gc7, 0,0,1,1);
-        addToGridBag(trackPage, searchField,gc7, 0,1,1,1);
-        addToGridBag(trackPage, search,gc7, 1,1,1,1);
+       
         
         
 
@@ -963,6 +1018,11 @@ private TableCellRenderer createRemainingCostRenderer() {
 }
 
 
+private  void showTable(List<TrackPackage> trackPackages) {
+    
+}
+
+
 private void showInvoiceTable(List<Invoice> list) {
     InvoiceTableModel model = new InvoiceTableModel(list);
     JTable table = new JTable(model);
@@ -1047,6 +1107,9 @@ private void showInvoiceTable(List<Invoice> list) {
     
     
 }
+
+
+
 	
 	
 	private int setZone()

@@ -272,6 +272,7 @@ public class Server {
                     logger.error("Error generating invoice: ", y);
                 }
             }
+            //======== Track Packages ===========
             else if ("generate-track".equals(action)) {
 
                 Shipment shipment = (Shipment) in.readObject();
@@ -303,6 +304,44 @@ public class Server {
                     logger.error("Error trackPackage invoice: ", y);
                 }
             }
+
+            else if (action.equals("GET_TRACK_PACKAGES")) {
+
+                User loggedInUser = (User) in.readObject();
+
+                List<TrackPackage> trackPackages = new ArrayList<>();
+
+                try (Session session = getSessionFactory().openSession()) {
+
+                    // Fetch user's track packages
+                    trackPackages = session.createQuery(
+                            "FROM TrackPackage WHERE custNo = :custNo", TrackPackage.class)
+                        .setParameter("custNo", loggedInUser.getTrn())
+                        .getResultList();
+
+                    // Attach shipment status for each package
+                    for (TrackPackage tp : trackPackages) {
+                        Shipment s = session.createQuery(
+                                "FROM Shipment WHERE packageNo = :pkg", Shipment.class)
+                                .setParameter("pkg", tp.getPackageNo())
+                                .uniqueResult();
+
+                        if (s != null) {
+                            tp.setShipmentStatus(s.getStatus());
+                        }
+                    }
+
+                } catch (Exception e) {
+                    logger.error("Error fetching track packages: " + e.getMessage(), e);
+                }
+
+                // Send list back to client
+                out.writeObject(trackPackages);
+                out.flush();
+            }
+
+
+
             
            
 
@@ -500,12 +539,6 @@ public class Server {
                     out.writeObject("Update failed: " + ex.getMessage());
                     logger.error(ex.getMessage());
                 }
-                out.flush();
-            }else if(action.equals("GET_TRACK_PACKAGES"))
-            {
-                String custNo = (String) in.readObject();
-                //List<TrackPackage> list = getTrackPackagesByCustNo(custNo);
-               // out.writeObject(list);
                 out.flush();
             }
 
