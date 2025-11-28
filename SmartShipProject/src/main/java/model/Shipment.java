@@ -9,7 +9,12 @@ import jakarta.persistence.*;
 @Table(name = "shipment")
 public class Shipment implements Serializable {
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "packageNo")
     private int packageNo;
@@ -144,19 +149,6 @@ public class Shipment implements Serializable {
 			return 1.75;
 		}
 		return 0;	
-	}
-	
-	public double shippingZoneRate(String input)
-	{
-		if(input.equals("Local"))
-		{
-			return 1;
-		}
-		else if(input.equals("International"))
-		{
-			return 1.5;
-		}
-		return 0;
 	}
 	
 	 public double calculateShippingCost() {
