@@ -19,9 +19,13 @@ import model.*;
 import network.Client;
 
 public class ManagerView extends TabView implements ActionListener {
-    private static final long serialVersionUID = -4604700777404064232L;
+   
 
-    // ===== EXISTING: User management tab =====
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	// ===== EXISTING: User management tab =====
     private JPanel manageUsersPanel = new JPanel(new BorderLayout());
     private JComboBox<String> showUserType = new JComboBox<>(
             new String[]{"All", "Customers", "Drivers", "Clerks"});

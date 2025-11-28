@@ -5,25 +5,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.query.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import com.mysql.cj.Query;
 
 
 import model.Invoice;
@@ -39,7 +35,6 @@ import model.Vehicle;
 public class Server {
     private static final Logger logger = LogManager.getLogger(Server.class);
     private static SessionFactory sessionFactory = null;
-    private static Connection conn=null;
 
     private ServerSocket serverSocket;
     private Socket connectionSocket;
