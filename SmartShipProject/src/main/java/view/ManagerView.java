@@ -9,9 +9,15 @@ import java.awt.event.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Locale;
 
 import com.formdev.flatlaf.*;
 
@@ -27,7 +33,7 @@ public class ManagerView extends TabView implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	// ===== EXISTING: User management tab =====
     private JPanel manageUsersPanel = new JPanel(new BorderLayout());
-    private JComboBox<String> showUserType = new JComboBox<>(
+    private JComboBox<String> showUserType = new JComboBox<String>(
             new String[]{"All", "Customers", "Drivers", "Clerks"});
     private JTextField searchUsers = new JTextField(20);
     private JButton findUserByID = new JButton("Search by ID");
@@ -47,12 +53,12 @@ public class ManagerView extends TabView implements ActionListener {
     private JButton refreshDispatchBtn = new JButton("Refresh");
     private JButton assignBtn = new JButton("Assign Package");
 
-    private JComboBox<String> routeCombo = new JComboBox<>();
-    private JComboBox<String> vehicleCombo = new JComboBox<>();
+    private JComboBox<String> routeCombo = new JComboBox<String>();
+    private JComboBox<String> vehicleCombo = new JComboBox<String>();
 
-    private List<Shipment> unassignedShipments = new ArrayList<>();
-    private List<Route> routes = new ArrayList<>();
-    private List<Vehicle> vehicles = new ArrayList<>();
+    private List<Shipment> unassignedShipments = new ArrayList<Shipment>();
+    private List<Route> routes = new ArrayList<Route>();
+    private List<Vehicle> vehicles = new ArrayList<Vehicle>();
 
     // ===== NEW: Vehicle overview tab =====
     private JPanel manageVehiclesPanel = new JPanel(new BorderLayout());
@@ -61,12 +67,16 @@ public class ManagerView extends TabView implements ActionListener {
     private VehicleTableModel vehicleTableModel;
     private JButton refreshVehiclesBtn = new JButton("Refresh");
     
+    // ===== NEW: Reports Tab =====
+    private JPanel reportsPanel = new JPanel(new BorderLayout());
+    
+    
  // ===== NEW: Trip Overview tab =====
     private JPanel manageTripsPanel = new JPanel(new BorderLayout());
     private JTable tripTable;
     private TripTableModel tripTableModel;
     private JButton refreshTripsBtn = new JButton("Refresh");
-    private List<Trip> trips = new ArrayList<>();
+    private List<Trip> trips = new ArrayList<Trip>();
 
 
     // ===== Constructors =====
@@ -89,11 +99,13 @@ public class ManagerView extends TabView implements ActionListener {
         addTab("User Management", manageUsersPanel);
         addTab("Manage Packages", managePackagesPanel);
         addTab("Manage Vehicles", manageVehiclesPanel);
+        addTab("Reports", reportsPanel);
         addTab("Trip Overview", manageTripsPanel);
 
         initUserManagementTab();
         initPackageDispatchTab();
         initVehicleTab();
+        initReportsTab();
         initTripTab();
 
         addActionListeners();
@@ -103,8 +115,27 @@ public class ManagerView extends TabView implements ActionListener {
         // loadDispatchData();
         // loadVehicles();
     }
+    
+    // REPORTS TAB
+    private void initReportsTab() {
+		JButton loadDailyReport = new JButton("Daily Report");
+		
+	}
+    
+    private void generateReports() {
+    	
+    	try {
+    		//ArrayList<Shipment> shipments = new Client().getShipments();
+    	}
+    	catch (Exception e) {
+			// TODO: handle exception
+		}
+    	
+    	
+    	JPanel panel = new JPanel();
+    }
 
-    // ---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
     //  USER MANAGEMENT TAB (existing behaviour kept)
     // ---------------------------------------------------------------------
     private void initUserManagementTab() {
@@ -349,8 +380,7 @@ public class ManagerView extends TabView implements ActionListener {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Could not load dispatch data: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Could not load dispatch data: " + ex.getMessage());
         }
     }
 
@@ -485,64 +515,6 @@ public class ManagerView extends TabView implements ActionListener {
     // ---------------------------------------------------------------------
     //  TABLE MODELS
     // ---------------------------------------------------------------------
-
-    // Simple table for unassigned shipments
-    private static class ShipmentTableModel extends AbstractTableModel {
-        private static final long serialVersionUID = 1L;
-
-        private final String[] columns = 
-            {"Package No", "Customer ID", "Name", "Receiver Addr", "Destination", "Weight", "Status"};
-
-
-        private List<Shipment> shipments;
-
-        public ShipmentTableModel(List<Shipment> shipments) {
-            this.shipments = shipments;
-        }
-
-        public void setShipments(List<Shipment> shipments) {
-            this.shipments = shipments;
-            fireTableDataChanged();
-        }
-
-        public Shipment getShipmentAt(int row) {
-            return shipments.get(row);
-        }
-
-        @Override
-        public int getRowCount() {
-            return shipments == null ? 0 : shipments.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columns.length;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return columns[column];
-        }
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Shipment s = shipments.get(rowIndex);
-            return switch (columnIndex) {
-                case 0 -> s.getPackageNo();
-                case 1 -> s.getCustID();
-                case 2 -> s.getPackageName();
-                case 3 -> s.getReceiverAddr();      // <--- NEW
-                case 4 -> s.getDestination();
-                case 5 -> s.getWeight();
-                case 6 -> s.getStatus();
-                default -> null;
-            };
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false; // manager only selects, no edit here
-        }
-    }
 
     // Simple table for vehicles
     private static class VehicleTableModel extends AbstractTableModel {
