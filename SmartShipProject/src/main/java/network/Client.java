@@ -17,6 +17,7 @@ import model.Route;
 import model.User;
 import model.Shipment;
 import model.TrackPackage;
+import model.Trip;
 import model.Vehicle;
 
 public class Client {
@@ -441,8 +442,105 @@ public class Client {
 			 logger.error(e.getMessage());
 		 }
 		return tp;
-	
 	}
+	
+	  public List<Shipment> getUnassignedShipments() {
+	        try (
+	            Socket socket = new Socket("127.0.0.1", 8888);
+	            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	        ) {
+	            out.writeObject("GET_UNASSIGNED_SHIPMENTS");
+	            out.flush();
+
+	            String status = (String) in.readObject();
+	            if ("success".equals(status)) {
+	                return (List<Shipment>) in.readObject();
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return new ArrayList<>();
+	    }
+
+	    public List<Route> getAllRoutes() {
+	        try (
+	            Socket socket = new Socket("127.0.0.1", 8888);
+	            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	        ) {
+	            out.writeObject("GET_ROUTES");
+	            out.flush();
+
+	            String status = (String) in.readObject();
+	            if ("success".equals(status)) {
+	                return (List<Route>) in.readObject();
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return new ArrayList<>();
+	    }
+
+	 public List<Vehicle> getAllVehicles() {
+	        try (
+	            Socket socket = new Socket("127.0.0.1", 8888);
+	            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	        ) {
+	            out.writeObject("GET_VEHICLES");
+	            out.flush();
+
+	            String status = (String) in.readObject();
+	            if ("success".equals(status)) {
+	                return (List<Vehicle>) in.readObject();
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return new ArrayList<>();
+	    }
+
+	    public String assignShipmentToVehicleRoute(Integer packageNo, Integer routeID, String vehicleNo, String managerTrn) {
+	        try (
+	                Socket socket = new Socket("127.0.0.1", 8888);
+	                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+	        ) {
+	            out.writeObject("ASSIGN_SHIPMENT");
+	            out.writeObject(packageNo);
+	            out.writeObject(routeID);
+	            out.writeObject(vehicleNo);
+	            out.writeObject(managerTrn);   // <---- NEW
+	            out.flush();
+
+	            return (String) in.readObject();
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return "Error communicating with server";
+	        }
+	    }
+	    public List<Trip> getAllTrips() {
+	        try (
+	            Socket socket = new Socket("127.0.0.1", 8888);
+	            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	        ) {
+	            out.writeObject("GET_TRIPS");
+	            out.flush();
+
+	            String status = (String) in.readObject();
+
+	            if ("success".equals(status)) {
+	                return (List<Trip>) in.readObject();
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return new ArrayList<>();
+	    }
 
 
 }

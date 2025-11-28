@@ -541,6 +541,388 @@ public class Server {
                 }
                 out.flush();
             }
+            
+
+
+            // ================================
+            // DRIVER: GET SHIPMENTS
+            // ================================
+
+            else if ("GetDriverShipments".equals(action)) {
+                String driverTrn = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    List<Shipment> shipments =
+                        session.createQuery(
+                                "select s from Shipment s, Assignment a " +
+                                "where a.driverID = :trn and a.packageNo = s.packageNo",
+                                Shipment.class)
+                            .setParameter("trn", driverTrn)
+                            .getResultList();
+
+                    session.getTransaction().commit();
+
+                    out.writeObject("success");
+                    out.writeObject(shipments);
+
+                } catch (Exception ex) {
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ================================
+            // DRIVER: UPDATE SHIPMENT STATUS
+            // ================================
+
+            else if ("UpdateShipmentStatus".equals(action)) {
+                String pkgIdStr = (String) in.readObject();
+                String newStatus = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    Integer pkgId = Integer.valueOf(pkgIdStr);
+                    Shipment shipment = session.find(Shipment.class, pkgId);
+
+                    if (shipment == null) {
+                        out.writeObject("not-found");
+                    } else {
+                        shipment.setStatus(newStatus);
+                        session.merge(shipment);
+                        session.getTransaction().commit();
+                        out.writeObject("success");
+                    }
+
+                } catch (Exception ex) {
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ================================
+            // DRIVER: GET ROUTE
+            // ================================
+
+            else if ("GetDriverRoute".equals(action)) {
+                String driverTrn = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    Assignment assignment = session.createQuery(
+                            "select a from Assignment a where a.driverID = :trn",
+                            Assignment.class)
+                        .setParameter("trn", driverTrn)
+                        .setMaxResults(1)
+                        .uniqueResult();
+
+                    Route route = null;
+
+                    if (assignment != null && assignment.getTripID() != null) {
+
+                        Trip trip = session.find(Trip.class, assignment.getTripID());
+
+                        if (trip != null && trip.getRouteID() != null) {
+                            Integer routeId = Integer.valueOf(trip.getRouteID());
+                            route = session.find(Route.class, routeId);
+                        }
+                    }
+
+                    session.getTransaction().commit();
+
+                    if (route != null) {
+                        out.writeObject("success");
+                        out.writeObject(route);
+                    } else {
+                        out.writeObject("not-found");
+                    }
+
+                } catch (Exception ex) {
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ================================
+            // DRIVER: GET VEHICLE
+            // ================================
+
+            else if ("GetDriverVehicle".equals(action)) {
+                String driverTrn = (String) in.readObject();
+
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    Assignment assignment = session.createQuery(
+                            "select a from Assignment a where a.driverID = :trn",
+                            Assignment.class)
+                        .setParameter("trn", driverTrn)
+                        .setMaxResults(1)
+                        .uniqueResult();
+
+                    Vehicle vehicle = null;
+
+                    if (assignment != null && assignment.getVehicleNo() != null) {
+                        vehicle = session.find(Vehicle.class, assignment.getVehicleNo());
+                    }
+
+                    session.getTransaction().commit();
+
+                    if (vehicle != null) {
+                        out.writeObject("success");
+                        out.writeObject(vehicle);
+                    } else {
+                        out.writeObject("not-found");
+                    }
+
+                } catch (Exception ex) {
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+  // ======================
+            // DISPATCH: UNASSIGNED SHIPMENTS
+            // ======================
+
+            else if ("GET_UNASSIGNED_SHIPMENTS".equals(action)) {
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    // Shipments with status 'Pending' and not already in Assignment
+                    List<Shipment> shipments = session.createQuery(
+                        "select s from Shipment s " +
+                        "where s.status = 'Pending' " +
+                        "and s.packageNo not in (select a.packageNo from Assignment a)",
+                        Shipment.class
+                    ).getResultList();
+
+                    session.getTransaction().commit();
+
+                    out.writeObject("success");
+                    out.writeObject(shipments);
+                } catch (Exception e) {
+                    logger.error("Error GET_UNASSIGNED_SHIPMENTS", e);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ======================
+            // DISPATCH: ALL ROUTES
+            // ======================
+
+            else if ("GET_ROUTES".equals(action)) {
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    List<Route> routes = session.createQuery(
+                        "from Route",
+                        Route.class
+                    ).getResultList();
+
+                    session.getTransaction().commit();
+
+                    out.writeObject("success");
+                    out.writeObject(routes);
+                } catch (Exception e) {
+                    logger.error("Error GET_ROUTES", e);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ======================
+            // DISPATCH: ALL VEHICLES
+            // ======================
+
+            else if ("GET_VEHICLES".equals(action)) {
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    out.flush();
+                    List<Vehicle> vehicles = session.createQuery(
+                        "from Vehicle",
+                        Vehicle.class
+                    ).getResultList();
+
+                    session.getTransaction().commit();
+
+                    out.writeObject("success");
+                    out.writeObject(vehicles);
+                    out.flush();
+                } catch (Exception e) {
+                    logger.error("Error GET_VEHICLES", e);
+                    out.writeObject("error");
+                }
+                out.flush();
+            }
+
+            // ======================
+            // DISPATCH: ASSIGN SHIPMENT
+            // One trip per vehicle per day (manager-only)
+            // ======================
+
+            else if (action.equals("ASSIGN_SHIPMENT")) 
+            {
+                Integer packageNo = (Integer) in.readObject();
+                Integer routeID   = (Integer) in.readObject();
+                String  vehicleNo = (String)  in.readObject();
+                String  managerTrn = (String) in.readObject(); // manager's TRN (staffID)
+
+                try (Session session = sessionFactory.openSession()) {
+
+                    Transaction tx = session.beginTransaction();
+
+                    // 1. Load required objects
+                    Shipment shipment = session.find(Shipment.class, packageNo);
+                    Vehicle vehicle   = session.find(Vehicle.class, vehicleNo);
+                    Route route       = session.find(Route.class, routeID);
+
+                    if (shipment == null) {
+                        out.writeObject("ERROR: Shipment not found");
+                        tx.commit();
+                        out.flush();
+                        return;
+                    }
+                    if (vehicle == null) {
+                        out.writeObject("ERROR: Vehicle not found");
+                        tx.commit();
+                        out.flush();
+                        return;
+                    }
+                    if (route == null) {
+                        out.writeObject("ERROR: Route not found");
+                        tx.commit();
+                        out.flush();
+                        return;
+                    }
+
+                    // 2. Check if shipment is already assigned
+                    Long count = session.createQuery(
+                            "select count(a) from Assignment a where a.packageNo = :pkg",
+                            Long.class
+                    ).setParameter("pkg", packageNo).uniqueResult();
+
+                    if (count != null && count > 0) {
+                        out.writeObject("ERROR: Shipment already assigned");
+                        tx.commit();
+                        out.flush();
+                        return;
+                    }
+
+                    // 3. Check capacity limitations
+                    double newWeight = vehicle.getCurrentWeight() + shipment.getWeight();
+                    int newQty = vehicle.getCurrentQuantity() + 1;
+
+                    if (newQty > vehicle.getQuantityCap()) {
+                        out.writeObject("OVER_CAPACITY_QTY");
+                        tx.commit();
+                        out.flush();
+                        return;
+                    }
+
+                    if (newWeight > vehicle.getWeightCap()) {
+                        out.writeObject("OVER_CAPACITY_WEIGHT");
+                        tx.commit();
+                        out.flush();
+                        return;
+                    }
+
+                    // 4. One trip per vehicle per day
+                    LocalDate today = LocalDate.now();
+
+                    Trip trip = session.createQuery(
+                            "from Trip t where t.vehicleNo = :veh and t.date = :dt",
+                            Trip.class)
+                            .setParameter("veh", vehicleNo)
+                            .setParameter("dt", today)
+                            .setMaxResults(1)
+                            .uniqueResult();
+
+                    if (trip == null) {
+                        // Create new Trip for this vehicle today
+                        Integer maxId = session.createQuery(
+                                "select coalesce(max(t.tripID), 0) from Trip t",
+                                Integer.class
+                        ).uniqueResult();
+                        int newTripId = (maxId == null ? 1 : maxId + 1);
+
+                        trip = new Trip();
+                        trip.setVehicleNo(vehicleNo);
+                        trip.setDriverID(vehicle.getDriverID());
+                        trip.setClerkID(managerTrn); // using this to store manager who dispatched
+                        trip.setRouteID(routeID);
+                        trip.setStatus("Pending");
+                        trip.setDate(today);
+                        trip.setDepartureTime(LocalTime.now());
+                        trip.setArrivalTime(null);
+
+                        session.persist(trip);
+                    } else {
+                        // Vehicle already has a trip today – must be same route
+                        if (trip.getRouteID() != null && !trip.getRouteID().equals(routeID)) {
+                            out.writeObject("ERROR: Vehicle already assigned to different route today");
+                            tx.commit();
+                            out.flush();
+                            return;
+                        }
+                    }
+
+                    // 5. Update vehicle loading
+                    vehicle.setCurrentQuantity(newQty);
+                    vehicle.setCurrentWeight(newWeight);
+                    session.merge(vehicle);
+
+                    // 6. Create assignment
+                    Assignment a = new Assignment();
+                    a.setPackageNo(packageNo);
+                    a.setVehicleNo(vehicleNo);
+                    a.setDriverID(vehicle.getDriverID()); 
+                    a.setCustID(shipment.getCustID());
+                    a.setDate(today);
+                    a.setTime(LocalTime.now());
+                    a.setTripID(trip.getTripID());
+                    a.setStaffID(managerTrn); // manager-only
+
+                    session.persist(a);
+
+                    // 7. Update shipment status to "Assigned"
+                    shipment.setStatus("Assigned");
+                    session.merge(shipment);
+
+                    tx.commit();
+                    out.writeObject("SUCCESS");
+                    out.flush();
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    out.writeObject("ERROR: " + ex.getMessage());
+                    out.flush();
+                }
+            }else if (action.equals("GET_TRIPS")) {
+                try (Session session = sessionFactory.openSession()) {
+                    session.beginTransaction();
+
+                    List<Trip> trips = session.createQuery(
+                        "from Trip", Trip.class
+                    ).getResultList();
+
+                    session.getTransaction().commit();
+
+                    out.writeObject("success");
+                    out.writeObject(trips);
+                    out.flush();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    out.writeObject("error");
+                    out.flush();
+                }
+            }
 
             
 
