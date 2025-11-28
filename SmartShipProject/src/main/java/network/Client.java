@@ -199,6 +199,7 @@ public class Client {
 		
 	}
 	
+
 	public Shipment requestOrder(Shipment shipment)
 	{
 	    try (
@@ -226,6 +227,7 @@ public class Client {
 	        return null;
 	    }
 	}
+
 	
 	public List<Shipment> getShipments(){
 		List<Shipment> shipments = null;
@@ -323,6 +325,7 @@ public class Client {
 		        
 	return false;
 	}
+
 
 
 

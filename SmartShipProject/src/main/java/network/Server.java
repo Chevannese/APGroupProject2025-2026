@@ -204,6 +204,7 @@ public class Server {
                 	 logger.error(e.getMessage());
                  }
                  }
+
             else if ("create-shipment".equals(action)) 
             {
                 Shipment shipment = (Shipment) in.readObject();
@@ -227,6 +228,8 @@ public class Server {
                     out.writeObject(null);
                     out.flush();
                 }
+
+
 
             	
             }else if("Next".equalsIgnoreCase(action))
