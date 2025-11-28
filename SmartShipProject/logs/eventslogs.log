@@ -943,3 +943,126 @@ java.io.EOFException: null
 	at network.Server.handleClient(Server.java:97) ~[classes/:?]
 	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
 	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-27 23:04:35.372 [main] Server - Server running on port 8888...
+[ INFO] 2025-11-27 23:05:58.210 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:05:58.216 [Thread-1] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:05:58.221 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-27 23:05:58.227 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:05:58.228 [Thread-2] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:05:58.231 [Thread-2] Server - Action received: SignIn
+[ INFO] 2025-11-27 23:06:00.536 [AWT-EventQueue-0] Client - User has successfully logged on with TRN: 123456789
+[ INFO] 2025-11-27 23:06:00.614 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:06:00.615 [Thread-3] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:06:00.769 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-27 23:06:00.770 [Thread-1] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-27 23:06:14.094 [Thread-3] Server - Client handling error: Connection reset
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1108) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1095) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1089) ~[?:?]
+	at java.base/java.io.ObjectInputStream$PeekInputStream.peek(ObjectInputStream.java:2878) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peek(ObjectInputStream.java:3205) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3215) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-27 23:08:35.016 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:08:35.021 [Thread-4] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:09:35.484 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:09:35.487 [Thread-5] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:09:35.488 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:09:35.491 [Thread-6] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:09:35.507 [Thread-6] Server - Action received: GET_TRACK_PACKAGES
+[ INFO] 2025-11-27 23:09:45.676 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:09:45.677 [Thread-7] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:09:45.678 [Thread-7] Server - Action received: GET_INVOICES
+[ INFO] 2025-11-27 23:09:48.536 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:09:48.538 [Thread-8] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:09:48.541 [Thread-8] Server - Action received: GET_INVOICES
+[ INFO] 2025-11-27 23:09:56.010 [AWT-EventQueue-0] CustomerView - 123456789has successfully logged out
+[ERROR] 2025-11-27 23:09:56.021 [Thread-4] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-27 23:10:01.337 [Thread-5] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-27 23:10:45.236 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:10:45.237 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-27 23:10:45.238 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:10:45.237 [Thread-9] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:10:45.240 [Thread-10] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:10:45.241 [Thread-10] Server - Action received: Create Account
+[ INFO] 2025-11-27 23:10:46.358 [Thread-10] Server - New user created with TRN: 333222111
+[ INFO] 2025-11-27 23:10:46.360 [AWT-EventQueue-0] Client - Account created successfully
+[ INFO] 2025-11-27 23:10:50.769 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-27 23:10:50.769 [Thread-9] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-27 23:11:00.357 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:11:00.358 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-27 23:11:00.358 [Thread-11] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:11:00.360 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:11:00.362 [Thread-12] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:11:00.363 [Thread-12] Server - Action received: SignIn
+[ INFO] 2025-11-27 23:11:02.555 [AWT-EventQueue-0] Client - User has successfully logged on with TRN: 333222111
+[ INFO] 2025-11-27 23:11:02.577 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-27 23:11:02.587 [Thread-13] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-27 23:11:02.634 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-27 23:11:02.634 [Thread-11] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-27 23:11:15.003 [Thread-13] Server - Client handling error: Connection reset
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1108) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1095) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1089) ~[?:?]
+	at java.base/java.io.ObjectInputStream$PeekInputStream.peek(ObjectInputStream.java:2878) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peek(ObjectInputStream.java:3205) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3215) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:97) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:77) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]

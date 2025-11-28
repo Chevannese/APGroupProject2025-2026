@@ -930,11 +930,6 @@ public class CustomerView extends JFrame
         
         addToGridBag(accountPage, btnEdit,gc5, 0, 10, 1, 1);
         addToGridBag(accountPage, submission,gc5, 1, 10, 1, 1);
-
-
-
-        //JLabel changeMsg = new JLabel("Information can only be changed at Login");
-        //changeMsg.setForeground(Color.red);
         
         
         btnEdit.addActionListener(e ->{
@@ -944,7 +939,6 @@ public class CustomerView extends JFrame
         	contactNumField.setEnabled(true);
         	emailField.setEnabled(true);
         	passwordFieldR.setEnabled(true);
-        	
         	firstNameField.setText("");
         	lastNameField.setText("");
         	contactNumField.setText("");
