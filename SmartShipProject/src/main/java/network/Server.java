@@ -110,7 +110,6 @@ public class Server {
             else if ("Create Account".equals(action)) 
             {
                 User user = (User) in.readObject();
-                out.writeObject("create-shipment");
                 try (Session session = getSessionFactory().openSession()) {
                     session.beginTransaction();
 
@@ -131,6 +130,27 @@ public class Server {
                     out.flush();
                 }
             }//end of Create Account
+            
+            else if ("Update Account".equals(action)) 
+            {
+                User user = (User) in.readObject();
+                try (Session session = getSessionFactory().openSession()) {
+                    session.beginTransaction();
+
+                    User existingUser = session.find(User.class, user.getTrn());
+                  
+                        session.merge(user);
+                        session.getTransaction().commit();
+                        logger.info("user has changed their details. TRN: " + user.getTrn());
+                        out.writeObject("done");
+                    
+                    out.flush();
+                } catch (Exception e) {
+                    logger.error("Error - Database error: " + e.getMessage(), e);
+                    out.writeObject("error-database-issue");
+                    out.flush();
+                }
+            }//end of Update Account
             
             else if(action.equalsIgnoreCase("SignIn"))
             {

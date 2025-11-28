@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ import javax.swing.table.TableCellRenderer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import model.Customer;
 import model.Invoice;
 import model.JTableToPDF;
 import model.Shipment;
@@ -55,7 +59,7 @@ public class CustomerView extends JFrame
 
 	private int distance;
     private boolean zoneChance = true;
-    private String senderName, senderAddr, receiverName, receiverAddr;
+    private String senderName, senderAddr, receiverName, receiverAddr, passText;
     private Shipment newShipment;ButtonGroup btnGrpPackages;
 	private ArrayList<Shipment> shipments;
 	private JTable table;
@@ -890,6 +894,12 @@ public class CustomerView extends JFrame
         emailField.setEnabled(false);
         JPasswordField passwordFieldR = new JPasswordField("" + loggedInUser.getPassword());
         passwordFieldR.setEnabled(false);
+        JButton btnEdit = new JButton("Enable Editing");
+        btnEdit.setBackground(new Color(0, 0, 139));
+        btnEdit.setForeground(Color.white);
+        JButton submission = new JButton("Submit");
+        submission.setForeground(Color.white);
+        submission.setBackground(new Color(27, 94, 32));
         
         addToGridBag(accountPage, titleP, gc5, 0, 0, 2, 1);
         addToGridBag(accountPage, editB, gc5, 0, 1, 2, 1);
@@ -918,10 +928,100 @@ public class CustomerView extends JFrame
         addToGridBag(accountPage, new JLabel("Password:"),gc5, 0, 9, 1, 1);
         addToGridBag(accountPage, passwordFieldR,gc5, 1, 9, 1, 1);
         
+        addToGridBag(accountPage, btnEdit,gc5, 0, 10, 1, 1);
+        addToGridBag(accountPage, submission,gc5, 1, 10, 1, 1);
+
+
+
+        //JLabel changeMsg = new JLabel("Information can only be changed at Login");
+        //changeMsg.setForeground(Color.red);
         
-        JLabel changeMsg = new JLabel("Information can only be changed at Login");
-        changeMsg.setForeground(Color.red);
-        addToGridBag(accountPage, changeMsg,gc5, 1, 10, 1, 1);
+        
+        btnEdit.addActionListener(e ->{
+        	
+        	firstNameField.setEnabled(true);
+        	lastNameField.setEnabled(true);
+        	contactNumField.setEnabled(true);
+        	emailField.setEnabled(true);
+        	passwordFieldR.setEnabled(true);
+        	
+        	firstNameField.setText("");
+        	lastNameField.setText("");
+        	contactNumField.setText("");
+        	emailField.setText("");
+        	passwordFieldR.setText("");
+
+        });
+        
+        submission.addActionListener(e ->{
+
+	        if(firstNameField.isEnabled() == false)
+	        {
+	        	JOptionPane.showMessageDialog( 
+		        		accountPage,
+		        		 "Please Press Enable Edit to make account changes");
+	        	return;
+	        }
+	        else if(firstNameField.getText().compareTo("") == 0 || lastNameField.getText().compareTo("") == 0 ||
+	            		 contactNumField.getText().compareTo("") == 0 ||
+	            		emailField.getText().compareTo("") == 0)
+	    	        {
+	    	        	JOptionPane.showMessageDialog( 
+	    		        		accountPage,
+	    		        		 "One or more fields were not filled");
+	    	        	return;
+	    	        }
+	    	        else
+	    	        {
+	    	        	String firstName = firstNameField.getText();
+	    	        	String lastName = lastNameField.getText();
+	    	        	String trn = trnField.getText();
+	    	        	String contactNum = contactNumField.getText();
+	    	        	String email = emailField.getText();
+	    	        	 passText = new String(passwordFieldR.getPassword());
+	    	        	
+	    	        	 if(!isValidEmail(email))
+	    	        	{
+	    	        	    JOptionPane.showMessageDialog(this, "Invalid email address!");
+	    	        	    return;
+	    	        	}
+	    	        	else if(!isValidPhone(contactNum))
+	    	        	{
+	    	        		JOptionPane.showMessageDialog(this, "Invalid phone number!");
+	    	        		return;
+	    	        	}
+	    	        	else
+	    					
+	    				
+	
+	
+	    						passText = hashString(passText);
+	    	
+	    						Client client = new Client();
+	    			            logger.info("Connection open for client");
+	    						 loggedInUser.setFirstName(firstName);
+	    						 loggedInUser.setLastName(lastName);
+	    						 loggedInUser.setEmail(email);
+	    						 loggedInUser.setContactNum(contactNum);
+	    						 loggedInUser.setPassword(passText);
+	    						 
+	    						boolean success = client.updateAccount(loggedInUser);
+	
+	    						if (!success)
+	    						{
+	    							System.out.println("Bad Bad");
+	    							return;
+	    						}
+	    						
+	    							JOptionPane.showMessageDialog(this, "Account changed with: \nName: " + firstName + " " + lastName + "\nTRN: "
+	    									+ trn + "\nContact Number: " + contactNum + "\nEmail: " + email
+	    									+ "\nPassword: " + passText);
+	    						    logout.doClick();                       // clear form
+	    						client.closeConnection();
+	    			            logger.info("Connection closed for client");
+	
+	    					}
+	        });
 
         
         
@@ -1147,8 +1247,50 @@ private void showInvoiceTable(List<Invoice> list) {
 	{
 		new CustomerView(new User("123456789", "Chevannese", "Ellis", "9f8a1359ecc402f73edc297d120d42c2c85a055d33d925bca5244f2885a03f9e","876-249-3133","chev@gmail.com"));
 	}
+	
+	public boolean isValidEmail(String email) {
+        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return email.matches(regex);
+    }
+    
+    public boolean isValidPhone(String phone) {
+        return phone.matches("^\\+?[0-9\\-\\s]{7,20}$");
+    }
+
+    
+    private boolean checkPasswordStrength()
+    {
+    	if (passText.length() < 8) {
+    		JOptionPane.showMessageDialog(this, "Password must be at least 8 characters long.", null, JOptionPane.WARNING_MESSAGE);
+			return false;
+		} else if (passText.length() > 30) {
+			JOptionPane.showMessageDialog(this,"Password must be at most 30 characters long.", null, JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		return false;
       
+    }
+    
+    private String hashString(String input) {
+   		try {
+   			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+   			byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+   			StringBuilder hexString = new StringBuilder();
+   			for (byte b : hash) {
+   				String hex = Integer.toHexString(0xff & b);
+   				if (hex.length() == 1) hexString.append('0');
+   				hexString.append(hex);
+   			}
+   			return hexString.toString();
+   		} catch (NoSuchAlgorithmException e) {
+   			logger.error(e.getMessage());
+   			throw new RuntimeException(e);
+   		}
+    
+    
 }
+    
+    
 
 
 
@@ -1245,10 +1387,12 @@ private void showInvoiceTable(List<Invoice> list) {
         return modified;
     }
     
+    
+    
   
 
 
-}
+ }}
  
 
 

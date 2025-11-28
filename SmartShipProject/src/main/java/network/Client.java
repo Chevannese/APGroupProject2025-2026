@@ -116,6 +116,36 @@ public class Client {
 		return false;
 	}
 	
+	
+	public boolean updateAccount(User newUser) {
+	    try (
+	        Socket socket = new Socket("127.0.0.1", 8888);
+	        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+	        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+	    ) {
+	        // Tell the server what action this is
+	        out.writeObject("Update Account");
+	        out.writeObject(newUser);
+	        out.flush();
+	        
+	     // Read the server's response (a String)
+	        String response = ((String) in.readObject()).trim();
+	        
+	        if ("done".equals(response)) 
+	        {
+	            logger.info("Account changed successfully");
+	            JOptionPane.showMessageDialog(null, "Account changed successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+	            return true;
+	        }
+	        out.flush();
+	        
+	    }catch(Exception e)
+	    {
+	    	logger.error(e.getMessage());
+	    }
+		return false;
+	}
+	
 	public User signIn(User loggedInUser)
 	{
 		try (
@@ -139,7 +169,7 @@ public class Client {
 	        	return test;
 	        }else if(response.equalsIgnoreCase("success"))
 	        {
-	        	JOptionPane.showMessageDialog(null,"User has successfully logged on with TRN: " + test.getTrn(), response, JOptionPane.WARNING_MESSAGE);
+	        	JOptionPane.showMessageDialog(null,"User has successfully logged on with TRN: " + test.getTrn(), response, JOptionPane.INFORMATION_MESSAGE);
 	        	logger.info("User has successfully logged on with TRN: " + test.getTrn());
 
 	        	return test;
