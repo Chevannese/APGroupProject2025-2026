@@ -23,7 +23,6 @@
 	<mapping class="model.Assignment"/>
 	<mapping class="model.TrackPackage"/>
 	<mapping class="model.Route"/>
-	<mapping class="model.Report"/>
 	
 
 
