@@ -6,6 +6,8 @@ import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -13,32 +15,30 @@ import jakarta.persistence.Table;
 @Table(name = "trip")
 public class Trip implements Serializable {
 
-    @Id
-    @Column(name = "tripID")
-    private Integer tripID;  // Must be Integer because Hibernate handles it better
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "vehicleNo")
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tripID")
+    private Integer tripID; 
+
     private String vehicleNo;
 
-    @Column(name = "driverID")
     private String driverID;
 
-    @Column(name = "clerkID")
     private String clerkID;
 
-    @Column(name = "routeID")
     private Integer routeID;
 
-    @Column(name = "status")
     private String status = "Pending"; // NEW DEFAULT
 
-    @Column(name = "date")
     private LocalDate date;
 
-    @Column(name = "depTime")
     private LocalTime departureTime;
 
-    @Column(name = "arrivalTime")
     private LocalTime arrivalTime;
 
     public Trip() {

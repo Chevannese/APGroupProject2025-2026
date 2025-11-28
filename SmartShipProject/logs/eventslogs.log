@@ -2117,3 +2117,251 @@ java.io.EOFException: null
 	at network.Server.handleClient(Server.java:92) ~[classes/:?]
 	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
 	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:32:38.511 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:32:38.511 [Thread-15] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:32:38.512 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:32:38.512 [Thread-16] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:32:38.513 [Thread-16] Server - Action received: GET_UNASSIGNED_SHIPMENTS
+[ INFO] 2025-11-28 17:32:39.671 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:32:39.677 [Thread-17] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:32:39.678 [Thread-17] Server - Action received: GET_ROUTES
+[ INFO] 2025-11-28 17:32:40.591 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:32:40.594 [Thread-18] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:32:40.596 [Thread-18] Server - Action received: GET_VEHICLES
+[ INFO] 2025-11-28 17:32:56.607 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:32:56.608 [Thread-19] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:32:56.609 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:32:56.610 [Thread-20] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:32:56.612 [Thread-20] Server - Action received: ASSIGN_SHIPMENT
+[ INFO] 2025-11-28 17:37:59.561 [main] Server - Server running on port 8888...
+[ INFO] 2025-11-28 17:39:11.154 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:11.164 [Thread-1] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:11.170 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-28 17:39:11.176 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:11.177 [Thread-2] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:11.183 [Thread-2] Server - Action received: SignIn
+[ INFO] 2025-11-28 17:39:13.144 [AWT-EventQueue-0] Client - User has successfully logged on with TRN: 200000003
+[ INFO] 2025-11-28 17:39:13.467 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-28 17:39:13.469 [Thread-1] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:39:29.937 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:29.938 [Thread-3] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:29.939 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:29.940 [Thread-4] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:29.943 [Thread-4] Server - Action received: GET_TRIPS
+[ERROR] 2025-11-28 17:39:41.880 [Thread-3] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:39:41.944 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:41.945 [Thread-5] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:41.945 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:41.947 [Thread-6] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:41.947 [Thread-6] Server - Action received: GET_UNASSIGNED_SHIPMENTS
+[ INFO] 2025-11-28 17:39:43.272 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:43.273 [Thread-7] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:43.274 [Thread-7] Server - Action received: GET_ROUTES
+[ INFO] 2025-11-28 17:39:44.176 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:39:44.178 [Thread-8] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:39:44.179 [Thread-8] Server - Action received: GET_VEHICLES
+[ INFO] 2025-11-28 17:40:08.055 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:40:08.056 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:40:08.056 [Thread-9] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:40:08.057 [Thread-10] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:40:08.058 [Thread-10] Server - Action received: ASSIGN_SHIPMENT
+[ INFO] 2025-11-28 17:44:37.824 [main] Server - Server running on port 8888...
+[ INFO] 2025-11-28 17:45:31.243 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:31.252 [Thread-1] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:31.256 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-28 17:45:31.260 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:31.260 [Thread-2] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:31.264 [Thread-2] Server - Action received: SignIn
+[ INFO] 2025-11-28 17:45:33.172 [AWT-EventQueue-0] Client - User has successfully logged on with TRN: 200000004
+[ INFO] 2025-11-28 17:45:33.472 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-28 17:45:33.473 [Thread-1] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:45:37.673 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:37.676 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:37.679 [Thread-3] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:37.681 [Thread-4] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:37.686 [Thread-4] Server - Action received: GET_TRIPS
+[ INFO] 2025-11-28 17:45:43.008 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:43.009 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:43.010 [Thread-5] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:43.014 [Thread-6] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:43.015 [Thread-6] Server - Action received: GET_UNASSIGNED_SHIPMENTS
+[ INFO] 2025-11-28 17:45:44.409 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:44.410 [Thread-7] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:44.410 [Thread-7] Server - Action received: GET_ROUTES
+[ INFO] 2025-11-28 17:45:45.323 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:45.332 [Thread-8] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:45.333 [Thread-8] Server - Action received: GET_VEHICLES
+[ INFO] 2025-11-28 17:45:54.386 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:54.401 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:45:54.401 [Thread-9] Server - Streams configured for /127.0.0.1
+[ERROR] 2025-11-28 17:45:54.401 [Thread-3] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-28 17:45:54.401 [Thread-5] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:45:54.408 [Thread-10] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:45:54.410 [Thread-10] Server - Action received: ASSIGN_SHIPMENT
+[ INFO] 2025-11-28 17:47:50.184 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:47:50.185 [Thread-11] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:47:50.186 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:47:50.188 [Thread-12] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:47:50.189 [Thread-12] Server - Action received: ASSIGN_SHIPMENT
+[ERROR] 2025-11-28 17:48:43.382 [Thread-11] Server - Client handling error: Connection reset
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1108) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1095) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1089) ~[?:?]
+	at java.base/java.io.ObjectInputStream$PeekInputStream.peek(ObjectInputStream.java:2878) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peek(ObjectInputStream.java:3205) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3215) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-28 17:48:43.382 [Thread-9] Server - Client handling error: Connection reset
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1108) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1095) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1089) ~[?:?]
+	at java.base/java.io.ObjectInputStream$PeekInputStream.peek(ObjectInputStream.java:2878) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peek(ObjectInputStream.java:3205) ~[?:?]
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3215) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-28 17:49:30.453 [main] Server - Server error: Address already in use: bind
+[ INFO] 2025-11-28 17:50:01.848 [main] Server - Server running on port 8888...
+[ INFO] 2025-11-28 17:50:19.836 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:19.842 [Thread-1] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:19.846 [AWT-EventQueue-0] Login - Connection open for client
+[ INFO] 2025-11-28 17:50:19.851 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:19.851 [Thread-2] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:19.856 [Thread-2] Server - Action received: SignIn
+[ INFO] 2025-11-28 17:50:21.610 [AWT-EventQueue-0] Client - User has successfully logged on with TRN: 200000001
+[ INFO] 2025-11-28 17:50:21.925 [AWT-EventQueue-0] Login - Connection closed for client
+[ERROR] 2025-11-28 17:50:21.927 [Thread-1] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:50:26.577 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:26.578 [Thread-3] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:26.579 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:26.580 [Thread-4] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:26.582 [Thread-4] Server - Action received: GET_UNASSIGNED_SHIPMENTS
+[ INFO] 2025-11-28 17:50:28.519 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:28.523 [Thread-5] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:28.524 [Thread-5] Server - Action received: GET_ROUTES
+[ INFO] 2025-11-28 17:50:29.525 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:29.527 [Thread-6] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:29.528 [Thread-6] Server - Action received: GET_VEHICLES
+[ INFO] 2025-11-28 17:50:37.568 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:37.569 [Thread-7] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:37.570 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:50:37.572 [Thread-8] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:50:37.573 [Thread-8] Server - Action received: ASSIGN_SHIPMENT
+[ INFO] 2025-11-28 17:56:59.593 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:56:59.595 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:56:59.595 [Thread-9] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:56:59.597 [Thread-10] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:56:59.598 [Thread-10] Server - Action received: ASSIGN_SHIPMENT
+[ INFO] 2025-11-28 17:57:07.421 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:57:07.422 [Thread-11] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:57:07.423 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:57:07.424 [Thread-12] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:57:07.425 [Thread-12] Server - Action received: GET_UNASSIGNED_SHIPMENTS
+[ INFO] 2025-11-28 17:57:08.348 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:57:08.351 [Thread-13] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:57:08.352 [Thread-13] Server - Action received: GET_ROUTES
+[ INFO] 2025-11-28 17:57:09.269 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:57:09.270 [Thread-14] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:57:09.274 [Thread-14] Server - Action received: GET_VEHICLES
+[ERROR] 2025-11-28 17:57:19.141 [Thread-7] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-28 17:57:19.141 [Thread-9] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ERROR] 2025-11-28 17:57:19.142 [Thread-11] Server - Client handling error: null
+java.io.EOFException: null
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3217) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1698) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:525) ~[?:?]
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:483) ~[?:?]
+	at network.Server.handleClient(Server.java:92) ~[classes/:?]
+	at network.Server.lambda$0(Server.java:72) ~[classes/:?]
+	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
+[ INFO] 2025-11-28 17:57:23.721 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:57:23.722 [Thread-15] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:57:23.723 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 17:57:23.725 [Thread-16] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 17:57:23.726 [Thread-16] Server - Action received: GET_TRIPS
+[ INFO] 2025-11-28 18:17:18.626 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 18:17:18.628 [Thread-17] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 18:17:18.628 [main] Server - Client connected: /127.0.0.1
+[ INFO] 2025-11-28 18:17:18.629 [Thread-18] Server - Streams configured for /127.0.0.1
+[ INFO] 2025-11-28 18:17:18.629 [Thread-18] Server - Action received: GET_TRIPS
