@@ -45,7 +45,40 @@ public class Login extends JFrame {
 
         add(loginPanel);
         cardLayout.show(loginPanel, "Login"); // start with sign-in
-        
+
+        // --- DEEMEDZ New Code Block for Logo ---
+
+        JLabel logoLabel;
+        try {
+            ImageIcon logoIcon = new ImageIcon(getClass().getResource("/images/delivery.png"));
+            Image originalImage = logoIcon.getImage();
+
+            int newWidth = 100;
+            int newHeight = 100;
+
+            Image scaledImage = originalImage.getScaledInstance(
+                    newWidth,
+                    newHeight,
+                    Image.SCALE_SMOOTH // Use a high-quality scaling algorithm
+            );
+
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+            logoLabel = new JLabel(scaledIcon);
+            logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+            logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//            logoLabel = new JLabel(logoIcon);
+        } catch (Exception e) {
+            logger.error("Failed to load logo image: " + e.getMessage());
+            // Fallback: Use a text label if the image fails to load
+            logoLabel = new JLabel("Application Logo");
+            logoLabel.setFont(new Font("Arial", Font.ITALIC, 14));
+            logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        }
+
+// --- DEEMEDZ End New Code Block ---
+
     	GridBagConstraints gc;
     	gc = new GridBagConstraints();
         gc.insets = new Insets(5, 5, 5, 5);
@@ -61,16 +94,19 @@ public class Login extends JFrame {
         JButton goToSignUpBtn = new JButton("Create Account");
         JButton clearSignUpBtn = new JButton("Clear Form");
 
-        addToGridBag(signInPanel, title, gc, 0, 0, 2, 1);
-        addToGridBag(signInPanel, new JLabel("Username:"), gc, 0, 1, 1, 1);
-        addToGridBag(signInPanel, usernameFieldL, gc, 1, 1, 1, 1);
+        // Add the logo label at row 0
+        addToGridBag(signInPanel, logoLabel, gc, 0, 0, 2, 1); // 👈 New line
+
+        addToGridBag(signInPanel, title, gc, 0, 1, 2, 1);
+        addToGridBag(signInPanel, new JLabel("Username:"), gc, 0, 2, 1, 1);
+        addToGridBag(signInPanel, usernameFieldL, gc, 1, 2, 1, 1);
 
 
-        addToGridBag(signInPanel, new JLabel("Password:"),gc, 0, 2, 1, 1);
-        addToGridBag(signInPanel, passwordFieldL, gc, 1, 2, 1, 1);
+        addToGridBag(signInPanel, new JLabel("Password:"),gc, 0, 3, 1, 1);
+        addToGridBag(signInPanel, passwordFieldL, gc, 1, 3, 1, 1);
 
-        addToGridBag(signInPanel, signInBtn, gc, 0, 3, 2, 1);
-        addToGridBag(signInPanel, goToSignUpBtn,gc, 0, 4, 2, 1);
+        addToGridBag(signInPanel, signInBtn, gc, 0, 4, 2, 1);
+        addToGridBag(signInPanel, goToSignUpBtn,gc, 0, 5, 2, 1);
 
 
         signInBtn.addActionListener(e -> {
