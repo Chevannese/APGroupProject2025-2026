@@ -39,6 +39,15 @@ public class TabView extends JFrame implements PopupMenuListener, ComponentListe
 			// move popup near button
 			popupSidebar.show(sidebarPopupBtn, 0, sidebarPopupBtn.getHeight());
         });
+        
+		JButton logout = new JButton("Logout");
+		    	
+		    	menubar.add(logout);
+		    	
+		    	logout.addActionListener(e -> {
+		            this.dispose();
+		    		new Login();
+		    	});
     }
     
     public void addTab(String tabName, JPanel pane) {
