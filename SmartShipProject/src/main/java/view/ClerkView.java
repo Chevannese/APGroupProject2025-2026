@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 
 import com.formdev.flatlaf.*;
@@ -24,6 +26,21 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     JTextField shipmentSearch = new JTextField();;
     JButton loadShipmentsButton = new JButton("(Re)Load Shipment Orders");;
     JPanel shipmentList = new JPanel();
+    
+    // ===== NEW: Package dispatch tab =====
+    private JPanel managePackagesPanel = new JPanel(new BorderLayout());
+
+    private JTable shipmentTable;
+    private ShipmentTableModel shipmentTableModel;
+    private JButton refreshDispatchBtn = new JButton("Refresh");
+    private JButton assignBtn = new JButton("Assign Package");
+
+    private JComboBox<String> routeCombo = new JComboBox<String>();
+    private JComboBox<String> vehicleCombo = new JComboBox<String>();
+
+    private List<Shipment> unassignedShipments = new ArrayList<Shipment>();
+    private List<Route> routes = new ArrayList<Route>();
+    private List<Vehicle> vehicles = new ArrayList<Vehicle>();
 
     User clerk;
     List<Shipment> shipments;
@@ -63,8 +80,13 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
         	accountInfoPanel.add(new JLabel(clerk.toString()));
         }
         
+        
+        
         addTab("Shipment Management", shipmentPanel);
-        addTab("Accounts", accountInfoPanel);
+        addTab("Manage Packages", managePackagesPanel);
+        addTab("Account", accountInfoPanel);
+        
+        initPackageDispatchTab();
     }
     
     private JPanel addToPanel(Component ...components) {
@@ -85,6 +107,39 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
         
         loadShipmentsButton.setActionCommand("load-shipments");
         shipmentFilter.setActionCommand("filter-shipments");
+        
+
+
+
+        // Dispatch tab
+        refreshDispatchBtn.addActionListener(this);
+        assignBtn.addActionListener(this);
+
+    }
+    
+    private void initPackageDispatchTab() {
+        managePackagesPanel.setLayout(new BorderLayout());
+
+        // Top: controls
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(new JLabel("Route:"));
+        topPanel.add(routeCombo);
+        topPanel.add(Box.createHorizontalStrut(15));
+        topPanel.add(new JLabel("Vehicle:"));
+        topPanel.add(vehicleCombo);
+        topPanel.add(Box.createHorizontalStrut(15));
+        topPanel.add(assignBtn);
+        topPanel.add(Box.createHorizontalStrut(15));
+        topPanel.add(refreshDispatchBtn);
+
+        // Center: table of unassigned shipments
+        shipmentTableModel = new ShipmentTableModel(new ArrayList<>());
+        shipmentTable = new JTable(shipmentTableModel);
+        JScrollPane shipmentScroll = new JScrollPane(shipmentTable);
+        shipmentScroll.setPreferredSize(new Dimension(900, 400));
+
+        managePackagesPanel.add(topPanel, BorderLayout.NORTH);
+        managePackagesPanel.add(shipmentScroll, BorderLayout.CENTER);
     }
     
     public void generateInvoice() {
@@ -94,6 +149,7 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     @Override public void actionPerformed(ActionEvent e) {
     	String action = e.getActionCommand();
     	System.out.println("Action: " + action);
+    	Object src = e.getSource();
 
     	if (action.equals("load-shipments")) {
     		this.loadShipments();
@@ -104,8 +160,95 @@ public class ClerkView extends TabView implements ActionListener, PopupMenuListe
     	if (action.equals("")) {
     		
     	}
+    	
+    	else if (src == refreshDispatchBtn) {
+            loadDispatchData();
+        } else if (src == assignBtn) {
+            assignSelectedShipment();
+        }
 	}
     
+    private void loadDispatchData() {
+        try {
+            Client client = new Client();
+
+            // ---- You must implement these in Client + Server ----
+            // e.g. client sends "GET_UNASSIGNED_SHIPMENTS" etc.
+            this.unassignedShipments = client.getUnassignedShipments();
+            this.routes             = client.getAllRoutes();
+            this.vehicles           = client.getAllVehicles();
+            // ------------------------------------------------------
+
+            shipmentTableModel.setShipments(new ArrayList<>(unassignedShipments));
+
+            // Fill route combo
+            routeCombo.removeAllItems();
+            for (Route r : routes) {
+                // Adjust display text to match your Route fields
+                String label = r.getRouteID() + " - " + r.getOrigin() + " → " + r.getDestination();
+                routeCombo.addItem(label);
+            }
+
+            // Fill vehicle combo
+            vehicleCombo.removeAllItems();
+            for (Vehicle v : vehicles) {
+                String label = v.getVehicleNo() + " - " + v.getVehicleName();
+                vehicleCombo.addItem(label);
+            }
+
+            JOptionPane.showMessageDialog(this, "Dispatch data loaded!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Could not load dispatch data: " + ex.getMessage());
+        }
+    }
+    
+    private void assignSelectedShipment() {
+        int row = shipmentTable.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a package to assign.");
+            return;
+        }
+        if (routeCombo.getSelectedIndex() < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a route.");
+            return;
+        }
+        if (vehicleCombo.getSelectedIndex() < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a vehicle.");
+            return;
+        }
+
+        Shipment shipment = shipmentTableModel.getShipmentAt(row);
+        Route route = routes.get(routeCombo.getSelectedIndex());
+        Vehicle vehicle = vehicles.get(vehicleCombo.getSelectedIndex());
+
+        try {
+            Client client = new Client();
+
+            // SEND THE MANAGER TRN → REQUIRED FOR TRIP CREATION
+            String response = client.assignShipmentToVehicleRoute(
+                    shipment.getPackageNo(),
+                    route.getRouteID(),
+                    vehicle.getVehicleNo(),
+                    clerk.getTrn()                 // <--- NEW
+            );
+
+            JOptionPane.showMessageDialog(this, response);
+
+            if (response.equals("SUCCESS")) {
+                loadDispatchData();
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Failed to assign package: " + ex.getMessage());
+        }
+    }
 
 private void populateShipmentList() {
     if (shipments == null) {
