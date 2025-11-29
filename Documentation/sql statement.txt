@@ -14,7 +14,7 @@ CREATE TABLE `user`
 
 CREATE TABLE `shipment`
 (
-	`packageNo` int AUTO_INCREMENT,
+	`packageNo` int NOT NULL AUTO_INCREMENT,
 	`custID` varchar(250),
 	`supplierName` varchar(250),
 	`supplierAddr` varchar(250),
@@ -86,7 +86,7 @@ CREATE TABLE `trip`
 	`clerkID` varchar(250),
 	`routeID` int,
 	`date` date,
-	`departureTime` time,
+	`depTime` time,
 	`arrivalTime` time NULL,
 	CONSTRAINT pk_tripID PRIMARY KEY (`tripID`),
 	CONSTRAINT fk_veh_trip FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
@@ -116,17 +116,6 @@ CREATE TABLE `assignment`
 	CONSTRAINT fk_clerk_assign FOREIGN KEY (`clerkID`) REFERENCES `users`(`trn`)
 );
 
-
-CREATE TABLE `report`
-(
-	`reportID` varchar(250),
-	`managerID` varchar(250),
-	`reportType` varchar(250),
-	`date` date,
-	`time` time,
-	CONSTRAINT pk_report PRIMARY KEY (`reportID`),
-	CONSTRAINT fk_manager_report FOREIGN KEY (`managerID`) REFERENCES `manager`(`managerTRN`)
-);
 
 CREATE TABLE `trackPackage`
 (
