@@ -10,7 +10,7 @@ Instructions on how to install Project
 
 2. Go to File → Import.
 
-3. In the dialog, select General → Maven -> Existing Maven Projects into Workspace, then click Next.
+3. In the dialog, -> Selct Maven -> Existing Maven Projects into Workspace, then click Next.
 
 4. Click Select root directory and browse to the folder containing your project.
 
