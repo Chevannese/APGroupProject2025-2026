@@ -39,10 +39,11 @@ public class Server {
     private ServerSocket serverSocket;
     private Socket connectionSocket;
 
-
+    //Upon calling the Server class it will establish a link to the database
     static {
         System.out.println("Before building SessionFactory...");
         try {
+        	
             sessionFactory = new Configuration().configure().buildSessionFactory();
             System.out.println("SessionFactory built successfully!");
         } catch (Throwable ex) {
@@ -146,7 +147,7 @@ public class Server {
                     out.flush();
                 }
             }//end of Update Account
-            
+            //=======
             else if(action.equalsIgnoreCase("SignIn"))
             {
             	 User user = (User) in.readObject();
@@ -205,6 +206,7 @@ public class Server {
                  }
                  }
 
+            //============= CREATE SHIPMENT | This request comes CustomerView ============
             else if ("create-shipment".equals(action)) 
             {
                 Shipment shipment = (Shipment) in.readObject();
@@ -213,7 +215,7 @@ public class Server {
                     session.beginTransaction();
 
                     session.persist(shipment);   // ID auto-generated here
-                    session.flush();             // Forces Hibernate to fetch ID NOW
+                    session.flush();             // Forces Hibernate to fetch ID immediately
 
                     session.getTransaction().commit();
 
@@ -231,13 +233,15 @@ public class Server {
 
 
 
-            	
+            //Goes to the next page
             }else if("Next".equalsIgnoreCase(action))
             {
             	out.writeObject("done");
             	out.flush();
             }
-            else if ("generate-invoice".equals(action)) {
+            else if ("generate-invoice".equals(action)) 
+            {
+            	
 
                 Shipment shipment = (Shipment) in.readObject();
                 User customer = (User) in.readObject();

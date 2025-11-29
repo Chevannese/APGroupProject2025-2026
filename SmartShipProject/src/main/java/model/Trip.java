@@ -33,7 +33,7 @@ public class Trip implements Serializable {
 
     private Integer routeID;
 
-    private String status = "Pending"; // NEW DEFAULT
+    private String status = "Pending"; 
 
     private LocalDate date;
 

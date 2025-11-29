@@ -80,13 +80,13 @@ CREATE TABLE `route`
 
 CREATE TABLE `trip`
 (
-	`tripID` int,
+	`tripID` int NOT NULL AUTO_INCREMENT,
 	`vehicleNo` varchar(250),
 	`driverID` varchar(250),
 	`clerkID` varchar(250),
 	`routeID` int,
 	`date` date,
-	`depTime` time,
+	`departureTime` time,
 	`arrivalTime` time NULL,
 	CONSTRAINT pk_tripID PRIMARY KEY (`tripID`),
 	CONSTRAINT fk_veh_trip FOREIGN KEY (`vehicleNo`) REFERENCES `vehicle`(`vehicleNo`),
